@@ -1,0 +1,2 @@
+patchedDependencies:
+  framework7-react: patches/framework7-react.patch
