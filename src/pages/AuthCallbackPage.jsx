@@ -2,38 +2,34 @@ import React, { useEffect } from 'react'
 import { Page, Preloader } from 'framework7-react'
 import { setSession } from '../stores/authStore'
 
-function decodeBase64Url(str) {
-  return atob(str.replace(/-/g, '+').replace(/_/g, '/'))
-}
-
-export default function AuthCallbackPage({ f7router }) {
+export default function AuthCallbackPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const error = params.get('error')
     const token = params.get('token')
-    const userEncoded = params.get('user')
+    const userRaw = params.get('user')
 
     if (error) {
-      f7router.navigate(`/login?error=${encodeURIComponent(error)}`)
+      window.location.replace(`/login?error=${encodeURIComponent(error)}`)
       return
     }
 
-    if (!token || !userEncoded) {
-      f7router.navigate('/login?error=auth_failed')
+    if (!token || !userRaw) {
+      window.location.replace('/login?error=auth_failed')
       return
     }
 
     try {
-      const user = JSON.parse(decodeBase64Url(userEncoded))
+      const user = JSON.parse(userRaw)
       setSession({ token, user })
     } catch {
-      f7router.navigate('/login?error=auth_failed')
+      window.location.replace('/login?error=auth_failed')
       return
     }
 
     const destination = localStorage.getItem('lachiwana_pending_redirect') || '/'
     localStorage.removeItem('lachiwana_pending_redirect')
-    f7router.navigate(destination)
+    window.location.replace(destination)
   }, [])
 
   return (

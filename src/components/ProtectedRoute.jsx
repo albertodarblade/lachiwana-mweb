@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import { f7 } from 'framework7-react'
 import { getSession, isTokenExpired, clearSession } from '../stores/authStore'
 
 export default function ProtectedRoute({ children }) {
@@ -9,10 +8,10 @@ export default function ProtectedRoute({ children }) {
   useEffect(() => {
     const redirect = encodeURIComponent(window.location.pathname)
     if (!session) {
-      f7.views.main.router.navigate(`/login?redirect=${redirect}`)
+      window.location.replace(`/login?redirect=${redirect}`)
     } else if (expired) {
       clearSession()
-      f7.views.main.router.navigate(`/login?expired=1&redirect=${redirect}`)
+      window.location.replace(`/login?expired=1&redirect=${redirect}`)
     }
   }, [])
 

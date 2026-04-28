@@ -55,17 +55,14 @@ export default function HomePage() {
           <p style={{ color: 'var(--f7-block-text-color)', margin: 0 }}>No users found.</p>
         )}
         {users.data?.data?.length > 0 && (
-          <List>
+          <List mediaList>
             {users.data.data.map((user) => (
-              <ListItem
-                key={user.googleId}
-                title={user.name}
-                subtitle={user.email}
-                media={user.picture
-                  ? <img src={user.picture} width={40} height={40} style={{ borderRadius: '50%' }} alt={user.name} />
-                  : <i className="f7-icons" style={{ fontSize: 40 }}>person_circle</i>
+              <ListItem key={user.googleId} title={user.name} subtitle={user.email}>
+                {user.picture
+                  ? <img slot="media" src={user.picture} width={44} height={44} style={{ borderRadius: '50%', objectFit: 'cover' }} alt={user.name} />
+                  : <i slot="media" className="f7-icons" style={{ fontSize: 44 }}>person_circle</i>
                 }
-              />
+              </ListItem>
             ))}
           </List>
         )}

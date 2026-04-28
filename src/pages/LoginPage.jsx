@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Page, Block, BlockTitle, Preloader, f7 } from 'framework7-react'
+import { Page, Block, BlockTitle, Preloader } from 'framework7-react'
 import { getSession, isTokenExpired } from '../stores/authStore'
 
 function GoogleLogo() {
@@ -58,7 +58,7 @@ export default function LoginPage() {
     const session = getSession()
     if (session && !isTokenExpired(session.token)) {
       const destination = params.get('redirect') || '/'
-      f7.views.main.router.navigate(destination)
+      window.location.replace(destination)
     }
   }, [])
   const expired = params.get('expired') === '1'

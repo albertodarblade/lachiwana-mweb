@@ -26,9 +26,13 @@ const f7params = {
   routes,
 }
 
+const PUBLIC_ROUTES = ['/login', '/auth/callback']
+
 function resolveInitialUrl() {
+  const path = window.location.pathname
+  if (PUBLIC_ROUTES.includes(path)) return path
   const session = getSession()
-  if (session && !isTokenExpired(session.token)) return '/'
+  if (session && !isTokenExpired(session.token)) return path
   return '/login'
 }
 
