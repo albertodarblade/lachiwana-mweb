@@ -22,7 +22,7 @@ function UserAvatar() {
   return <i className="f7-icons" style={{ fontSize: '32px' }}>person_circle</i>
 }
 
-export default function NotebooksPage({ f7router }) {
+export default function NotebooksPage() {
   const { data, isLoading, isError, refetch } = useNotebooks()
 
   const notebooks = [...(data?.data ?? [])].sort(
@@ -67,7 +67,7 @@ export default function NotebooksPage({ f7router }) {
         </div>
       )}
 
-      <Fab position="right-bottom" text="Crear Cuaderno" onClick={() => f7router.navigate('/notebooks/create')}>
+      <Fab position="right-bottom" href="/notebooks/create" text="Crear Cuaderno">
         <Icon f7="plus" />
       </Fab>
     </Page>

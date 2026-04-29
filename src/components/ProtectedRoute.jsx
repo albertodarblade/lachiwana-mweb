@@ -6,7 +6,9 @@ export default function ProtectedRoute({ children }) {
   const expired = !!(session && isTokenExpired(session.token))
 
   useEffect(() => {
-    const redirect = encodeURIComponent(window.location.pathname)
+    const path = window.location.pathname
+    if (path === '/login' || path.startsWith('/login')) return
+    const redirect = encodeURIComponent(path)
     if (!session) {
       window.location.replace(`/login?redirect=${redirect}`)
     } else if (expired) {
