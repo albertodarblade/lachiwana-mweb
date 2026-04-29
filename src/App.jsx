@@ -1,15 +1,24 @@
 import React from 'react'
 import { App as F7App, View } from 'framework7-react'
-import HomePage from './pages/HomePage'
+import NotebooksPage from './pages/NotebooksPage'
+import CreateNotebookPage from './pages/CreateNotebookPage'
 import LoginPage from './pages/LoginPage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { getSession, isTokenExpired } from './stores/authStore'
 
-function ProtectedHome() {
+function ProtectedHome(props) {
   return (
     <ProtectedRoute>
-      <HomePage />
+      <NotebooksPage {...props} />
+    </ProtectedRoute>
+  )
+}
+
+function ProtectedCreate(props) {
+  return (
+    <ProtectedRoute>
+      <CreateNotebookPage {...props} />
     </ProtectedRoute>
   )
 }
@@ -18,6 +27,7 @@ const routes = [
   { path: '/login', component: LoginPage },
   { path: '/auth/callback', component: AuthCallbackPage },
   { path: '/', component: ProtectedHome },
+  { path: '/notebooks/create', component: ProtectedCreate },
 ]
 
 const f7params = {
