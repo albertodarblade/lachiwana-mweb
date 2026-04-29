@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  framework7-react:
-    hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-    path: patches/framework7-react.patch
-
 importers:
 
   .:
@@ -24,7 +19,7 @@ importers:
         version: 5.0.5
       framework7-react:
         specifier: ^9.0.3
-        version: 9.0.3(patch_hash=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855)
+        version: 9.0.3
       react:
         specifier: ^19.2.5
         version: 19.2.5
@@ -504,7 +499,7 @@ snapshots:
 
   framework7-icons@5.0.5: {}
 
-  framework7-react@9.0.3(patch_hash=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855): {}
+  framework7-react@9.0.3: {}
 
   framework7@9.0.3:
     dependencies:
