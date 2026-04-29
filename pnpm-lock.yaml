@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   framework7-react:
-    hash: 67d92624043e93cd89d33be5418ef5485425186ea2d83cf9e2ededee9c27f960
+    hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
     path: patches/framework7-react.patch
 
 importers:
@@ -24,7 +24,7 @@ importers:
         version: 5.0.5
       framework7-react:
         specifier: ^9.0.3
-        version: 9.0.3(patch_hash=67d92624043e93cd89d33be5418ef5485425186ea2d83cf9e2ededee9c27f960)
+        version: 9.0.3(patch_hash=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855)
       react:
         specifier: ^19.2.5
         version: 19.2.5
@@ -504,7 +504,7 @@ snapshots:
 
   framework7-icons@5.0.5: {}
 
-  framework7-react@9.0.3(patch_hash=67d92624043e93cd89d33be5418ef5485425186ea2d83cf9e2ededee9c27f960): {}
+  framework7-react@9.0.3(patch_hash=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855): {}
 
   framework7@9.0.3:
     dependencies:

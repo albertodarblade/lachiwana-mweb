@@ -6,7 +6,9 @@
       "Bash(pnpm *)",
       "Bash(bash *)",
       "PowerShell(.specify/scripts/powershell/setup-plan.ps1 -Json)",
-      "PowerShell(.specify/scripts/powershell/check-prerequisites.ps1 -Json)"
+      "PowerShell(.specify/scripts/powershell/check-prerequisites.ps1 -Json)",
+      "PowerShell(.specify/scripts/powershell/check-prerequisites.ps1 -Json -PathsOnly)",
+      "PowerShell(.specify/scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks)"
     ]
   }
 }
