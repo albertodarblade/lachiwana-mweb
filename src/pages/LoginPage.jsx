@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { Page, Block, Preloader, Button } from 'framework7-react'
 import { getSession, isTokenExpired } from '../stores/authStore'
+import styles from './LoginPage.module.css'
 
 const COLORS = {
-  primary: '#BF5A00', // Deep orange from image
+  primary: '#BF5A00',
   text: '#111827',
   secondaryText: '#4B5563',
   lightGray: '#F3F4F6',
   decorativeHex: 'rgba(229, 231, 235, 0.3)',
 }
 
-function Hexagon({ size = 100, color = COLORS.decorativeHex, strokeWidth = 2, fill = 'none', style }) {
+function Hexagon({ size = 100, color = COLORS.decorativeHex, strokeWidth = 2, fill = 'none', className, style }) {
   return (
-    <svg width={size} height={size * 1.15} viewBox="0 0 100 115.47" style={style}>
+    <svg width={size} height={size * 1.15} viewBox="0 0 100 115.47" className={className} style={style}>
       <path
         d="M50 0 L93.3 25 L93.3 75 L50 100 L6.7 75 L6.7 25 Z"
         fill={fill}
@@ -26,7 +27,7 @@ function Hexagon({ size = 100, color = COLORS.decorativeHex, strokeWidth = 2, fi
 
 function MainLogo() {
   return (
-    <div style={{ position: 'relative', width: 80, height: 92, marginBottom: 24 }}>
+    <div className={styles.mainLogo}>
       <svg width="80" height="92" viewBox="0 0 80 92" fill="none">
         {/* Outer Orange Hexagon */}
         <path d="M40 0L74.641 20V72L40 92L5.35898 72V20L40 0Z" fill={COLORS.primary} />
@@ -41,16 +42,7 @@ function MainLogo() {
 
 function GoogleLogo() {
   return (
-    <div style={{
-      background: 'white',
-      borderRadius: '50%',
-      width: 24,
-      height: 24,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginRight: 12
-    }}>
+    <div className={styles.googleLogoContainer}>
       <svg width="14" height="14" viewBox="0 0 24 24">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
@@ -92,65 +84,31 @@ export default function LoginPage() {
   }
 
   return (
-    <Page noNavbar style={{ background: '#FFFFFF', overflow: 'hidden' }}>
+    <Page noNavbar className={styles.page}>
       {/* Decorative Background Hexagons */}
       <Hexagon size={120} style={{ position: 'absolute', top: '-2%', left: '-5%', opacity: 0.2 }} />
       <Hexagon size={80} style={{ position: 'absolute', top: '15%', right: '-10%', opacity: 0.15 }} />
       <Hexagon size={160} style={{ position: 'absolute', bottom: '15%', right: '-15%', opacity: 0.1 }} />
       <Hexagon size={140} style={{ position: 'absolute', bottom: '-5%', left: '-10%', opacity: 0.15 }} />
 
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        padding: '0 32px',
-        textAlign: 'center',
-        position: 'relative',
-        zIndex: 1
-      }}>
+      <div className={styles.container}>
         <MainLogo />
 
-        <h1 style={{
-          fontSize: '48px',
-          fontWeight: '800',
-          margin: '0 0 8px',
-          color: COLORS.text,
-          letterSpacing: '-2px'
-        }}>
+        <h1 className={styles.title}>
           Lachiwana
         </h1>
 
-        <h2 style={{
-          fontSize: '22px',
-          fontWeight: '700',
-          margin: '0 0 32px',
-          color: COLORS.text
-        }}>
+        <h2 className={styles.subtitle}>
           Tu colmena familiar
         </h2>
 
-        <p style={{
-          fontSize: '16px',
-          lineHeight: '1.5',
-          color: COLORS.secondaryText,
-          margin: '0 0 48px',
-          maxWidth: '280px'
-        }}>
+        <p className={styles.description}>
           Organiza notas y tareas con toda tu familia. Trabajen juntos, como una colmena en armonía.
         </p>
 
         {statusMessage && (
-          <Block style={{ width: '100%', margin: '0 0 24px' }}>
-            <div style={{
-              padding: '12px 16px',
-              borderRadius: '12px',
-              background: expired ? '#FEF3C7' : '#FEE2E2',
-              color: expired ? '#92400E' : '#991B1B',
-              fontSize: '14px',
-              fontWeight: '500'
-            }}>
+          <Block className={styles.statusBlock}>
+            <div className={`${styles.statusMessage} ${expired ? styles.statusExpired : styles.statusError}`}>
               {statusMessage}
             </div>
           </Block>
@@ -161,21 +119,7 @@ export default function LoginPage() {
           fill
           onClick={handleSignIn}
           disabled={loading}
-          style={{
-            background: COLORS.primary,
-            height: '64px',
-            borderRadius: '18px',
-            width: '100%',
-            maxWidth: '320px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            textTransform: 'none',
-            fontSize: '18px',
-            fontWeight: '600',
-            boxShadow: '0 10px 20px rgba(191, 90, 0, 0.25)',
-            marginBottom: '48px'
-          }}
+          className={styles.loginButton}
         >
           {loading ? (
             <Preloader color="white" size={24} />
@@ -187,15 +131,7 @@ export default function LoginPage() {
           )}
         </Button>
 
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-          color: COLORS.secondaryText,
-          fontSize: '14px',
-          opacity: 0.7
-        }}>
+        <div className={styles.footer}>
           <Hexagon size={24} color="#D1D5DB" fill="none" strokeWidth={6} />
           <span>Gratis para siempre · No requiere tarjeta</span>
         </div>
