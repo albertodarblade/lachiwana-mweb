@@ -1,0 +1,113 @@
+:root {
+  --color-primary: #BF5A00;
+  --color-text: #111827;
+  --color-secondary-text: #4B5563;
+  --color-light-gray: #F3F4F6;
+  --color-decorative-hex: rgba(229, 231, 235, 0.3);
+}
+
+.page {
+  background: #FFFFFF !important;
+  overflow: hidden !important;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 0 32px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.mainLogo {
+  position: relative;
+  width: 80px;
+  height: 92px;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 48px;
+  font-weight: 800;
+  margin: 0 0 8px;
+  color: var(--color-text);
+  letter-spacing: -2px;
+}
+
+.subtitle {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 32px;
+  color: var(--color-text);
+}
+
+.description {
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-secondary-text);
+  margin: 0 0 48px;
+  max-width: 280px;
+}
+
+.statusBlock {
+  width: 100%;
+  margin: 0 0 24px !important;
+}
+
+.statusMessage {
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.statusExpired {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.statusError {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+.loginButton {
+  background: var(--color-primary) !important;
+  height: 64px !important;
+  border-radius: 18px !important;
+  width: 100% !important;
+  max-width: 320px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-transform: none !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 10px 20px rgba(191, 90, 0, 0.25) !important;
+  margin-bottom: 48px !important;
+}
+
+.googleLogoContainer {
+  background: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--color-secondary-text);
+  font-size: 14px;
+  opacity: 0.7;
+}
