@@ -1,10 +1,22 @@
 import React from 'react'
-import { Card, CardContent } from 'framework7-react'
+import { Link } from 'framework7-react'
 
 export default function NotebookCard({ notebook }) {
   return (
-    <Card style={{ margin: '8px 16px' }}>
-      <CardContent style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px' }}>
+    <Link
+      href={`/notebooks/${notebook.id}`}
+      style={{
+        display: 'block',
+        margin: '8px 16px',
+        background: 'var(--f7-card-bg-color)',
+        borderRadius: 'var(--f7-card-border-radius, 8px)',
+        boxShadow: 'var(--f7-card-box-shadow)',
+        overflow: 'hidden',
+        textDecoration: 'none',
+        color: 'inherit',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px' }}>
         <div style={{
           width: '6px',
           alignSelf: 'stretch',
@@ -20,7 +32,7 @@ export default function NotebookCard({ notebook }) {
         <span style={{ fontSize: '16px', fontWeight: '500', flex: 1 }}>
           {notebook.title}
         </span>
-      </CardContent>
-    </Card>
+      </div>
+    </Link>
   )
 }

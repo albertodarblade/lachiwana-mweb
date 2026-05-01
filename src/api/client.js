@@ -28,15 +28,15 @@ async function request(method, path) {
 
 export const get = (path) => request('GET', path)
 
-export function post(path, body) {
+function jsonRequest(method, path, body) {
   const session = getSession()
   const headers = { 'Content-Type': 'application/json' }
   if (session?.token) headers['Authorization'] = `Bearer ${session.token}`
 
   return fetch(`${BASE_URL}${path}`, {
-    method: 'POST',
+    method,
     headers,
-    body: JSON.stringify(body),
+    body: body !== undefined ? JSON.stringify(body) : undefined,
   }).then(async (response) => {
     if (response.status === 401) {
       clearSession()
@@ -45,6 +45,11 @@ export function post(path, body) {
       throw new Error('Session expired')
     }
     if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    if (response.status === 204) return null
     return response.json()
   })
 }
+
+export const post = (path, body) => jsonRequest('POST', path, body)
+export const patch = (path, body) => jsonRequest('PATCH', path, body)
+export const del = (path) => jsonRequest('DELETE', path)
