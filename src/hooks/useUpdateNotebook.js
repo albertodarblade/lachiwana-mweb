@@ -35,8 +35,11 @@ export function useUpdateNotebook() {
       }
     },
     onSettled: (_data, _err, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['notebooks'] })
+      // Refetch the detail immediately — user is on the detail/edit page
       queryClient.invalidateQueries({ queryKey: ['notebook', variables.id] })
+      // Mark the list stale but don't refetch now — it will refetch when
+      // the home page mounts next time the user navigates back
+      queryClient.invalidateQueries({ queryKey: ['notebooks'], refetchType: 'none' })
     },
   })
 }
