@@ -1,10 +1,14 @@
-import React, { useState } from 'react'
-import { Page, Navbar, NavLeft, NavTitle, Block, BlockTitle, List, ListInput, Button, f7 } from 'framework7-react'
-import { useCreateNotebook } from '../hooks/useCreateNotebook'
+import React, { useState, useEffect } from 'react'
+import {
+  Page, Navbar, NavLeft, NavTitle, NavRight,
+  List, ListInput, Block, BlockTitle, Link, f7,
+} from 'framework7-react'
+import { useNotebook } from '../hooks/useNotebook'
+import { useUpdateNotebook } from '../hooks/useUpdateNotebook'
 import { useUsers } from '../hooks/useUsers'
-import { getSession } from '../stores/authStore'
-import MemberPicker from '../components/notebooks/MemberPicker'
 import IconSelector from '../components/notebooks/IconSelector'
+import MemberPicker from '../components/notebooks/MemberPicker'
+import { navigateBack } from '../utils/f7navigate'
 
 const COLORS = [
   { label: 'Red', hex: '#FF3B30' },
@@ -17,7 +21,13 @@ const COLORS = [
   { label: 'Pink', hex: '#FF2D55' },
 ]
 
-export default function CreateNotebookPage() {
+export default function EditNotebookPage({ f7route }) {
+  const id = f7route?.params?.id
+  const { data: notebook } = useNotebook(id)
+  const { mutate, isPending } = useUpdateNotebook()
+  const { data: usersData } = useUsers()
+  const allUsers = usersData?.data ?? []
+
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [color, setColor] = useState(null)
@@ -25,12 +35,17 @@ export default function CreateNotebookPage() {
   const [selectedIds, setSelectedIds] = useState(new Set())
   const [titleError, setTitleError] = useState(false)
 
-  const { mutate, isPending } = useCreateNotebook()
-  const { data: usersData } = useUsers()
-  const allUsers = usersData?.data ?? []
-  const currentUserId = getSession()?.user?.googleId
+  useEffect(() => {
+    if (notebook) {
+      setTitle(notebook.title ?? '')
+      setDescription(notebook.description ?? '')
+      setColor(notebook.color ?? null)
+      setIconName(notebook.iconName ?? null)
+      setSelectedIds(new Set(notebook.users ?? []))
+    }
+  }, [notebook])
 
-  function handleSubmit() {
+  function handleSave() {
     if (!title.trim()) {
       setTitleError(true)
       return
@@ -38,6 +53,7 @@ export default function CreateNotebookPage() {
     setTitleError(false)
     mutate(
       {
+        id: notebook.id,
         title: title.trim(),
         description: description.trim() || undefined,
         color: color ?? undefined,
@@ -45,9 +61,13 @@ export default function CreateNotebookPage() {
         users: [...selectedIds],
       },
       {
-        onSuccess: () => { window.location.href = '/' },
-        onError: () => {
-          f7.toast.create({ text: 'Error al crear el cuaderno. Intenta de nuevo.', closeTimeout: 3000 }).open()
+        onSuccess: () => navigateBack(),
+        onError: (err) => {
+          f7.toast.create({
+            text: err?.message ?? 'Error al guardar. Intenta de nuevo.',
+            closeTimeout: 3000,
+            position: 'top',
+          }).open()
         },
       }
     )
@@ -56,8 +76,21 @@ export default function CreateNotebookPage() {
   return (
     <Page>
       <Navbar>
-        <NavLeft backLink="Atrás" />
-        <NavTitle>Nuevo Cuaderno</NavTitle>
+        <NavLeft>
+          <Link onClick={() => navigateBack()} style={{ paddingLeft: '12px' }}>
+            <i className="f7-icons">xmark</i>
+          </Link>
+        </NavLeft>
+        <NavTitle>Editar Cuaderno</NavTitle>
+        <NavRight>
+          <Link
+            onClick={handleSave}
+            disabled={isPending}
+            style={{ paddingRight: '12px', fontWeight: '600' }}
+          >
+            {isPending ? 'Guardando...' : 'Guardar'}
+          </Link>
+        </NavRight>
       </Navbar>
 
       <List>
@@ -70,7 +103,6 @@ export default function CreateNotebookPage() {
           errorMessage="El título es obligatorio"
           errorMessageForce={titleError}
           clearButton
-          autofocus
         />
         <ListInput
           label="Descripción"
@@ -89,15 +121,9 @@ export default function CreateNotebookPage() {
               key={c.hex}
               onClick={() => setColor(color === c.hex ? null : c.hex)}
               style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '50%',
-                background: c.hex,
-                flexShrink: 0,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                width: '36px', height: '36px', borderRadius: '50%',
+                background: c.hex, flexShrink: 0, cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
                 border: color === c.hex ? '3px solid var(--f7-theme-color)' : '2px solid transparent',
                 boxSizing: 'border-box',
               }}
@@ -124,16 +150,10 @@ export default function CreateNotebookPage() {
             allUsers={allUsers}
             selectedIds={selectedIds}
             onChange={setSelectedIds}
-            excludeId={currentUserId}
+            excludeId={notebook?.owner}
           />
         </li>
       </List>
-
-      <Block>
-        <Button large fill disabled={isPending} onClick={handleSubmit}>
-          {isPending ? 'Creando...' : 'Crear Cuaderno'}
-        </Button>
-      </Block>
     </Page>
   )
 }
