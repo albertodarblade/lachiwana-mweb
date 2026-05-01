@@ -7,8 +7,9 @@ import queryClient from '../queryClient'
 export function useDeleteNotebook() {
   return useMutation({
     mutationFn: (id) => deleteNotebook(id),
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: ['notebooks'] })
+      queryClient.removeQueries({ queryKey: ['notebook', id] })
     },
   })
 }

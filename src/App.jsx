@@ -3,6 +3,7 @@ import { App as F7App, View } from 'framework7-react'
 import NotebooksPage from './pages/NotebooksPage'
 import CreateNotebookPage from './pages/CreateNotebookPage'
 import NotebookDetailPage from './pages/NotebookDetailPage'
+import EditNotebookPage from './pages/EditNotebookPage'
 import LoginPage from './pages/LoginPage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -30,11 +31,20 @@ function ProtectedDetail(props) {
   )
 }
 
+function ProtectedEdit(props) {
+  return (
+    <ProtectedRoute>
+      <EditNotebookPage {...props} />
+    </ProtectedRoute>
+  )
+}
+
 const routes = [
   { path: '/login', component: LoginPage },
   { path: '/auth/callback', component: AuthCallbackPage },
   { path: '/', component: ProtectedHome },
   { path: '/notebooks/create', component: ProtectedCreate },
+  { path: '/notebooks/:id/edit', component: ProtectedEdit },
   { path: '/notebooks/:id', component: ProtectedDetail },
 ]
 

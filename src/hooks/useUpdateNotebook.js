@@ -7,26 +7,36 @@ export function useUpdateNotebook() {
     mutationFn: ({ id, ...payload }) => updateNotebook(id, payload),
     onMutate: async (variables) => {
       await queryClient.cancelQueries({ queryKey: ['notebooks'] })
-      const previous = queryClient.getQueryData(['notebooks'])
+      await queryClient.cancelQueries({ queryKey: ['notebook', variables.id] })
+
+      const previousList = queryClient.getQueryData(['notebooks'])
+      const previousDetail = queryClient.getQueryData(['notebook', variables.id])
+
+      const updated = { ...variables, updatedAt: new Date().toISOString() }
 
       queryClient.setQueryData(['notebooks'], (old) => ({
         ...old,
-        data: old?.data?.map((n) =>
-          n.id === variables.id
-            ? { ...n, ...variables, updatedAt: new Date().toISOString() }
-            : n
-        ) ?? [],
+        data: old?.data?.map((n) => n.id === variables.id ? { ...n, ...updated } : n) ?? [],
       }))
 
-      return { previous }
+      queryClient.setQueryData(['notebook', variables.id], (old) => ({
+        ...old,
+        data: { ...old?.data, ...updated },
+      }))
+
+      return { previousList, previousDetail }
     },
-    onError: (_err, _variables, context) => {
-      if (context?.previous !== undefined) {
-        queryClient.setQueryData(['notebooks'], context.previous)
+    onError: (_err, variables, context) => {
+      if (context?.previousList !== undefined) {
+        queryClient.setQueryData(['notebooks'], context.previousList)
+      }
+      if (context?.previousDetail !== undefined) {
+        queryClient.setQueryData(['notebook', variables.id], context.previousDetail)
       }
     },
-    onSettled: () => {
+    onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({ queryKey: ['notebooks'] })
+      queryClient.invalidateQueries({ queryKey: ['notebook', variables.id] })
     },
   })
 }

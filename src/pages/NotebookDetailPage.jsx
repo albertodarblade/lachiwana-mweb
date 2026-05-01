@@ -2,18 +2,18 @@ import React, { useState } from 'react'
 import {
   Page, Navbar, NavLeft, NavTitle, NavRight,
   Block, Preloader, Actions, ActionsGroup, ActionsButton, f7,
+  Button,
 } from 'framework7-react'
 import { useNotebook } from '../hooks/useNotebook'
 import { useDeleteNotebook } from '../hooks/useDeleteNotebook'
 import { getSession } from '../stores/authStore'
-import EditNotebookSheet from '../components/notebooks/EditNotebookSheet'
 import DeleteConfirmDialog from '../components/notebooks/DeleteConfirmDialog'
+import { navigate, navigateBack } from '../utils/f7navigate'
 
 export default function NotebookDetailPage({ f7route }) {
   const id = f7route?.params?.id
   const { data: notebook, isLoading, isError } = useNotebook(id)
   const [actionsOpen, setActionsOpen] = useState(false)
-  const [editSheetOpen, setEditSheetOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   const { mutate: deleteMutate, isPending: isDeleting } = useDeleteNotebook()
@@ -23,12 +23,12 @@ export default function NotebookDetailPage({ f7route }) {
 
   function openEdit() {
     setActionsOpen(false)
-    setTimeout(() => setEditSheetOpen(true), 300)
+    navigate(`/notebooks/${notebook.id}/edit`)
   }
 
   function openDelete() {
     setActionsOpen(false)
-    setTimeout(() => setDeleteDialogOpen(true), 300)
+    setDeleteDialogOpen(true)
   }
 
   function handleDeleteConfirm() {
@@ -67,7 +67,7 @@ export default function NotebookDetailPage({ f7route }) {
           <p style={{ opacity: 0.6 }}>Cuaderno no encontrado.</p>
           <span
             style={{ color: 'var(--f7-theme-color)', cursor: 'pointer' }}
-            onClick={() => window.location.replace('/')}
+            onClick={() => navigateBack()}
           >
             Volver al inicio
           </span>
@@ -98,12 +98,12 @@ export default function NotebookDetailPage({ f7route }) {
           </div>
         </NavTitle>
         <NavRight>
-          <a
+          <Button
             onClick={() => setActionsOpen(true)}
             style={{ color: '#fff', padding: '0 12px', cursor: 'pointer' }}
           >
             <i className="f7-icons">ellipsis_vertical</i>
-          </a>
+          </Button>
         </NavRight>
       </Navbar>
 
@@ -131,14 +131,6 @@ export default function NotebookDetailPage({ f7route }) {
           <ActionsButton bold onClick={() => setActionsOpen(false)}>Cancelar</ActionsButton>
         </ActionsGroup>
       </Actions>
-
-      {notebook && (
-        <EditNotebookSheet
-          notebook={notebook}
-          opened={editSheetOpen}
-          onClose={() => setEditSheetOpen(false)}
-        />
-      )}
 
       <DeleteConfirmDialog
         notebook={notebook}
