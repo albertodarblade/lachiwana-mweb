@@ -53,3 +53,40 @@ function jsonRequest(method, path, body) {
 export const post = (path, body) => jsonRequest('POST', path, body)
 export const patch = (path, body) => jsonRequest('PATCH', path, body)
 export const del = (path) => jsonRequest('DELETE', path)
+
+export async function getBlob(path) {
+  const session = getSession()
+  const headers = {}
+  if (session?.token) headers['Authorization'] = `Bearer ${session.token}`
+
+  const response = await fetch(`${BASE_URL}${path}`, { method: 'GET', headers })
+
+  if (response.status === 401) {
+    clearSession()
+    queryClient.clear()
+    window.location.href = '/login?expired=1'
+    throw new Error('Session expired')
+  }
+  if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+
+  return response.blob()
+}
+
+export async function postForm(path, formData) {
+  const session = getSession()
+  const headers = {}
+  if (session?.token) headers['Authorization'] = `Bearer ${session.token}`
+
+  const response = await fetch(`${BASE_URL}${path}`, { method: 'POST', headers, body: formData })
+
+  if (response.status === 401) {
+    clearSession()
+    queryClient.clear()
+    window.location.href = '/login?expired=1'
+    throw new Error('Session expired')
+  }
+  if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+  if (response.status === 204) return null
+
+  return response.json()
+}

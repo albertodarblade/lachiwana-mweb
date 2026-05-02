@@ -1,20 +1,28 @@
 import React, { useState } from 'react'
 import {
   Page, Navbar, NavLeft, NavTitle, NavRight,
-  Block, Preloader, Actions, ActionsGroup, ActionsButton, f7,
+  Block, Preloader, List, Fab, Icon, Actions, ActionsGroup, ActionsButton, f7,
   Button,
 } from 'framework7-react'
 import { useNotebook } from '../hooks/useNotebook'
 import { useDeleteNotebook } from '../hooks/useDeleteNotebook'
+import { useNotes } from '../hooks/useNotes'
 import { getSession } from '../stores/authStore'
+import queryClient from '../queryClient'
 import DeleteConfirmDialog from '../components/notebooks/DeleteConfirmDialog'
+import NoteCard from '../components/notes/NoteCard'
+import NoteEmptyState from '../components/notes/NoteEmptyState'
+import CreateNotePopup from '../components/notes/CreateNotePopup'
 import { navigate, navigateBack } from '../utils/f7navigate'
 
 export default function NotebookDetailPage({ f7route }) {
   const id = f7route?.params?.id
   const { data: notebook, isLoading, isError } = useNotebook(id)
+  const { data: notesData, isPending: notesLoading, isError: notesError } = useNotes(id)
+  const notes = notesData?.data ?? []
   const [actionsOpen, setActionsOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [createPopupOpen, setCreatePopupOpen] = useState(false)
 
   const { mutate: deleteMutate, isPending: isDeleting } = useDeleteNotebook()
 
@@ -78,8 +86,14 @@ export default function NotebookDetailPage({ f7route }) {
 
   const navbarColor = notebook.color ?? 'var(--f7-theme-color)'
 
+  function handlePageAfterIn() {
+    if (queryClient.getQueryState(['notes', id])?.isInvalidated) {
+      queryClient.refetchQueries({ queryKey: ['notes', id] })
+    }
+  }
+
   return (
-    <Page>
+    <Page onPageAfterIn={handlePageAfterIn}>
       <Navbar
         style={{
           '--f7-navbar-bg-color': navbarColor,
@@ -107,18 +121,47 @@ export default function NotebookDetailPage({ f7route }) {
         </NavRight>
       </Navbar>
 
-      <Block style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '50vh',
-        gap: '12px',
-        opacity: 0.5,
-      }}>
-        <i className="f7-icons" style={{ fontSize: '56px' }}>note_text</i>
-        <p style={{ margin: 0, fontSize: '16px' }}>Notas vacías</p>
-      </Block>
+      {notesLoading && (
+        <Block style={{ display: 'flex', justifyContent: 'center', paddingTop: '40px' }}>
+          <Preloader size={44} />
+        </Block>
+      )}
+
+      {!notesLoading && notesError && (
+        <Block style={{ textAlign: 'center', paddingTop: '40px', opacity: 0.6 }}>
+          <p style={{ margin: '0 0 12px' }}>Error al cargar las notas.</p>
+          <span
+            style={{ color: 'var(--f7-theme-color)', cursor: 'pointer' }}
+            onClick={() => window.location.reload()}
+          >
+            Reintentar
+          </span>
+        </Block>
+      )}
+
+      {!notesLoading && !notesError && notes.length === 0 && <NoteEmptyState />}
+
+      {!notesLoading && !notesError && notes.length > 0 && (
+        <List>
+          {notes.map((note) => (
+            <NoteCard key={note.id} note={note} notebookId={id} />
+          ))}
+        </List>
+      )}
+
+      <Fab
+        position="right-bottom"
+        text="Nueva Nota"
+        onClick={() => setCreatePopupOpen(true)}
+      >
+        <Icon ios="f7:plus" md="material:add" />
+      </Fab>
+
+      <CreateNotePopup
+        notebookId={id}
+        opened={createPopupOpen}
+        onClose={() => setCreatePopupOpen(false)}
+      />
 
       <Actions opened={actionsOpen} onActionsClosed={() => setActionsOpen(false)}>
         <ActionsGroup>
