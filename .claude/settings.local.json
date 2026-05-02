@@ -11,7 +11,9 @@
       "PowerShell(.specify/scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks)",
       "Bash(xargs grep *)",
       "PowerShell(& \".\\\\.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1\" -Json -PathsOnly)",
-      "PowerShell(& \".\\\\.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1\" -Json -RequireTasks -IncludeTasks)"
+      "PowerShell(& \".\\\\.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1\" -Json -RequireTasks -IncludeTasks)",
+      "Read(//d/projects/lachiwana/Lachiwana-service/src/models/**)",
+      "Read(//d/projects/lachiwana/Lachiwana-service/src/**)"
     ]
   }
 }

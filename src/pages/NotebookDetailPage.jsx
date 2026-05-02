@@ -8,9 +8,11 @@ import { useNotebook } from '../hooks/useNotebook'
 import { useDeleteNotebook } from '../hooks/useDeleteNotebook'
 import { useNotes } from '../hooks/useNotes'
 import { getSession } from '../stores/authStore'
+import queryClient from '../queryClient'
 import DeleteConfirmDialog from '../components/notebooks/DeleteConfirmDialog'
 import NoteCard from '../components/notes/NoteCard'
 import NoteEmptyState from '../components/notes/NoteEmptyState'
+import CreateNotePopup from '../components/notes/CreateNotePopup'
 import { navigate, navigateBack } from '../utils/f7navigate'
 
 export default function NotebookDetailPage({ f7route }) {
@@ -20,6 +22,7 @@ export default function NotebookDetailPage({ f7route }) {
   const notes = notesData?.data ?? []
   const [actionsOpen, setActionsOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [createPopupOpen, setCreatePopupOpen] = useState(false)
 
   const { mutate: deleteMutate, isPending: isDeleting } = useDeleteNotebook()
 
@@ -83,8 +86,14 @@ export default function NotebookDetailPage({ f7route }) {
 
   const navbarColor = notebook.color ?? 'var(--f7-theme-color)'
 
+  function handlePageAfterIn() {
+    if (queryClient.getQueryState(['notes', id])?.isInvalidated) {
+      queryClient.refetchQueries({ queryKey: ['notes', id] })
+    }
+  }
+
   return (
-    <Page>
+    <Page onPageAfterIn={handlePageAfterIn}>
       <Navbar
         style={{
           '--f7-navbar-bg-color': navbarColor,
@@ -143,10 +152,16 @@ export default function NotebookDetailPage({ f7route }) {
       <Fab
         position="right-bottom"
         text="Nueva Nota"
-        onClick={() => navigate(`/notebooks/${id}/notes/create`)}
+        onClick={() => setCreatePopupOpen(true)}
       >
         <Icon ios="f7:plus" md="material:add" />
       </Fab>
+
+      <CreateNotePopup
+        notebookId={id}
+        opened={createPopupOpen}
+        onClose={() => setCreatePopupOpen(false)}
+      />
 
       <Actions opened={actionsOpen} onActionsClosed={() => setActionsOpen(false)}>
         <ActionsGroup>
