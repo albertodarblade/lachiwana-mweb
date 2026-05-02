@@ -13,7 +13,11 @@
       "PowerShell(& \".\\\\.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1\" -Json -PathsOnly)",
       "PowerShell(& \".\\\\.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1\" -Json -RequireTasks -IncludeTasks)",
       "Read(//d/projects/lachiwana/Lachiwana-service/src/models/**)",
-      "Read(//d/projects/lachiwana/Lachiwana-service/src/**)"
+      "Read(//d/projects/lachiwana/Lachiwana-service/src/**)",
+      "PowerShell(& \".\\\\.specify\\\\extensions\\\\git\\\\scripts\\\\powershell\\\\create-new-feature.ps1\" -Json -ShortName \"user-settings\" \"add settings page with user profile, logout, theme \\(ios/md\\) and dark/light mode stored in localStorage per user\")",
+      "PowerShell(& \".\\\\.specify\\\\scripts\\\\powershell\\\\setup-plan.ps1\" -Json)",
+      "PowerShell(& \".\\\\.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1\" -Json)",
+      "Bash(node --input-type=module)"
     ]
   }
 }
