@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import useNetwork from '../hooks/useNetwork'
-import { clearReconnected } from '../stores/networkStore'
+import { clearReconnected, dismissOfflineBanner } from '../stores/networkStore'
 
 const toastBase = {
   position: 'fixed',
@@ -20,21 +20,16 @@ const toastBase = {
 }
 
 export default function OfflineBanner() {
-  const { isOnline, justReconnected } = useNetwork()
-  const [dismissed, setDismissed] = useState(false)
-
-  useEffect(() => {
-    if (!isOnline) setDismissed(false)
-  }, [isOnline])
+  const { isOnline, justReconnected, offlineDismissed } = useNetwork()
 
   if (isOnline && !justReconnected) return null
-  if (dismissed) return null
+  if (offlineDismissed) return null
 
   if (justReconnected) {
     return (
       <div
         style={{ ...toastBase, backgroundColor: 'var(--f7-color-green)', color: '#fff' }}
-        onClick={() => { clearReconnected(); setDismissed(true) }}
+        onClick={() => { clearReconnected(); dismissOfflineBanner() }}
       >
         <span>Conexión restaurada</span>
         <span style={{ opacity: 0.8, fontSize: 12 }}>Toca para actualizar</span>
@@ -45,7 +40,7 @@ export default function OfflineBanner() {
   return (
     <div
       style={{ ...toastBase, backgroundColor: 'var(--f7-color-red)', color: '#fff' }}
-      onClick={() => setDismissed(true)}
+      onClick={dismissOfflineBanner}
     >
       <span>Sin conexión — solo lectura</span>
     </div>

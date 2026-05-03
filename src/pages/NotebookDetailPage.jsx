@@ -121,33 +121,36 @@ export default function NotebookDetailPage({ f7route }) {
         </NavRight>
       </Navbar>
 
-      {notesLoading && (
-        <Block style={{ display: 'flex', justifyContent: 'center', paddingTop: '40px' }}>
-          <Preloader size={44} />
-        </Block>
-      )}
+      {/* Wrapper div isolates React's insertBefore from F7-teleported siblings (Fab, Actions). */}
+      <div>
+        {notesLoading && (
+          <Block style={{ display: 'flex', justifyContent: 'center', paddingTop: '40px' }}>
+            <Preloader size={44} />
+          </Block>
+        )}
 
-      {!notesLoading && notesError && (
-        <Block style={{ textAlign: 'center', paddingTop: '40px', opacity: 0.6 }}>
-          <p style={{ margin: '0 0 12px' }}>Error al cargar las notas.</p>
-          <span
-            style={{ color: 'var(--f7-theme-color)', cursor: 'pointer' }}
-            onClick={() => window.location.reload()}
-          >
-            Reintentar
-          </span>
-        </Block>
-      )}
+        {!notesLoading && notesError && (
+          <Block style={{ textAlign: 'center', paddingTop: '40px', opacity: 0.6 }}>
+            <p style={{ margin: '0 0 12px' }}>Error al cargar las notas.</p>
+            <span
+              style={{ color: 'var(--f7-theme-color)', cursor: 'pointer' }}
+              onClick={() => window.location.reload()}
+            >
+              Reintentar
+            </span>
+          </Block>
+        )}
 
-      {!notesLoading && !notesError && notes.length === 0 && <NoteEmptyState />}
+        {!notesLoading && !notesError && notes.length === 0 && <NoteEmptyState />}
 
-      {!notesLoading && !notesError && notes.length > 0 && (
-        <List>
-          {notes.map((note) => (
-            <NoteCard key={note.id} note={note} notebookId={id} />
-          ))}
-        </List>
-      )}
+        {!notesLoading && !notesError && notes.length > 0 && (
+          <List>
+            {notes.map((note) => (
+              <NoteCard key={note.id} note={note} notebookId={id} />
+            ))}
+          </List>
+        )}
+      </div>
 
       <Fab
         position="right-bottom"
