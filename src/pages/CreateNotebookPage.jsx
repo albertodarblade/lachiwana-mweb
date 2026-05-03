@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Page, Navbar, NavLeft, NavTitle, Block, BlockTitle, List, ListInput, Button, f7 } from 'framework7-react'
 import { useCreateNotebook } from '../hooks/useCreateNotebook'
 import { useUsers } from '../hooks/useUsers'
@@ -24,6 +24,14 @@ export default function CreateNotebookPage() {
   const [iconName, setIconName] = useState(null)
   const [selectedIds, setSelectedIds] = useState(new Set())
   const [titleError, setTitleError] = useState(false)
+  const titleContainerRef = useRef(null)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      titleContainerRef.current?.querySelector('input')?.focus()
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [])
 
   const { mutate, isPending } = useCreateNotebook()
   const { data: usersData } = useUsers()
@@ -61,17 +69,18 @@ export default function CreateNotebookPage() {
       </Navbar>
 
       <List>
-        <ListInput
-          label="Título"
-          type="text"
-          placeholder="Título del cuaderno"
-          value={title}
-          onInput={(e) => { setTitle(e.target.value); setTitleError(false) }}
-          errorMessage="El título es obligatorio"
-          errorMessageForce={titleError}
-          clearButton
-          autofocus
-        />
+        <div ref={titleContainerRef}>
+          <ListInput
+            label="Título"
+            type="text"
+            placeholder="Título del cuaderno"
+            value={title}
+            onInput={(e) => { setTitle(e.target.value); setTitleError(false) }}
+            errorMessage="El título es obligatorio"
+            errorMessageForce={titleError}
+            clearButton
+          />
+        </div>
         <ListInput
           label="Descripción"
           type="textarea"

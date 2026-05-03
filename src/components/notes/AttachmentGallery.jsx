@@ -1,9 +1,10 @@
 import React, { useRef } from 'react'
-import { Block, Button, PhotoBrowser } from 'framework7-react'
+import { Block, Button, PhotoBrowser, f7 } from 'framework7-react'
 import { useQueries } from '@tanstack/react-query'
 import { useUploadAttachment } from '../../hooks/useUploadAttachment'
 import { getBlob } from '../../api/client'
 import AttachmentItem from './AttachmentItem'
+import { prepareFileForUpload } from '../../utils/compressImage'
 
 function blobToDataUrl(blob) {
   return new Promise((resolve, reject) => {
@@ -45,13 +46,22 @@ export default function AttachmentGallery({ notebookId, noteId, attachments }) {
     }
   }
 
-  function handleFileChange(e) {
+  async function handleFileChange(e) {
     const file = e.target.files?.[0]
     if (!file) return
-    const formData = new FormData()
-    formData.append('file', file)
-    upload(formData)
     e.target.value = ''
+
+    let prepared
+    try {
+      prepared = await prepareFileForUpload(file)
+    } catch (err) {
+      f7.toast.create({ text: err.message, closeTimeout: 3500, position: 'top' }).open()
+      return
+    }
+
+    const formData = new FormData()
+    formData.append('file', prepared, file.name)
+    upload(formData)
   }
 
   return (

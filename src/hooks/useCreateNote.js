@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { createNote, uploadAttachment } from '../api/notes'
 import queryClient from '../queryClient'
+import { prepareFileForUpload } from '../utils/compressImage'
 
 export function useCreateNote(notebookId) {
   return useMutation({
@@ -39,8 +40,9 @@ export async function uploadAttachmentsSequentially(notebookId, noteId, files) {
   const errors = []
   for (const file of files) {
     try {
+      const prepared = await prepareFileForUpload(file)
       const formData = new FormData()
-      formData.append('file', file)
+      formData.append('file', prepared, file.name)
       await uploadAttachment(notebookId, noteId, formData)
     } catch (err) {
       errors.push(err)

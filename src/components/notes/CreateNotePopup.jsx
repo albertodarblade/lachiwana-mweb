@@ -41,9 +41,9 @@ export default function CreateNotePopup({ notebookId, opened, onClose }) {
 
       if (images.length > 0 && noteId) {
         const errors = await uploadAttachmentsSequentially(notebookId, noteId, images)
-        errors.forEach(() => {
+        errors.forEach((err) => {
           f7.toast.create({
-            text: 'Error al subir un archivo.',
+            text: err?.message || 'Error al subir un archivo.',
             closeTimeout: 3500,
             position: 'top',
           }).open()
