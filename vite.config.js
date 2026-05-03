@@ -6,5 +6,6 @@ export default defineConfig({
   envPrefix: 'LACHIWANA_',
   optimizeDeps: {
     include: ['framework7', 'framework7-react'],
+    dedupe: ['react', 'react-dom'],
   },
 })

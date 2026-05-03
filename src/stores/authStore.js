@@ -15,6 +15,7 @@ export function setSession(session) {
 
 export function clearSession() {
   localStorage.removeItem(SESSION_KEY)
+  localStorage.removeItem('LACHIWANA_QUERY_CACHE')
 }
 
 export function isTokenExpired(token) {
