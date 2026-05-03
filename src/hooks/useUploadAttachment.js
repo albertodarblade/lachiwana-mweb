@@ -7,6 +7,7 @@ export function useUploadAttachment(notebookId, noteId) {
     mutationFn: (formData) => uploadAttachment(notebookId, noteId, formData),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['note', notebookId, noteId] })
+      queryClient.invalidateQueries({ queryKey: ['notes', notebookId] })
     },
   })
 }

@@ -48,5 +48,9 @@ export async function uploadAttachmentsSequentially(notebookId, noteId, files) {
       errors.push(err)
     }
   }
+  await Promise.all([
+    queryClient.invalidateQueries({ queryKey: ['note', notebookId, noteId] }),
+    queryClient.invalidateQueries({ queryKey: ['notes', notebookId] }),
+  ])
   return errors
 }
