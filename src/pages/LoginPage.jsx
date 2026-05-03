@@ -65,6 +65,10 @@ export default function LoginPage() {
   const params = new URLSearchParams(window.location.search)
 
   useEffect(() => {
+    // Clean up any leftover OAuth state from an interrupted popup flow
+    localStorage.removeItem('lachiwana_oauth_popup')
+    localStorage.removeItem('lachiwana_oauth_done')
+
     const session = getSession()
     if (session && !isTokenExpired(session.token)) {
       const destination = params.get('redirect') || '/'
@@ -80,7 +84,45 @@ export default function LoginPage() {
     setLoading(true)
     const redirect = params.get('redirect')
     if (redirect) localStorage.setItem('lachiwana_pending_redirect', redirect)
-    window.location.href = `${serviceUrl}/api/v1/auth/google`
+
+    const oauthUrl = `${serviceUrl}/api/v1/auth/google`
+    const popup = window.open(oauthUrl, 'lachiwana_oauth', 'width=500,height=650,scrollbars=yes,resizable=yes')
+
+    if (!popup || popup.closed) {
+      // Popup blocked (common on mobile) — fall back to full-page redirect
+      window.location.replace(oauthUrl)
+      return
+    }
+
+    // Signal to AuthCallbackPage that it's running inside a popup.
+    // postMessage can't be used here because Google's COOP header
+    // (Cross-Origin-Opener-Policy: same-origin) destroys window.opener
+    // when the popup navigates to accounts.google.com. localStorage storage
+    // events are not affected by COOP and work across browsing context groups.
+    localStorage.setItem('lachiwana_oauth_popup', '1')
+
+    function handleStorage(event) {
+      if (event.key !== 'lachiwana_oauth_done') return
+      const destination = event.newValue
+      if (!destination) return
+      window.removeEventListener('storage', handleStorage)
+      clearInterval(pollClosed)
+      localStorage.removeItem('lachiwana_oauth_done')
+      try { popup.close() } catch {}
+      window.location.replace(destination)
+    }
+
+    window.addEventListener('storage', handleStorage)
+
+    // If user closes the popup manually, reset the loading state
+    const pollClosed = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(pollClosed)
+        window.removeEventListener('storage', handleStorage)
+        localStorage.removeItem('lachiwana_oauth_popup')
+        setLoading(false)
+      }
+    }, 500)
   }
 
   return (
