@@ -17,18 +17,24 @@ Framework7.use(Framework7React);
 applyPrefs(getPrefs(getSession()?.user?.googleId ?? ''))
 
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').then((registration) => {
-      registration.addEventListener('updatefound', () => {
-        const newWorker = registration.installing
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            notifyUpdateReady(newWorker)
-          }
+  if (import.meta.env.PROD) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').then((registration) => {
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              notifyUpdateReady(newWorker)
+            }
+          })
         })
       })
     })
-  })
+  } else {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((r) => r.unregister())
+    })
+  }
 }
 
 ReactDOM.createRoot(document.getElementById('app')).render(
