@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.100.5",
+    "@tanstack/query-sync-storage-persister": "^5.100.9",
+    "@tanstack/react-query": "^5.100.9",
+    "@tanstack/react-query-persist-client": "^5.100.9",
     "framework7": "^9.0.3",
     "framework7-icons": "^5.0.5",
     "framework7-react": "^9.0.3",

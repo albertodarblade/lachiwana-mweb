@@ -17,7 +17,8 @@
       "PowerShell(& \".\\\\.specify\\\\extensions\\\\git\\\\scripts\\\\powershell\\\\create-new-feature.ps1\" -Json -ShortName \"user-settings\" \"add settings page with user profile, logout, theme \\(ios/md\\) and dark/light mode stored in localStorage per user\")",
       "PowerShell(& \".\\\\.specify\\\\scripts\\\\powershell\\\\setup-plan.ps1\" -Json)",
       "PowerShell(& \".\\\\.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1\" -Json)",
-      "Bash(node --input-type=module)"
+      "Bash(node --input-type=module)",
+      "PowerShell(.specify/extensions/git/scripts/powershell/create-new-feature.ps1 -Json -ShortName \"pwa-offline-config\" \"create PWA configuration, I set the needed files on public folder, the app should work offline, use cachefirst methods, the app should be able to work as read only mode on offline mode.\")"
     ]
   }
 }

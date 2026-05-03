@@ -1,5 +1,8 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { App as F7App, View } from 'framework7-react'
+import OfflineBanner from './components/OfflineBanner'
+import UpdateBanner from './components/UpdateBanner'
+import { setOnUpdateReady } from './stores/swUpdateStore'
 import NotebooksPage from './pages/NotebooksPage'
 import CreateNotebookPage from './pages/CreateNotebookPage'
 import NotebookDetailPage from './pages/NotebookDetailPage'
@@ -78,9 +81,22 @@ const f7params = {
 }
 
 export default function App() {
+  const [waitingWorker, setWaitingWorker] = useState(null)
+
+  useEffect(() => {
+    setOnUpdateReady(setWaitingWorker)
+  }, [])
+
   return (
-    <F7App {...f7params}>
-      <View main url="/" browserHistory browserHistorySeparator="" />
-    </F7App>
+    <>
+      <OfflineBanner />
+      <UpdateBanner
+        waitingWorker={waitingWorker}
+        onDismiss={() => setWaitingWorker(null)}
+      />
+      <F7App {...f7params}>
+        <View main url="/" browserHistory browserHistorySeparator="" />
+      </F7App>
+    </>
   )
 }
