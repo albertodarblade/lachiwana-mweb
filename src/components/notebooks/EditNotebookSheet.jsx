@@ -7,6 +7,7 @@ import { useUpdateNotebook } from '../../hooks/useUpdateNotebook'
 import { useUsers } from '../../hooks/useUsers'
 import IconSelector from './IconSelector'
 import MemberPicker from './MemberPicker'
+import TagsPopup from './TagsPopup'
 
 const COLORS = [
   { label: 'Red', hex: '#FF3B30' },
@@ -26,6 +27,7 @@ export default function EditNotebookSheet({ notebook, opened, onClose }) {
   const [iconName, setIconName] = useState(null)
   const [selectedIds, setSelectedIds] = useState(new Set())
   const [titleError, setTitleError] = useState(false)
+  const [tagsPopupOpen, setTagsPopupOpen] = useState(false)
 
   const { mutate, isPending } = useUpdateNotebook()
   const { data: usersData } = useUsers()
@@ -145,12 +147,29 @@ export default function EditNotebookSheet({ notebook, opened, onClose }) {
           </li>
         </List>
 
+        <BlockTitle>Etiquetas</BlockTitle>
+        <Block style={{ marginTop: 0 }}>
+          <Button outline onClick={() => setTagsPopupOpen(true)}>
+            <i className="f7-icons" style={{ marginRight: 6 }}>tag</i>
+            Gestionar etiquetas
+          </Button>
+        </Block>
+
         <Block>
           <Button large fill disabled={isPending} onClick={handleSave}>
             {isPending ? 'Guardando...' : 'Guardar cambios'}
           </Button>
         </Block>
       </PageContent>
+
+      <TagsPopup
+        mode="edit"
+        notebookId={notebook?.id}
+        tags={notebook?.tags ?? []}
+        onTagsChange={() => {}}
+        opened={tagsPopupOpen}
+        onClose={() => setTagsPopupOpen(false)}
+      />
     </Sheet>
   )
 }

@@ -5,6 +5,7 @@ import { useUsers } from '../hooks/useUsers'
 import { getSession } from '../stores/authStore'
 import MemberPicker from '../components/notebooks/MemberPicker'
 import IconSelector from '../components/notebooks/IconSelector'
+import TagsPopup from '../components/notebooks/TagsPopup'
 
 const COLORS = [
   { label: 'Red', hex: '#FF3B30' },
@@ -24,6 +25,8 @@ export default function CreateNotebookPage() {
   const [iconName, setIconName] = useState(null)
   const [selectedIds, setSelectedIds] = useState(new Set())
   const [titleError, setTitleError] = useState(false)
+  const [tags, setTags] = useState([])
+  const [tagsPopupOpen, setTagsPopupOpen] = useState(false)
   const titleContainerRef = useRef(null)
 
   useEffect(() => {
@@ -51,6 +54,7 @@ export default function CreateNotebookPage() {
         color: color ?? undefined,
         iconName: iconName ?? undefined,
         users: [...selectedIds],
+        tags: tags.map(({ title: t, icon }) => ({ title: t, icon })),
       },
       {
         onSuccess: () => { window.location.href = '/' },
@@ -138,11 +142,29 @@ export default function CreateNotebookPage() {
         </li>
       </List>
 
+      <BlockTitle>Etiquetas</BlockTitle>
+      <Block style={{ marginTop: 0 }}>
+        <Button outline onClick={() => setTagsPopupOpen(true)}>
+          <i className="f7-icons" style={{ marginRight: 6 }}>tag</i>
+          {tags.length > 0
+            ? `${tags.length} etiqueta${tags.length !== 1 ? 's' : ''} configurada${tags.length !== 1 ? 's' : ''}`
+            : 'Gestionar etiquetas'}
+        </Button>
+      </Block>
+
       <Block>
         <Button large fill disabled={isPending} onClick={handleSubmit}>
           {isPending ? 'Creando...' : 'Crear Cuaderno'}
         </Button>
       </Block>
+
+      <TagsPopup
+        mode="create"
+        tags={tags}
+        onTagsChange={setTags}
+        opened={tagsPopupOpen}
+        onClose={() => setTagsPopupOpen(false)}
+      />
     </Page>
   )
 }
