@@ -43,18 +43,25 @@ export default function MemberPicker({ allUsers = [], selectedIds, onChange, exc
 
       <Sheet
         opened={isOpen}
-        onSheetClosed={() => setIsOpen(false)}
-        style={{ height: '70vh' }}
+        onSheetClosed={() => { setIsOpen(false); setSearchQuery('') }}
         swipeToClose
+        backdrop
+        style={{ height: 'auto' }}
       >
-        <PageContent>
-          <Searchbar
-            placeholder="Buscar por nombre o email"
-            value={searchQuery}
-            onInput={(e) => setSearchQuery(e.target.value)}
-            onSearchbarClear={() => setSearchQuery('')}
-            style={{ margin: '8px 0' }}
-          />
+        <PageContent style={{ padding: '0 0 32px' }}>
+          <div style={{
+            width: 36, height: 4, borderRadius: 2,
+            background: 'rgba(0,0,0,0.15)', margin: '12px auto 4px',
+          }} />
+
+          <div style={{ position: 'sticky', top: 0, background: 'var(--f7-page-bg-color)', zIndex: 10, paddingTop: 4 }}>
+            <Searchbar
+              placeholder="Buscar por nombre o email"
+              value={searchQuery}
+              onInput={(e) => setSearchQuery(e.target.value)}
+              onSearchbarClear={() => setSearchQuery('')}
+            />
+          </div>
 
           {filtered.length === 0 && (
             <Block style={{ textAlign: 'center', color: 'var(--f7-block-text-color)', opacity: 0.6 }}>

@@ -57,7 +57,7 @@ export default function IconSelector({ value, onChange }) {
         onSheetClosed={close}
         swipeToClose
         backdrop
-        style={{ height: 'auto' }}
+        style={{ height: '70vh' }}
       >
         <PageContent style={{ paddingTop: 0 }}>
           <div style={{
