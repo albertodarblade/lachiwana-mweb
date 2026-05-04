@@ -5,14 +5,29 @@ import { f7 } from 'framework7-react'
 
 export function useUpdateNote(notebookId, noteId) {
   return useMutation({
-    mutationFn: ({ title }) => updateNote(notebookId, noteId, { title }),
-    onMutate: async ({ title }) => {
+    mutationFn: ({ title, tags }) => updateNote(notebookId, noteId, {
+      ...(title !== undefined && { title }),
+      ...(tags !== undefined && { tags }),
+    }),
+    onMutate: async ({ title, tags }) => {
       await queryClient.cancelQueries({ queryKey: ['note', notebookId, noteId] })
+      await queryClient.cancelQueries({ queryKey: ['notes', notebookId] })
       const previous = queryClient.getQueryData(['note', notebookId, noteId])
+
+      const patch = {
+        ...(title !== undefined && { title }),
+        ...(tags !== undefined && { tags }),
+        updatedAt: new Date().toISOString(),
+      }
 
       queryClient.setQueryData(['note', notebookId, noteId], (old) => ({
         ...old,
-        data: { ...old?.data, title, updatedAt: new Date().toISOString() },
+        data: { ...old?.data, ...patch },
+      }))
+
+      queryClient.setQueryData(['notes', notebookId], (old) => ({
+        ...old,
+        data: old?.data?.map((n) => n.id === noteId ? { ...n, ...patch } : n) ?? [],
       }))
 
       return { previous }
@@ -22,7 +37,7 @@ export function useUpdateNote(notebookId, noteId) {
         queryClient.setQueryData(['note', notebookId, noteId], context.previous)
       }
       f7.toast.create({
-        text: 'Error al guardar. El título no fue actualizado.',
+        text: 'Error al guardar. Los cambios no fueron guardados.',
         closeTimeout: 3000,
         position: 'top',
       }).open()

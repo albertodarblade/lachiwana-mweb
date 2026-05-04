@@ -1,16 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Sheet, PageContent, List, ListInput, Button, Block, f7 } from 'framework7-react'
 import { useCreateNote, uploadAttachmentsSequentially } from '../../hooks/useCreateNote'
+import { useNotebook } from '../../hooks/useNotebook'
+import NoteTagPicker from './NoteTagPicker'
 
 export default function CreateNotePopup({ notebookId, opened, onClose }) {
   const [title, setTitle] = useState('')
   const [titleError, setTitleError] = useState(false)
   const [images, setImages] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [selectedTagIds, setSelectedTagIds] = useState([])
+  const [tagPickerOpen, setTagPickerOpen] = useState(false)
   const fileInputRef = useRef(null)
   const titleContainerRef = useRef(null)
 
   const { mutateAsync: createNote } = useCreateNote(notebookId)
+  const { data: notebookData } = useNotebook(notebookId)
+  const notebookTags = notebookData?.tags ?? []
 
   useEffect(() => {
     if (!opened) return
@@ -25,6 +31,7 @@ export default function CreateNotePopup({ notebookId, opened, onClose }) {
     setTitleError(false)
     setImages([])
     setIsSubmitting(false)
+    setSelectedTagIds([])
   }
 
   async function handleSubmit() {
@@ -36,7 +43,7 @@ export default function CreateNotePopup({ notebookId, opened, onClose }) {
     setIsSubmitting(true)
 
     try {
-      const result = await createNote({ title: title.trim() })
+      const result = await createNote({ title: title.trim(), tags: selectedTagIds })
       const noteId = result?.data?.id
 
       if (images.length > 0 && noteId) {
@@ -114,6 +121,15 @@ export default function CreateNotePopup({ notebookId, opened, onClose }) {
             style={{ display: 'none' }}
             onChange={handleImageChange}
           />
+          {notebookTags.length > 0 && (
+            <Button outline onClick={() => setTagPickerOpen(true)} style={{ marginBottom: '12px' }}>
+              <i className="f7-icons" style={{ marginRight: '6px' }}>tag</i>
+              {selectedTagIds.length > 0
+                ? `${selectedTagIds.length} etiqueta${selectedTagIds.length !== 1 ? 's' : ''} seleccionada${selectedTagIds.length !== 1 ? 's' : ''}`
+                : 'Agregar etiquetas (opcional)'}
+            </Button>
+          )}
+
           <Button outline onClick={() => fileInputRef.current?.click()} style={{ marginBottom: '12px' }}>
             <i className="f7-icons" style={{ marginRight: '6px' }}>photo</i>
             {images.length > 0
@@ -126,6 +142,14 @@ export default function CreateNotePopup({ notebookId, opened, onClose }) {
           </Button>
         </Block>
       </PageContent>
+
+      <NoteTagPicker
+        notebookTags={notebookTags}
+        selectedTagIds={selectedTagIds}
+        onConfirm={setSelectedTagIds}
+        opened={tagPickerOpen}
+        onClose={() => setTagPickerOpen(false)}
+      />
     </Sheet>
   )
 }

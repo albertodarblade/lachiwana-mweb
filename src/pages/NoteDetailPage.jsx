@@ -5,9 +5,12 @@ import {
   Sheet, PageContent, Preloader,
 } from 'framework7-react'
 import { useNote } from '../hooks/useNote'
+import { useNotebook } from '../hooks/useNotebook'
 import { useUpdateNote } from '../hooks/useUpdateNote'
 import { useDeleteNote } from '../hooks/useDeleteNote'
 import AttachmentGallery from '../components/notes/AttachmentGallery'
+import NoteTagPicker from '../components/notes/NoteTagPicker'
+import TagChip from '../components/notebooks/TagChip'
 import { navigate } from '../utils/f7navigate'
 
 const DEBOUNCE_MS = 800
@@ -24,14 +27,25 @@ export default function NoteDetailPage({ f7route }) {
   const [isSaving, setIsSaving] = useState(false)
   const [actionsOpen, setActionsOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
+  const [tagPickerOpen, setTagPickerOpen] = useState(false)
   const [countdown, setCountdown] = useState(COUNTDOWN_START)
 
   const debounceRef = useRef(null)
   const intervalRef = useRef(null)
   const initializedRef = useRef(false)
 
-  const { mutate: updateTitle } = useUpdateNote(notebookId, noteId)
+  const { data: notebookData } = useNotebook(notebookId)
+  const notebookTags = notebookData?.tags ?? []
+  const resolvedTags = (note?.tags ?? [])
+    .map((id) => notebookTags.find((t) => t.id === id))
+    .filter(Boolean)
+
+  const { mutate: updateNote } = useUpdateNote(notebookId, noteId)
   const { mutate: deleteNote, isPending: isDeleting } = useDeleteNote(notebookId, noteId)
+
+  function handleTagsConfirm(newTagIds) {
+    updateNote({ tags: newTagIds })
+  }
 
   // Initialise title from note data (includes initialData from list cache per FR-018)
   useEffect(() => {
@@ -64,7 +78,7 @@ export default function NoteDetailPage({ f7route }) {
     clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {
       setIsSaving(true)
-      updateTitle({ title: value }, {
+      updateNote({ title: value }, {
         onSettled: () => setIsSaving(false),
       })
     }, DEBOUNCE_MS)
@@ -121,6 +135,28 @@ export default function NoteDetailPage({ f7route }) {
           <p style={{ margin: 0, fontSize: '12px', opacity: 0.5 }}>Guardando…</p>
         </Block>
       )}
+
+      <Block style={{ marginBottom: 0 }}>
+        {resolvedTags.length > 0 && (
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
+            {resolvedTags.map((tag) => <TagChip key={tag.id} tag={tag} />)}
+          </div>
+        )}
+        {notebookTags.length > 0 && (
+          <Button small outline onClick={() => setTagPickerOpen(true)}>
+            <i className="f7-icons" style={{ marginRight: 4, fontSize: 14 }}>tag</i>
+            {resolvedTags.length > 0 ? 'Gestionar etiquetas' : 'Agregar etiquetas'}
+          </Button>
+        )}
+      </Block>
+
+      <NoteTagPicker
+        notebookTags={notebookTags}
+        selectedTagIds={note?.tags ?? []}
+        onConfirm={handleTagsConfirm}
+        opened={tagPickerOpen}
+        onClose={() => setTagPickerOpen(false)}
+      />
 
       <AttachmentGallery
         notebookId={notebookId}

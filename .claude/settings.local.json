@@ -22,7 +22,8 @@
       "PowerShell(.specify/extensions/git/scripts/powershell/create-new-feature.ps1 -Json -ShortName \"notebook-tags\" \"the BE has tags endpoints for the notebooks, the user should be able to add tags or manage on its own popup component\")",
       "Read(//d/projects/lachiwana/Lachiwana-service/routes/**)",
       "Read(//d/projects/lachiwana/Lachiwana-service/**)",
-      "Bash(grep -E \"\\\\.ts$|^d\")"
+      "Bash(grep -E \"\\\\.ts$|^d\")",
+      "PowerShell(.specify/extensions/git/scripts/powershell/create-new-feature.ps1 -Json -ShortName \"note-tags\" \"add tags to notes on creation or edition mode\")"
     ]
   }
 }

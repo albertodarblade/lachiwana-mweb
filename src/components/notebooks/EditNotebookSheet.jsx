@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import {
-  Sheet, PageContent, Navbar, NavLeft, NavTitle, NavRight,
-  List, ListInput, Block, BlockTitle, Button, Link, f7,
+  Sheet, PageContent,
+  List, ListInput, Block, BlockTitle, Button, f7,
 } from 'framework7-react'
 import { useUpdateNotebook } from '../../hooks/useUpdateNotebook'
 import { useUsers } from '../../hooks/useUsers'
@@ -73,19 +73,12 @@ export default function EditNotebookSheet({ notebook, opened, onClose }) {
   }
 
   return (
-    <Sheet opened={opened} onSheetClosed={onClose} style={{ height: '90vh' }} swipeToClose>
-      <PageContent style={{ paddingTop: 0 }}>
-        <Navbar>
-          <NavLeft>
-            <Link sheetClose style={{ paddingLeft: '12px' }}>Cancelar</Link>
-          </NavLeft>
-          <NavTitle>Editar Cuaderno</NavTitle>
-          <NavRight>
-            <Link onClick={handleSave} disabled={isPending} style={{ paddingRight: '12px' }}>
-              {isPending ? 'Guardando...' : 'Guardar'}
-            </Link>
-          </NavRight>
-        </Navbar>
+    <Sheet opened={opened} onSheetClosed={onClose} swipeToClose backdrop style={{ height: 'auto' }}>
+      <PageContent style={{ padding: '0 0 32px' }}>
+        <div style={{
+          width: 36, height: 4, borderRadius: 2,
+          background: 'rgba(0,0,0,0.15)', margin: '12px auto 4px',
+        }} />
 
         <List>
           <ListInput
