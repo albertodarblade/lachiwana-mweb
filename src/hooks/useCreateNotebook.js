@@ -18,6 +18,7 @@ export function useCreateNotebook() {
         iconName: payload.iconName ?? null,
         owner: getSession()?.user?.googleId ?? '',
         users: payload.users ?? [],
+        tags: payload.tags ?? [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       }

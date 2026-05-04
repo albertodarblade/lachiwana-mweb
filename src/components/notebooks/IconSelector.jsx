@@ -20,10 +20,14 @@ export default function IconSelector({ value, onChange }) {
     return ALL_F7_ICONS.filter((name) => name.includes(q)).length
   }, [query])
 
-  function select(icon) {
-    onChange(value === icon ? null : icon)
+  function close() {
     setIsOpen(false)
     setQuery('')
+  }
+
+  function select(icon) {
+    onChange(value === icon ? null : icon)
+    close()
   }
 
   return (
@@ -50,12 +54,17 @@ export default function IconSelector({ value, onChange }) {
 
       <Sheet
         opened={isOpen}
-        onSheetClosed={() => { setIsOpen(false); setQuery('') }}
-        style={{ height: '80vh' }}
+        onSheetClosed={close}
         swipeToClose
+        backdrop
+        style={{ height: 'auto' }}
       >
         <PageContent style={{ paddingTop: 0 }}>
-          <div style={{ position: 'sticky', top: 0, background: 'var(--f7-page-bg-color)', zIndex: 10, paddingTop: '8px' }}>
+          <div style={{
+            width: 36, height: 4, borderRadius: 2,
+            background: 'rgba(0,0,0,0.15)', margin: '12px auto 8px',
+          }} />
+          <div style={{ position: 'sticky', top: 0, background: 'var(--f7-page-bg-color)', zIndex: 10, paddingTop: '4px' }}>
             <Searchbar
               placeholder="Buscar ícono..."
               value={query}

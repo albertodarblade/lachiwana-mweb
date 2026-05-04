@@ -6,5 +6,5 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at `specs/006-pwa-offline-config/plan.md`.
+at `specs/007-notebook-tags/plan.md`.
 <!-- SPECKIT END -->

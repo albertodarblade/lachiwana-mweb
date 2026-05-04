@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import {
   Page, Navbar, NavLeft, NavTitle, NavRight,
-  List, ListInput, Block, BlockTitle, Link, f7,
+  List, ListInput, Block, BlockTitle, Button, Link, f7,
 } from 'framework7-react'
 import { useNotebook } from '../hooks/useNotebook'
 import { useUpdateNotebook } from '../hooks/useUpdateNotebook'
 import { useUsers } from '../hooks/useUsers'
 import IconSelector from '../components/notebooks/IconSelector'
 import MemberPicker from '../components/notebooks/MemberPicker'
+import TagsPopup from '../components/notebooks/TagsPopup'
 import { navigateBack } from '../utils/f7navigate'
 
 const COLORS = [
@@ -34,6 +35,7 @@ export default function EditNotebookPage({ f7route }) {
   const [iconName, setIconName] = useState(null)
   const [selectedIds, setSelectedIds] = useState(new Set())
   const [titleError, setTitleError] = useState(false)
+  const [tagsPopupOpen, setTagsPopupOpen] = useState(false)
 
   useEffect(() => {
     if (notebook) {
@@ -154,6 +156,23 @@ export default function EditNotebookPage({ f7route }) {
           />
         </li>
       </List>
+
+      <BlockTitle>Etiquetas</BlockTitle>
+      <Block style={{ marginTop: 0 }}>
+        <Button outline onClick={() => setTagsPopupOpen(true)}>
+          <i className="f7-icons" style={{ marginRight: 6 }}>tag</i>
+          Gestionar etiquetas
+        </Button>
+      </Block>
+
+      <TagsPopup
+        mode="edit"
+        notebookId={id}
+        tags={notebook?.tags ?? []}
+        onTagsChange={() => {}}
+        opened={tagsPopupOpen}
+        onClose={() => setTagsPopupOpen(false)}
+      />
     </Page>
   )
 }

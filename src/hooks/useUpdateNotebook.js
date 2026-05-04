@@ -12,7 +12,8 @@ export function useUpdateNotebook() {
       const previousList = queryClient.getQueryData(['notebooks'])
       const previousDetail = queryClient.getQueryData(['notebook', variables.id])
 
-      const updated = { ...variables, updatedAt: new Date().toISOString() }
+      const existing = queryClient.getQueryData(['notebook', variables.id])
+      const updated = { ...variables, updatedAt: new Date().toISOString(), tags: existing?.data?.tags ?? [] }
 
       queryClient.setQueryData(['notebooks'], (old) => ({
         ...old,
