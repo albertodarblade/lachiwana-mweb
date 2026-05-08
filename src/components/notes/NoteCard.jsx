@@ -33,7 +33,7 @@ export default function NoteCard({ note, notebookId }) {
     .map((id) => notebookTags.find((t) => t.id === id))
     .filter(Boolean)
 
-  const { title, body } = parseContent(note.title)
+  const { title, body } = parseContent(note.content)
   const hasAttachments = (note.attachments?.length ?? 0) > 0
   const date = note.updatedAt || note.createdAt
 

@@ -44,10 +44,11 @@ export default function CreateNoteEditorPage({ f7route }) {
     clearTimeout(debounceRef.current)
 
     if (!noteIdRef.current) {
+      if (!markdown.trim()) return
       if (isCreatingRef.current) return
       isCreatingRef.current = true
       setSaveStatus('saving')
-      createNote({ title: markdown, tags: selectedTagIds })
+      createNote({ content: markdown, tags: selectedTagIds })
         .then((result) => {
           const id = result?.data?.id
           if (id) {
@@ -61,7 +62,7 @@ export default function CreateNoteEditorPage({ f7route }) {
                 debounceRef.current = null
                 setSaveStatus('saving')
                 updateMutateRef.current?.(
-                  { title: latest },
+                  { content: latest },
                   { onSuccess: () => setSaveStatus('saved'), onError: () => setSaveStatus('error') }
                 )
               }, 0)
@@ -79,7 +80,7 @@ export default function CreateNoteEditorPage({ f7route }) {
       debounceRef.current = null
       setSaveStatus('saving')
       updateMutateRef.current?.(
-        { title: contentRef.current },
+        { content: contentRef.current },
         { onSuccess: () => setSaveStatus('saved'), onError: () => setSaveStatus('error') }
       )
     }, DEBOUNCE_MS)
@@ -129,7 +130,7 @@ export default function CreateNoteEditorPage({ f7route }) {
     if (!content.trim()) {
       deleteMutateRef.current?.()
     } else {
-      updateMutateRef.current?.({ title: content })
+      updateMutateRef.current?.({ content: content })
     }
   }
 

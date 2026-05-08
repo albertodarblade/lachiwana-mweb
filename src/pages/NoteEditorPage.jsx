@@ -82,7 +82,7 @@ export default function NoteEditorPage({ f7route }) {
       debounceRef.current = null
       setSaveStatus('saving')
       updateNote(
-        { title: markdown },
+        { content: markdown },
         { onSuccess: () => setSaveStatus('saved'), onError: () => setSaveStatus('error') }
       )
     }, DEBOUNCE_MS)
@@ -115,7 +115,7 @@ export default function NoteEditorPage({ f7route }) {
     clearTimeout(debounceRef.current)
     debounceRef.current = null
     const content = contentRef.current
-    if (content) updateNote({ title: content })
+    if (content) updateNote({ content: content })
   }
 
   function handleDeleteConfirm() {
@@ -167,7 +167,7 @@ export default function NoteEditorPage({ f7route }) {
         />
         <NoteEditor
           key={noteId}
-          initialContent={note?.title ?? ''}
+          initialContent={note?.content ?? ''}
           onContentChange={handleContentChange}
           imageUploadHandler={handleImageUpload}
           onDeleteImage={handleDeleteImage}

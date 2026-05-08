@@ -5,14 +5,14 @@ import { prepareFileForUpload } from '../utils/compressImage'
 
 export function useCreateNote(notebookId) {
   return useMutation({
-    mutationFn: ({ title, tags }) => createNote(notebookId, { title, ...(tags?.length && { tags }) }),
-    onMutate: async ({ title, tags }) => {
+    mutationFn: ({ content, tags }) => createNote(notebookId, { content, ...(tags?.length && { tags }) }),
+    onMutate: async ({ content, tags }) => {
       await queryClient.cancelQueries({ queryKey: ['notes', notebookId] })
       const previous = queryClient.getQueryData(['notes', notebookId])
 
       const optimistic = {
         id: `temp-${Date.now()}`,
-        title,
+        content,
         tags: tags ?? [],
         attachments: [],
         createdAt: new Date().toISOString(),
