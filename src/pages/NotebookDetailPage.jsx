@@ -91,7 +91,7 @@ export default function NotebookDetailPage({ f7route }) {
         {!notesLoading && !notesError && notes.length === 0 && <NoteEmptyState />}
 
         {!notesLoading && !notesError && notes.length > 0 && (
-          <div>
+          <div className={styles.notesGrid}>
             {notes.map((note) => (
               <NoteCard key={note.id} note={note} notebookId={id} />
             ))}

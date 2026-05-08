@@ -1,37 +1,95 @@
 .card {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--f7-list-item-border-color);
+  break-inside: avoid;
+  display: inline-block;
+  width: 100%;
+  box-sizing: border-box;
+  background: color-mix(in srgb, var(--card-color, #FFCC00) 14%, white);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.15s;
 }
 
-.row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
+.card:active {
+  opacity: 0.7;
 }
 
-.preview {
-  flex: 1;
-  min-height: 7.5em;
-  max-height: 12em;
-  overflow: hidden;
-  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+.title {
+  font-weight: 700;
+  font-size: 16px;
+  margin: 0 0 8px;
+  line-height: 1.35;
+  color: var(--f7-text-color, #111);
+}
+
+.body {
   font-size: 14px;
-  line-height: 1.5;
-  pointer-events: none;
+  line-height: 1.55;
+  color: var(--f7-text-color, #333);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 7;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
-.attachmentCount {
+/* Reset markdown element margins inside the preview */
+.body :global(p),
+.body :global(li) {
+  margin: 0;
+}
+
+.body :global(ul),
+.body :global(ol) {
+  padding-left: 18px;
+  margin: 0;
+}
+
+.body :global(h1),
+.body :global(h2),
+.body :global(h3) {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 4px 0 0;
+}
+
+/* Prevent code blocks from causing horizontal scrollbars */
+.body :global(pre),
+.body :global(code) {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: hidden;
   font-size: 12px;
-  opacity: 0.5;
-  flex-shrink: 0;
 }
 
-.tags {
+.footer {
   display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 6px;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.date {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.38);
+  flex: 1;
+}
+
+.attachBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--f7-theme-color);
+}
+
+.attachIcon {
+  font-size: 14px;
+}
+
+.attachCount {
+  font-size: 12px;
+  font-weight: 600;
 }

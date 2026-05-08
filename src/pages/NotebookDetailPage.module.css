@@ -53,6 +53,15 @@
   cursor: pointer;
 }
 
+.notesGrid {
+  columns: 2;
+  column-gap: 10px;
+  padding: 12px 12px 120px 12px;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  width: 100%;
+}
+
 .notesLoadingBlock {
   display: flex;
   justify-content: center;

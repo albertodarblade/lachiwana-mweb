@@ -1,41 +1,56 @@
 import React from 'react'
 import Markdown from 'react-markdown'
 import { navigate } from '../../utils/f7navigate'
-import TagChip from '../notebooks/TagChip'
 import queryClient from '../../queryClient'
 import styles from './NoteCard.module.css'
 
-export default function NoteCard({ note, notebookId }) {
-  const count = note.attachments?.length ?? 0
-  const content = note.title || ''
+function formatDate(dateStr) {
+  if (!dateStr) return ''
+  const d = new Date(dateStr)
+  const day = String(d.getDate()).padStart(2, '0')
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const year = d.getFullYear()
+  return `${day}-${month}-${year}`
+}
 
-  const notebookCache = queryClient.getQueryData(['notebook', notebookId])?.data
-  const notebookTags = notebookCache?.tags ?? []
-  const notebookColor = notebookCache?.color
-  const resolvedTags = (note.tags ?? [])
-    .map((id) => notebookTags.find((t) => t.id === id))
-    .filter(Boolean)
+function parseContent(markdown) {
+  const lines = (markdown || '').split('\n')
+  const firstNonEmpty = lines.find((l) => l.trim()) ?? ''
+  const headingMatch = firstNonEmpty.match(/^#{1,6}\s+(.+)/)
+  if (headingMatch) {
+    const idx = lines.indexOf(firstNonEmpty)
+    return { title: headingMatch[1], body: lines.slice(idx + 1).join('\n').trim() }
+  }
+  return { title: null, body: markdown || '' }
+}
+
+export default function NoteCard({ note, notebookId }) {
+  const notebookColor = queryClient.getQueryData(['notebook', notebookId])?.data?.color
+  const { title, body } = parseContent(note.title)
+  const hasAttachments = (note.attachments?.length ?? 0) > 0
+  const date = note.updatedAt || note.createdAt
 
   return (
     <div
-      onClick={() => navigate(`/notebooks/${notebookId}/notes/${note.id}`)}
       className={styles.card}
+      style={{ '--card-color': notebookColor ?? '#FFCC00' }}
+      onClick={() => navigate(`/notebooks/${notebookId}/notes/${note.id}`)}
     >
-      <div className={styles.row}>
-        <div className={styles.preview}>
-          <Markdown>{content || '*(sin contenido)*'}</Markdown>
+      {title && <p className={styles.title}>{title}</p>}
+      {body && (
+        <div className={styles.body}>
+          <Markdown>{body}</Markdown>
         </div>
-        {count > 0 && (
-          <span className={styles.attachmentCount}>
-            {count} archivo{count !== 1 ? 's' : ''}
+      )}
+      <div className={styles.footer}>
+        <span className={styles.date}>{formatDate(date)}</span>
+        {hasAttachments && (
+          <span className={styles.attachBadge}>
+            <i className={['f7-icons', styles.attachIcon].join(' ')}>paperclip</i>
+            <span className={styles.attachCount}>{note.attachments.length}</span>
           </span>
         )}
       </div>
-      {resolvedTags.length > 0 && (
-        <div className={styles.tags}>
-          {resolvedTags.map((tag) => <TagChip key={tag.id} tag={tag} color={notebookColor} />)}
-        </div>
-      )}
     </div>
   )
 }
