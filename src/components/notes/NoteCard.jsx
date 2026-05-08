@@ -37,7 +37,7 @@ export default function NoteCard({ note, notebookId }) {
     >
       {title && <p className={styles.title}>{title}</p>}
       {body && (
-        <div className={['note-card-body', styles.body].join(' ')}>
+        <div className={styles.body}>
           <Markdown>{body}</Markdown>
         </div>
       )}

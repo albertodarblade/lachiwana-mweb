@@ -1,18 +1,43 @@
+.navbarInner {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  width: 100%;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brandName {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--f7-navbar-text-color, #111);
+  letter-spacing: -0.3px;
+}
+
 .avatarWrapper {
-  padding: 0 12px;
   display: flex;
   align-items: center;
   cursor: pointer;
 }
 
 .avatar {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   object-fit: cover;
   display: block;
+  border: none;
+  outline: none;
 }
 
 .avatarIcon {
-  font-size: 32px;
+  font-size: 36px;
+  color: var(--f7-navbar-text-color, #333);
 }
 
 .loadingBlock {
