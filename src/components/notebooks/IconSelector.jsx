@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { Sheet, PageContent, Searchbar, Block } from 'framework7-react'
 import { ALL_F7_ICONS } from './f7Icons'
+import styles from './IconSelector.module.css'
 
 const INITIAL_LIMIT = 96
 
@@ -34,22 +35,16 @@ export default function IconSelector({ value, onChange }) {
     <>
       <div
         onClick={() => setIsOpen(true)}
-        style={{
-          padding: '12px 16px',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          color: value ? 'var(--f7-theme-color)' : 'var(--f7-list-item-subtitle-text-color)',
-        }}
+        className={styles.trigger}
+        style={{ color: value ? 'var(--f7-theme-color)' : 'var(--f7-list-item-subtitle-text-color)' }}
       >
         {value ? (
-          <i className="f7-icons" style={{ fontSize: '28px' }}>{value}</i>
+          <i className={['f7-icons', styles.triggerIcon].join(' ')}>{value}</i>
         ) : (
-          <i className="f7-icons" style={{ fontSize: '28px', opacity: 0.4 }}>square_grid_2x2</i>
+          <i className={['f7-icons', styles.triggerIconEmpty].join(' ')}>square_grid_2x2</i>
         )}
-        <span style={{ flex: 1 }}>{value ?? 'Seleccionar ícono'}</span>
-        <i className="f7-icons" style={{ fontSize: '16px', opacity: 0.5 }}>chevron_right</i>
+        <span className={styles.triggerLabel}>{value ?? 'Seleccionar ícono'}</span>
+        <i className={['f7-icons', styles.triggerChevron].join(' ')}>chevron_right</i>
       </div>
 
       <Sheet
@@ -59,19 +54,16 @@ export default function IconSelector({ value, onChange }) {
         backdrop
         style={{ height: '70vh' }}
       >
-        <PageContent style={{ paddingTop: 0 }}>
-          <div style={{
-            width: 36, height: 4, borderRadius: 2,
-            background: 'rgba(0,0,0,0.15)', margin: '12px auto 8px',
-          }} />
-          <div style={{ position: 'sticky', top: 0, background: 'var(--f7-page-bg-color)', zIndex: 10, paddingTop: '4px' }}>
+        <PageContent className={styles.sheetContent}>
+          <div className={styles.dragHandle} />
+          <div className={styles.stickyHeader}>
             <Searchbar
               placeholder="Buscar ícono..."
               value={query}
               onInput={(e) => setQuery(e.target.value)}
               onSearchbarClear={() => setQuery('')}
             />
-            <p style={{ margin: '4px 16px 8px', fontSize: '12px', color: 'var(--f7-block-text-color)', opacity: 0.6 }}>
+            <p className={styles.resultCount}>
               {query.trim()
                 ? `${totalMatches} resultado${totalMatches !== 1 ? 's' : ''}`
                 : `Mostrando ${INITIAL_LIMIT} de ${ALL_F7_ICONS.length} — busca para filtrar`}
@@ -79,17 +71,12 @@ export default function IconSelector({ value, onChange }) {
           </div>
 
           {filtered.length === 0 && (
-            <Block style={{ textAlign: 'center', opacity: 0.6 }}>
+            <Block className={styles.emptyBlock}>
               <p>Sin resultados para "{query}"</p>
             </Block>
           )}
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(5, 1fr)',
-            gap: '4px',
-            padding: '0 12px 80px',
-          }}>
+          <div className={styles.grid}>
             {filtered.map((icon) => {
               const selected = value === icon
               return (
@@ -97,30 +84,10 @@ export default function IconSelector({ value, onChange }) {
                   key={icon}
                   onClick={() => select(icon)}
                   title={icon}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '10px 4px 6px',
-                    borderRadius: '10px',
-                    cursor: 'pointer',
-                    background: selected ? 'var(--f7-theme-color)' : 'transparent',
-                    color: selected ? '#fff' : 'inherit',
-                    gap: '4px',
-                  }}
+                  className={[styles.gridItem, selected ? styles.gridItemSelected : styles.gridItemDefault].join(' ')}
                 >
-                  <i className="f7-icons" style={{ fontSize: '24px' }}>{icon}</i>
-                  <span style={{
-                    fontSize: '8px',
-                    lineHeight: 1.2,
-                    textAlign: 'center',
-                    wordBreak: 'break-all',
-                    opacity: 0.7,
-                    maxWidth: '100%',
-                  }}>
-                    {icon}
-                  </span>
+                  <i className={['f7-icons', styles.gridIcon].join(' ')}>{icon}</i>
+                  <span className={styles.gridLabel}>{icon}</span>
                 </div>
               )
             })}

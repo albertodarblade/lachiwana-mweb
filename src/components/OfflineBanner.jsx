@@ -1,23 +1,7 @@
 import React from 'react'
 import useNetwork from '../hooks/useNetwork'
 import { clearReconnected, dismissOfflineBanner } from '../stores/networkStore'
-
-const toastBase = {
-  position: 'fixed',
-  bottom: 24,
-  left: 0,
-  zIndex: 9000,
-  borderRadius: 12,
-  padding: '10px 16px',
-  display: 'flex',
-  alignItems: 'center',
-  gap: 10,
-  fontSize: '14px',
-  fontWeight: 500,
-  boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
-  cursor: 'pointer',
-  userSelect: 'none',
-}
+import styles from './OfflineBanner.module.css'
 
 export default function OfflineBanner() {
   const { isOnline, justReconnected, offlineDismissed } = useNetwork()
@@ -28,18 +12,18 @@ export default function OfflineBanner() {
   if (justReconnected) {
     return (
       <div
-        style={{ ...toastBase, backgroundColor: 'var(--f7-color-green)', color: '#fff' }}
+        className={[styles.toast, styles.online].join(' ')}
         onClick={() => { clearReconnected(); dismissOfflineBanner() }}
       >
         <span>Conexión restaurada</span>
-        <span style={{ opacity: 0.8, fontSize: 12 }}>Toca para actualizar</span>
+        <span className={styles.subtext}>Toca para actualizar</span>
       </div>
     )
   }
 
   return (
     <div
-      style={{ ...toastBase, backgroundColor: 'var(--f7-color-red)', color: '#fff' }}
+      className={[styles.toast, styles.offline].join(' ')}
       onClick={dismissOfflineBanner}
     >
       <span>Sin conexión — solo lectura</span>

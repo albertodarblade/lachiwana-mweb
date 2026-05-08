@@ -1,0 +1,97 @@
+.trigger {
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.triggerIcon {
+  font-size: 28px;
+}
+
+.triggerIconEmpty {
+  font-size: 28px;
+  opacity: 0.4;
+}
+
+.triggerLabel {
+  flex: 1;
+}
+
+.triggerChevron {
+  font-size: 16px;
+  opacity: 0.5;
+}
+
+.dragHandle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.15);
+  margin: 12px auto 8px;
+}
+
+.stickyHeader {
+  position: sticky;
+  top: 0;
+  background: var(--f7-page-bg-color);
+  z-index: 10;
+  padding-top: 4px;
+}
+
+.resultCount {
+  margin: 4px 16px 8px;
+  font-size: 12px;
+  color: var(--f7-block-text-color);
+  opacity: 0.6;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  padding: 0 12px 80px;
+}
+
+.gridItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 4px 6px;
+  border-radius: 10px;
+  cursor: pointer;
+  gap: 4px;
+}
+
+.gridItemSelected {
+  background: var(--f7-theme-color);
+  color: #fff;
+}
+
+.gridItemDefault {
+  background: transparent;
+}
+
+.gridIcon {
+  font-size: 24px;
+}
+
+.gridLabel {
+  font-size: 8px;
+  line-height: 1.2;
+  text-align: center;
+  word-break: break-all;
+  opacity: 0.7;
+  max-width: 100%;
+}
+
+.sheetContent {
+  padding-top: 0;
+}
+
+.emptyBlock {
+  text-align: center;
+  opacity: 0.6;
+}

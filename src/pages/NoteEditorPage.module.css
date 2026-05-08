@@ -1,0 +1,35 @@
+.editorLayoutCentered {
+  justify-content: center;
+  align-items: center;
+}
+
+.menuButton {
+  color: var(--f7-theme-color);
+  padding: 0 12px;
+}
+
+.deletePageContent {
+  padding: 24px 16px 40px;
+}
+
+.deleteBlock {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.deleteHeading {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.deleteBody {
+  margin: 0;
+  opacity: 0.7;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.confirmButton {
+  margin-bottom: 12px;
+}

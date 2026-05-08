@@ -45,6 +45,42 @@
   cursor: pointer;
 }
 
+/* ── Checklist items: circular, larger, notebook-colored ─────────────────── */
+
+/* Extra left padding to fit the bigger circle */
+.note-editor-root .mdxeditor-root-contenteditable li[role="checkbox"] {
+  padding-left: 2rem !important;
+}
+
+/* The checkbox circle (::before pseudo-element) */
+.note-editor-root .mdxeditor-root-contenteditable li[role="checkbox"]::before {
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  top: 1px !important;
+}
+
+/* Unchecked ring */
+.note-editor-root .mdxeditor-root-contenteditable li[aria-checked="false"]::before {
+  border: 2px solid rgba(0, 0, 0, 0.2) !important;
+  background-color: transparent !important;
+}
+
+/* Checked: fill with notebook color */
+.note-editor-root .mdxeditor-root-contenteditable li[aria-checked="true"]::before {
+  background-color: var(--notebook-color, var(--f7-theme-color)) !important;
+  border-color:     var(--notebook-color, var(--f7-theme-color)) !important;
+}
+
+/* Tick mark: repositioned for larger circle */
+.note-editor-root .mdxeditor-root-contenteditable li[aria-checked="true"]::after {
+  top: 4px !important;
+  left: 8px !important;
+  width: 5px !important;
+  height: 11px !important;
+  border-width: 0 2.5px 2.5px 0 !important;
+}
+
 /* MDXEditor appends its popup container to <body> at z-index:2, which sits behind
    Framework7's .view layer (z-index:500). Push it above all F7 UI. */
 .mdxeditor-popup-container {

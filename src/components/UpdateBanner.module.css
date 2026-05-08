@@ -1,0 +1,31 @@
+.banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9000;
+  margin: 0;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--f7-color-blue);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.links {
+  display: flex;
+  gap: 16px;
+}
+
+.updateLink {
+  color: #fff;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.dismissLink {
+  color: rgba(255, 255, 255, 0.7);
+}

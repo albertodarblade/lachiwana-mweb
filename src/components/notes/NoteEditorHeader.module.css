@@ -1,0 +1,28 @@
+.block {
+  margin: 8px 0 0;
+  padding-top: 0;
+  padding-bottom: 8px;
+}
+
+.tagsRow {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.manageButton {
+  flex-shrink: 0;
+}
+
+.manageIcon {
+  margin-right: 4px;
+  font-size: 14px;
+}
+
+.createdAt {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.5;
+}

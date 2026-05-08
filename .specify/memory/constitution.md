@@ -1,19 +1,15 @@
 <!--
 SYNC IMPACT REPORT
-Version change: N/A (template) → 1.0.0
-Modified principles: N/A (initial ratification from template)
+Version change: 1.0.0 → 1.1.0 (MINOR — new principle added)
+Modified principles: none
 Added sections:
-  - UI/UX Philosophy (Principles I–IV)
-  - Data Fetching & State Management (Principles V–VII)
-  - Engineering Standards (Principles VIII–X)
-  - Governance
-Removed sections: N/A
+  - XI. CSS Modules for All Styling (Engineering Standards)
+Removed sections: none
 Templates requiring updates:
-  - .specify/templates/plan-template.md ✅ updated (Constitution Check gates now concrete)
+  - .specify/templates/plan-template.md ✅ updated (XI checklist gate added)
   - .specify/templates/spec-template.md ✅ no changes required
-  - .specify/templates/tasks-template.md ✅ no changes required (tests already marked optional)
-  - .specify/templates/commands/ ✅ no command templates found; skipped
-Follow-up TODOs: None — all placeholders resolved
+  - .specify/templates/tasks-template.md ✅ no changes required
+Follow-up TODOs: none
 -->
 
 # Lachiwana Mobile Constitution
@@ -95,6 +91,16 @@ conventions, and module boundaries MUST follow the conventions established in th
 active feature plan at all times. Abstractions are introduced only when three or more
 concrete usages justify them.
 
+### XI. CSS Modules for All Styling
+
+All component styling MUST use co-located CSS Modules (`.module.css` files) imported as
+`import styles from './Component.module.css'`. Inline `style` props are forbidden except
+for genuinely dynamic values that cannot be expressed in static CSS — runtime colors
+derived from server data, numeric offsets computed in JavaScript, or values that change
+on every render. Static layout, spacing, typography, borders, and visual appearance MUST
+live in the corresponding `.module.css` file and NEVER in a `style={{}}` prop. This rule
+applies to every `.jsx` component and page in the project without exception.
+
 ## Governance
 
 This constitution supersedes all other documented practices and conventions within this
@@ -108,4 +114,4 @@ MUST re-verify compliance after Phase 1 design. Any constitution violation intro
 by implementation necessity MUST be documented in the plan's Complexity Tracking table
 with explicit justification for why a simpler, compliant approach was insufficient.
 
-**Version**: 1.0.0 | **Ratified**: 2026-04-28 | **Last Amended**: 2026-04-28
+**Version**: 1.1.0 | **Ratified**: 2026-04-28 | **Last Amended**: 2026-05-07

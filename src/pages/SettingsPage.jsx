@@ -4,6 +4,7 @@ import UserProfileHeader from '../components/settings/UserProfileHeader'
 import { getSession, clearSession } from '../stores/authStore'
 import { getPrefs, setPrefs } from '../stores/settingsStore'
 import queryClient from '../queryClient'
+import styles from './SettingsPage.module.css'
 
 export default function SettingsPage() {
   const [, rerender] = useState(0)
@@ -60,11 +61,11 @@ export default function SettingsPage() {
         </ListItem>
       </List>
 
-      <List style={{ marginTop: '32px' }}>
+      <List className={styles.logoutList}>
         <ListItem
           title="Cerrar sesión"
           onClick={handleLogout}
-          style={{ color: 'var(--f7-color-red)' }}
+          className={styles.logoutItem}
         />
       </List>
     </Page>

@@ -41,6 +41,7 @@
 - [ ] **VIII. Clean Code** — Functions are single-responsibility; identifiers are self-documenting.
 - [ ] **IX. No Unit Tests** — No unit test files are planned or created.
 - [ ] **X. Maintainability** — Module boundaries and file structure follow the plan; abstractions have ≥3 usages.
+- [ ] **XI. CSS Modules** — All static styles are in `.module.css` files; no inline `style={{}}` props for static values.
 
 ## Project Structure
 

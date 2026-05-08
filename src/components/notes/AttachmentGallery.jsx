@@ -5,6 +5,7 @@ import { useUploadAttachment } from '../../hooks/useUploadAttachment'
 import { getBlob } from '../../api/client'
 import AttachmentItem from './AttachmentItem'
 import { prepareFileForUpload } from '../../utils/compressImage'
+import styles from './AttachmentGallery.module.css'
 
 function blobToDataUrl(blob) {
   return new Promise((resolve, reject) => {
@@ -66,24 +67,24 @@ export default function AttachmentGallery({ notebookId, noteId, attachments }) {
 
   return (
     <Block>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-        <strong style={{ fontSize: '14px' }}>Archivos adjuntos</strong>
+      <div className={styles.header}>
+        <strong className={styles.headerTitle}>Archivos adjuntos</strong>
         <div>
           <input
             ref={fileInputRef}
             type="file"
-            style={{ display: 'none' }}
+            className={styles.fileInput}
             onChange={handleFileChange}
           />
           <Button small onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-            <i className="f7-icons" style={{ marginRight: '4px' }}>paperclip</i>
+            <i className={['f7-icons', styles.addIcon].join(' ')}>paperclip</i>
             {isUploading ? 'Subiendo...' : 'Agregar archivo'}
           </Button>
         </div>
       </div>
 
       {(!attachments || attachments.length === 0) && (
-        <p style={{ opacity: 0.5, fontSize: '13px', margin: 0 }}>Sin archivos adjuntos</p>
+        <p className={styles.emptyText}>Sin archivos adjuntos</p>
       )}
 
       {(attachments ?? []).map((att) => (

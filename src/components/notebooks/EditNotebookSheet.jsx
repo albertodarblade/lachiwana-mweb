@@ -8,6 +8,7 @@ import { useUsers } from '../../hooks/useUsers'
 import IconSelector from './IconSelector'
 import MemberPicker from './MemberPicker'
 import TagsPopup from './TagsPopup'
+import styles from './EditNotebookSheet.module.css'
 
 const COLORS = [
   { label: 'Red', hex: '#FF3B30' },
@@ -74,11 +75,8 @@ export default function EditNotebookSheet({ notebook, opened, onClose }) {
 
   return (
     <Sheet opened={opened} onSheetClosed={onClose} swipeToClose backdrop style={{ height: 'auto' }}>
-      <PageContent style={{ padding: '0 0 32px' }}>
-        <div style={{
-          width: 36, height: 4, borderRadius: 2,
-          background: 'rgba(0,0,0,0.15)', margin: '12px auto 4px',
-        }} />
+      <PageContent className={styles.pageContent}>
+        <div className={styles.dragHandle} />
 
         <List>
           <ListInput
@@ -102,20 +100,18 @@ export default function EditNotebookSheet({ notebook, opened, onClose }) {
 
         <BlockTitle>Color</BlockTitle>
         <Block>
-          <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '4px' }}>
+          <div className={styles.colorRow}>
             {COLORS.map((c) => (
               <div
                 key={c.hex}
                 onClick={() => setColor(color === c.hex ? null : c.hex)}
+                className={styles.colorSwatch}
                 style={{
-                  width: '36px', height: '36px', borderRadius: '50%',
-                  background: c.hex, flexShrink: 0, cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: c.hex,
                   border: color === c.hex ? '3px solid var(--f7-theme-color)' : '2px solid transparent',
-                  boxSizing: 'border-box',
                 }}
               >
-                {color === c.hex && <i className="f7-icons" style={{ fontSize: '16px', color: '#fff' }}>checkmark</i>}
+                {color === c.hex && <i className={['f7-icons', styles.checkIcon].join(' ')}>checkmark</i>}
               </div>
             ))}
           </div>
@@ -141,9 +137,9 @@ export default function EditNotebookSheet({ notebook, opened, onClose }) {
         </List>
 
         <BlockTitle>Etiquetas</BlockTitle>
-        <Block style={{ marginTop: 0 }}>
+        <Block className={styles.tagsBlock}>
           <Button outline onClick={() => setTagsPopupOpen(true)}>
-            <i className="f7-icons" style={{ marginRight: 6 }}>tag</i>
+            <i className={['f7-icons', styles.tagIcon].join(' ')}>tag</i>
             Gestionar etiquetas
           </Button>
         </Block>

@@ -13,6 +13,7 @@ import DeleteConfirmDialog from '../components/notebooks/DeleteConfirmDialog'
 import NoteCard from '../components/notes/NoteCard'
 import NoteEmptyState from '../components/notes/NoteEmptyState'
 import { navigate, navigateBack } from '../utils/f7navigate'
+import styles from './NotebookDetailPage.module.css'
 
 export default function NotebookDetailPage({ f7route }) {
   const id = f7route?.params?.id
@@ -57,7 +58,7 @@ export default function NotebookDetailPage({ f7route }) {
     return (
       <Page>
         <Navbar title="Cuaderno" backLink="Atrás" />
-        <Block style={{ display: 'flex', justifyContent: 'center', paddingTop: '60px' }}>
+        <Block className={styles.loadingBlock}>
           <Preloader size={44} />
         </Block>
       </Page>
@@ -68,10 +69,10 @@ export default function NotebookDetailPage({ f7route }) {
     return (
       <Page>
         <Navbar title="Cuaderno" backLink="Atrás" />
-        <Block style={{ textAlign: 'center', paddingTop: '60px' }}>
-          <p style={{ opacity: 0.6 }}>Cuaderno no encontrado.</p>
+        <Block className={styles.errorBlock}>
+          <p className={styles.notFoundText}>Cuaderno no encontrado.</p>
           <span
-            style={{ color: 'var(--f7-theme-color)', cursor: 'pointer' }}
+            className={styles.backLink}
             onClick={() => navigateBack()}
           >
             Volver al inicio
@@ -91,27 +92,25 @@ export default function NotebookDetailPage({ f7route }) {
 
   return (
     <Page onPageAfterIn={handlePageAfterIn}>
-      <Navbar
-        style={{
-          '--f7-navbar-bg-color': navbarColor,
-          '--f7-navbar-link-color': '#fff',
-          '--f7-navbar-text-color': '#fff',
-          '--f7-navbar-subtitle-text-color': '#fff',
-        }}
-      >
-        <NavLeft backLink="Atrás" backLinkColor="white" />
+      <Navbar>
+        <NavLeft backLink="Atrás" />
         <NavTitle>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <i className="f7-icons" style={{ color: '#fff', fontSize: '20px' }}>
-              {notebook.iconName ?? 'book'}
-            </i>
-            <span style={{ color: '#fff' }}>{notebook.title}</span>
+          <div className={styles.navTitleInner}>
+            <div
+              className={styles.iconContainer}
+              style={{ '--icon-color': navbarColor }}
+            >
+              <i className={['f7-icons', styles.navIcon].join(' ')}>
+                {notebook.iconName ?? 'book'}
+              </i>
+            </div>
+            <span className={styles.navTitleText}>{notebook.title}</span>
           </div>
         </NavTitle>
         <NavRight>
           <Button
             onClick={() => setActionsOpen(true)}
-            style={{ color: '#fff', padding: '0 12px', cursor: 'pointer' }}
+            className={styles.menuButton}
           >
             <i className="f7-icons">ellipsis_vertical</i>
           </Button>
@@ -121,16 +120,16 @@ export default function NotebookDetailPage({ f7route }) {
       {/* Wrapper div isolates React's insertBefore from F7-teleported siblings (Fab, Actions). */}
       <div>
         {notesLoading && (
-          <Block style={{ display: 'flex', justifyContent: 'center', paddingTop: '40px' }}>
+          <Block className={styles.notesLoadingBlock}>
             <Preloader size={44} />
           </Block>
         )}
 
         {!notesLoading && notesError && (
-          <Block style={{ textAlign: 'center', paddingTop: '40px', opacity: 0.6 }}>
-            <p style={{ margin: '0 0 12px' }}>Error al cargar las notas.</p>
+          <Block className={styles.notesErrorBlock}>
+            <p className={styles.notesErrorText}>Error al cargar las notas.</p>
             <span
-              style={{ color: 'var(--f7-theme-color)', cursor: 'pointer' }}
+              className={styles.retryLink}
               onClick={() => window.location.reload()}
             >
               Reintentar
@@ -153,6 +152,13 @@ export default function NotebookDetailPage({ f7route }) {
         position="right-bottom"
         text="Nueva Nota"
         onClick={() => navigate(`/notebooks/${id}/notes/create`)}
+        style={{
+          '--f7-fab-bg-color': navbarColor,
+          '--f7-fab-pressed-bg-color': navbarColor,
+          '--f7-fab-text-color': '#fff',
+          '--f7-glass-shadow-fab': '0 2px 8px rgba(0,0,0,0.28)',
+          '--f7-touch-ripple-color': 'rgba(255,255,255,0.25)',
+        }}
       >
         <Icon ios="f7:plus" md="material:add" />
       </Fab>

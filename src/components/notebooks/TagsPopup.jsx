@@ -8,13 +8,7 @@ import IconSelector from './IconSelector'
 import { useAddTag } from '../../hooks/useAddTag'
 import { useUpdateTag } from '../../hooks/useUpdateTag'
 import { useDeleteTag } from '../../hooks/useDeleteTag'
-
-const DRAG_HANDLE = (
-  <div style={{
-    width: 36, height: 4, borderRadius: 2,
-    background: 'rgba(0,0,0,0.15)', margin: '12px auto 4px',
-  }} />
-)
+import styles from './TagsPopup.module.css'
 
 const EMPTY_FORM = { title: '', icon: 'circle_fill' }
 
@@ -106,11 +100,11 @@ export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTa
 
   return (
     <Sheet opened={opened} onSheetClosed={onClose} swipeToClose backdrop style={{ height: 'auto' }}>
-      <PageContent style={{ padding: '0 0 32px' }}>
-        {DRAG_HANDLE}
+      <PageContent className={styles.pageContent}>
+        <div className={styles.dragHandle} />
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 16px 4px' }}>
-          <span style={{ fontSize: 17, fontWeight: 600 }}>Etiquetas</span>
+        <div className={styles.header}>
+          <span className={styles.headerTitle}>Etiquetas</span>
           {!formOpen && (
             <Link onClick={openAdd}>
               <i className="f7-icons">plus</i>
@@ -120,25 +114,19 @@ export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTa
 
         {tags.length === 0 && !formOpen && (
           <Block>
-            <p style={{ opacity: 0.5, fontSize: 13, margin: 0 }}>Sin etiquetas. Toca + para agregar.</p>
+            <p className={styles.emptyText}>Sin etiquetas. Toca + para agregar.</p>
           </Block>
         )}
 
         {tags.map((tag) => (
-          <div
-            key={tag.id}
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              padding: '8px 16px', borderBottom: '1px solid var(--f7-list-item-border-color)',
-            }}
-          >
+          <div key={tag.id} className={styles.tagRow}>
             <TagChip tag={tag} />
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div className={styles.tagActions}>
               <Link onClick={() => openEdit(tag)} disabled={deletingId === tag.id}>
-                <i className="f7-icons" style={{ fontSize: 18, color: 'var(--f7-theme-color)' }}>pencil</i>
+                <i className={['f7-icons', styles.editIcon].join(' ')}>pencil</i>
               </Link>
               <Link onClick={() => handleDelete(tag)} disabled={deletingId === tag.id}>
-                <i className="f7-icons" style={{ fontSize: 18, color: 'var(--f7-color-red)' }}>
+                <i className={['f7-icons', styles.deleteIcon].join(' ')}>
                   {deletingId === tag.id ? 'clock' : 'trash'}
                 </i>
               </Link>
@@ -147,7 +135,7 @@ export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTa
         ))}
 
         {formOpen && (
-          <Block style={{ marginTop: 8 }}>
+          <Block className={styles.formBlock}>
             <List>
               <ListInput
                 label="Título de la etiqueta"
@@ -163,9 +151,9 @@ export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTa
                 <IconSelector value={form.icon} onChange={(icon) => setForm((f) => ({ ...f, icon: icon || 'circle_fill' }))} />
               </li>
             </List>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <Button outline onClick={closeForm} style={{ flex: 1 }}>Cancelar</Button>
-              <Button fill onClick={handleConfirm} disabled={isMutating} style={{ flex: 1 }}>
+            <div className={styles.formButtons}>
+              <Button outline onClick={closeForm} className={styles.formButton}>Cancelar</Button>
+              <Button fill onClick={handleConfirm} disabled={isMutating} className={styles.formButton}>
                 {isMutating ? 'Guardando...' : editingId ? 'Guardar' : 'Agregar'}
               </Button>
             </div>
@@ -175,7 +163,7 @@ export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTa
         {!formOpen && (
           <Block>
             <Button outline onClick={openAdd}>
-              <i className="f7-icons" style={{ marginRight: 6 }}>tag</i>
+              <i className={['f7-icons', styles.addTagIcon].join(' ')}>tag</i>
               Agregar etiqueta
             </Button>
           </Block>

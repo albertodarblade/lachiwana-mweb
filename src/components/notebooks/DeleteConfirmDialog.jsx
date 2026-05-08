@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Sheet, PageContent, Block, Button } from 'framework7-react'
+import styles from './DeleteConfirmDialog.module.css'
 
 const COUNTDOWN_START = 5
 
@@ -41,12 +42,12 @@ export default function DeleteConfirmDialog({ notebook, opened, onClose, onConfi
       swipeToClose={false}
       backdrop
     >
-      <PageContent style={{ padding: '24px 16px 40px' }}>
-        <Block style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: '600' }}>
+      <PageContent className={styles.pageContent}>
+        <Block className={styles.titleBlock}>
+          <h3 className={styles.heading}>
             Eliminar Cuaderno
           </h3>
-          <p style={{ margin: 0, opacity: 0.7, fontSize: '14px', lineHeight: 1.5 }}>
+          <p className={styles.body}>
             ¿Eliminar <strong>«{notebook?.title ?? ''}»</strong>?
             Esta acción no se puede deshacer.
           </p>
@@ -58,7 +59,7 @@ export default function DeleteConfirmDialog({ notebook, opened, onClose, onConfi
           color="red"
           disabled={countdown > 0 || isDeleting}
           onClick={onConfirm}
-          style={{ marginBottom: '12px' }}
+          className={styles.confirmButton}
         >
           {confirmLabel}
         </Button>

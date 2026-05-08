@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Sheet, PageContent, List, ListItem, Block, Button } from 'framework7-react'
 import TagChip from '../notebooks/TagChip'
+import styles from './NoteTagPicker.module.css'
 
 export default function NoteTagPicker({ notebookTags = [], selectedTagIds = [], onConfirm, opened, onClose }) {
   const [localIds, setLocalIds] = useState(selectedTagIds)
@@ -29,19 +30,16 @@ export default function NoteTagPicker({ notebookTags = [], selectedTagIds = [], 
       backdrop
       style={{ height: 'auto' }}
     >
-      <PageContent style={{ padding: '0 0 32px' }}>
-        <div style={{
-          width: 36, height: 4, borderRadius: 2,
-          background: 'rgba(0,0,0,0.15)', margin: '12px auto 4px',
-        }} />
+      <PageContent className={styles.pageContent}>
+        <div className={styles.dragHandle} />
 
-        <div style={{ padding: '8px 16px 4px', fontSize: 17, fontWeight: 600 }}>
+        <div className={styles.sheetTitle}>
           Etiquetas
         </div>
 
         {notebookTags.length === 0 ? (
           <Block>
-            <p style={{ opacity: 0.5, fontSize: 13, margin: 0 }}>
+            <p className={styles.emptyText}>
               Este cuaderno no tiene etiquetas.
             </p>
           </Block>
@@ -62,7 +60,7 @@ export default function NoteTagPicker({ notebookTags = [], selectedTagIds = [], 
           </List>
         )}
 
-        <Block style={{ marginTop: 8 }}>
+        <Block className={styles.confirmBlock}>
           <Button large fill onClick={handleConfirm}>Listo</Button>
         </Block>
       </PageContent>

@@ -1,0 +1,7 @@
+.logoutList {
+  margin-top: 32px;
+}
+
+.logoutItem {
+  color: var(--f7-color-red);
+}

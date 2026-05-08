@@ -1,0 +1,69 @@
+.dragHandle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.15);
+  margin: 12px auto 4px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px 4px;
+}
+
+.headerTitle {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.emptyText {
+  opacity: 0.5;
+  font-size: 13px;
+  margin: 0;
+}
+
+.tagRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--f7-list-item-border-color);
+}
+
+.tagActions {
+  display: flex;
+  gap: 8px;
+}
+
+.editIcon {
+  font-size: 18px;
+  color: var(--f7-theme-color);
+}
+
+.deleteIcon {
+  font-size: 18px;
+  color: var(--f7-color-red);
+}
+
+.formButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.formButton {
+  flex: 1;
+}
+
+.addTagIcon {
+  margin-right: 6px;
+}
+
+.pageContent {
+  padding: 0 0 32px;
+}
+
+.formBlock {
+  margin-top: 8px;
+}

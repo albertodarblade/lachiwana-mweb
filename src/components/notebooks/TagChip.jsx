@@ -1,20 +1,11 @@
 import React from 'react'
+import styles from './TagChip.module.css'
 
-export default function TagChip({ tag }) {
+export default function TagChip({ tag, color }) {
+  const chipColor = color ?? 'var(--f7-theme-color)'
   return (
-    <div style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: 5,
-      background: 'rgba(0, 0, 0, 0.08)',
-      color: 'var(--f7-theme-color)',
-      borderRadius: 20,
-      padding: '4px 10px',
-      fontSize: 13,
-      fontWeight: 500,
-      flexShrink: 0,
-    }}>
-      <i className="f7-icons" style={{ fontSize: 14 }}>{tag.icon}</i>
+    <div className={styles.chip} style={{ color: chipColor }}>
+      <i className={['f7-icons', styles.icon].join(' ')}>{tag.icon}</i>
       <span>{tag.title}</span>
     </div>
   )

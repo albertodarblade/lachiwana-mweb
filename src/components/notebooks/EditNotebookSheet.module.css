@@ -1,0 +1,43 @@
+.dragHandle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.15);
+  margin: 12px auto 4px;
+}
+
+.colorRow {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.colorSwatch {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.checkIcon {
+  font-size: 16px;
+  color: #fff;
+}
+
+.tagIcon {
+  margin-right: 6px;
+}
+
+.pageContent {
+  padding: 0 0 32px;
+}
+
+.tagsBlock {
+  margin-top: 0;
+}

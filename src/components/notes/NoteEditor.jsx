@@ -14,6 +14,7 @@ import {
 } from '@mdxeditor/editor'
 import { getBlob } from '../../api/client'
 import queryClient from '../../queryClient'
+import styles from './NoteEditor.module.css'
 
 const UploadContext = createContext({ uploadImage: null, isUploading: false })
 
@@ -74,18 +75,17 @@ function InsertImageButton() {
         ref={fileInputRef}
         type="file"
         accept="image/*"
-        style={{ display: 'none' }}
+        className={styles.fileInput}
         onChange={handleFileChange}
       />
       <button
         type="button"
         title="Insert image"
         disabled={isUploading}
-        className="mdxeditor-toolbar-button"
+        className={['mdxeditor-toolbar-button', isUploading ? styles.insertImageButtonUploading : styles.insertImageButton].join(' ')}
         onClick={() => fileInputRef.current?.click()}
-        style={{ cursor: isUploading ? 'default' : 'pointer', background: 'none', border: 'none', padding: '4px 6px', opacity: isUploading ? 0.6 : 1 }}
       >
-        <i className="f7-icons" style={{ fontSize: 24 }}>photo</i>
+        <i className={['f7-icons', styles.buttonIcon].join(' ')}>photo</i>
       </button>
     </>
   )
@@ -127,6 +127,7 @@ export default function NoteEditor({
   onContentChange,
   imageUploadHandler,
   onDeleteImage,
+  notebookColor,
   placeholder = 'Start writing...',
   autoFocus = false,
 }) {
@@ -230,7 +231,11 @@ export default function NoteEditor({
 
   return (
     <UploadContext.Provider value={contextValue}>
-      <div className="note-editor-root" onClick={handleEditorClick}>
+      <div
+        className="note-editor-root"
+        style={notebookColor ? { '--notebook-color': notebookColor } : undefined}
+        onClick={handleEditorClick}
+      >
         <MDXEditor
           ref={mdxEditorRef}
           markdown={initialContent || ''}

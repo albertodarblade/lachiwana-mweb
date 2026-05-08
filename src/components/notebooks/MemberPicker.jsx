@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Sheet, PageContent, Block, Searchbar, List, ListItem, Button } from 'framework7-react'
+import styles from './MemberPicker.module.css'
 
 export default function MemberPicker({ allUsers = [], selectedIds, onChange, excludeId }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -28,17 +29,11 @@ export default function MemberPicker({ allUsers = [], selectedIds, onChange, exc
     <>
       <div
         onClick={() => setIsOpen(true)}
-        style={{
-          padding: '12px 16px',
-          cursor: 'pointer',
-          color: count > 0 ? 'var(--f7-theme-color)' : 'var(--f7-list-item-subtitle-text-color)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
+        className={styles.trigger}
+        style={{ color: count > 0 ? 'var(--f7-theme-color)' : 'var(--f7-list-item-subtitle-text-color)' }}
       >
         <span>{count > 0 ? `${count} miembro${count !== 1 ? 's' : ''} seleccionado${count !== 1 ? 's' : ''}` : 'Agregar miembros'}</span>
-        <i className="f7-icons" style={{ fontSize: '16px', opacity: 0.5 }}>chevron_right</i>
+        <i className={['f7-icons', styles.triggerChevron].join(' ')}>chevron_right</i>
       </div>
 
       <Sheet
@@ -48,13 +43,10 @@ export default function MemberPicker({ allUsers = [], selectedIds, onChange, exc
         backdrop
         style={{ height: 'auto' }}
       >
-        <PageContent style={{ padding: '0 0 32px' }}>
-          <div style={{
-            width: 36, height: 4, borderRadius: 2,
-            background: 'rgba(0,0,0,0.15)', margin: '12px auto 4px',
-          }} />
+        <PageContent className={styles.pageContent}>
+          <div className={styles.dragHandle} />
 
-          <div style={{ position: 'sticky', top: 0, background: 'var(--f7-page-bg-color)', zIndex: 10, paddingTop: 4 }}>
+          <div className={styles.stickySearch}>
             <Searchbar
               placeholder="Buscar por nombre o email"
               value={searchQuery}
@@ -64,7 +56,7 @@ export default function MemberPicker({ allUsers = [], selectedIds, onChange, exc
           </div>
 
           {filtered.length === 0 && (
-            <Block style={{ textAlign: 'center', color: 'var(--f7-block-text-color)', opacity: 0.6 }}>
+            <Block className={styles.emptyBlock}>
               <p>No hay usuarios disponibles</p>
             </Block>
           )}
@@ -80,8 +72,8 @@ export default function MemberPicker({ allUsers = [], selectedIds, onChange, exc
                 subtitle={user.email}
               >
                 {user.picture
-                  ? <img slot="media" src={user.picture} width={40} height={40} style={{ borderRadius: '50%', objectFit: 'cover' }} alt={user.name} />
-                  : <i slot="media" className="f7-icons" style={{ fontSize: 40 }}>person_circle</i>
+                  ? <img slot="media" src={user.picture} width={40} height={40} className={styles.avatar} alt={user.name} />
+                  : <i slot="media" className={['f7-icons', styles.avatarIcon].join(' ')}>person_circle</i>
                 }
               </ListItem>
             ))}

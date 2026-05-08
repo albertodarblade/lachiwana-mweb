@@ -1,0 +1,47 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: var(--f7-font-family);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--btn-color, var(--f7-theme-color));
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition: opacity 0.15s ease;
+  text-decoration: none;
+  padding: 0;
+}
+
+.btn:active {
+  opacity: 0.5;
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ── Variants ──────────────────────────────────────────────────────────────── */
+
+.outline {
+  border: 1.5px solid var(--btn-color, var(--f7-theme-color));
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 13px;
+  min-height: 32px;
+}
+
+.icon {
+  padding: 8px;
+  font-size: 22px;
+  border-radius: 50%;
+  min-width: 44px;
+  min-height: 44px;
+}

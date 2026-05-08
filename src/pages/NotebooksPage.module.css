@@ -1,0 +1,36 @@
+.avatarWrapper {
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatarIcon {
+  font-size: 32px;
+}
+
+.loadingBlock {
+  display: flex;
+  justify-content: center;
+  padding-top: 40px;
+}
+
+.errorBlock {
+  text-align: center;
+  color: var(--f7-color-red);
+}
+
+.retryLink {
+  color: var(--f7-theme-color);
+  cursor: pointer;
+}
+
+.listPadding {
+  padding-bottom: 80px;
+}

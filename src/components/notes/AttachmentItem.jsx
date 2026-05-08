@@ -3,6 +3,7 @@ import { Preloader, Button, f7 } from 'framework7-react'
 import { useBlobUrl } from '../../hooks/useBlobUrl'
 import { useDeleteAttachment } from '../../hooks/useDeleteAttachment'
 import { getBlob } from '../../api/client'
+import styles from './AttachmentItem.module.css'
 
 const EXT_ICONS = {
   pdf: 'doc_text',
@@ -56,33 +57,22 @@ export default function AttachmentItem({ attachment, notebookId, noteId, onImage
     }
   }
 
-  const thumbStyle = {
-    width: '72px',
-    height: '72px',
-    borderRadius: '8px',
-    background: '#f0f0f0',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-    overflow: 'hidden',
-    cursor: isImage && blobData ? 'pointer' : 'default',
-  }
+  const thumbClass = [styles.thumb, isImage && blobData ? styles.thumbClickable : styles.thumbDefault].join(' ')
 
   function renderThumbnail() {
     if (isImage) {
       if (isLoading) return <Preloader size={24} />
-      if (isError || !blobData) return <i className="f7-icons" style={{ fontSize: '28px', opacity: 0.4 }}>photo</i>
+      if (isError || !blobData) return <i className={['f7-icons', styles.thumbIconSmall].join(' ')}>photo</i>
       return (
         <img
           src={blobData.dataUrl}
           alt=""
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          className={styles.thumbImg}
           onError={(e) => { e.target.style.display = 'none' }}
         />
       )
     }
-    return <i className="f7-icons" style={{ fontSize: '32px', opacity: 0.5 }}>{fileIcon(attachment.extension)}</i>
+    return <i className={['f7-icons', styles.thumbIconLarge].join(' ')}>{fileIcon(attachment.extension)}</i>
   }
 
   const sizeLabel = formatSize(attachment.size)
@@ -91,21 +81,19 @@ export default function AttachmentItem({ attachment, notebookId, noteId, onImage
     : sizeLabel
 
   return (
-    <div
-      style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 0' }}
-    >
-      <div style={thumbStyle} onClick={isImage && blobData ? onImageTap : undefined}>
+    <div className={styles.item}>
+      <div className={thumbClass} onClick={isImage && blobData ? onImageTap : undefined}>
         {renderThumbnail()}
       </div>
 
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ margin: '0 0 2px', fontSize: '12px', opacity: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <div className={styles.meta}>
+        <p className={styles.uploadedBy}>
           {attachment.uploadedBy?.name ?? 'Archivo'}
         </p>
         {nameLabel && (
-          <p style={{ margin: '0 0 6px', fontSize: '11px', opacity: 0.4 }}>{nameLabel}</p>
+          <p className={styles.fileLabel}>{nameLabel}</p>
         )}
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className={styles.actions}>
           {!isImage && (
             <Button small outline disabled={isDownloading} onClick={handleDownload}>
               {isDownloading ? '...' : 'Descargar'}

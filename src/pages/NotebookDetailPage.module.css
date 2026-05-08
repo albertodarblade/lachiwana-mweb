@@ -1,0 +1,75 @@
+.loadingBlock {
+  display: flex;
+  justify-content: center;
+  padding-top: 60px;
+}
+
+.errorBlock {
+  text-align: center;
+  padding-top: 60px;
+}
+
+.notFoundText {
+  opacity: 0.6;
+}
+
+.backLink {
+  color: var(--f7-theme-color);
+  cursor: pointer;
+}
+
+.navTitleInner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Rounded square with a soft tint of the notebook color */
+.iconContainer {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--icon-color, var(--f7-theme-color)) 14%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.navIcon {
+  color: var(--icon-color, var(--f7-theme-color));
+  font-size: 20px;
+}
+
+.navTitleText {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--f7-navbar-text-color);
+}
+
+.menuButton {
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+.notesLoadingBlock {
+  display: flex;
+  justify-content: center;
+  padding-top: 40px;
+}
+
+.notesErrorBlock {
+  text-align: center;
+  padding-top: 40px;
+  opacity: 0.6;
+}
+
+.notesErrorText {
+  margin: 0 0 12px;
+}
+
+.retryLink {
+  color: var(--f7-theme-color);
+  cursor: pointer;
+}
+

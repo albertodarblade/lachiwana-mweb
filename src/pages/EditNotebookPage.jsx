@@ -10,6 +10,7 @@ import IconSelector from '../components/notebooks/IconSelector'
 import MemberPicker from '../components/notebooks/MemberPicker'
 import TagsPopup from '../components/notebooks/TagsPopup'
 import { navigateBack } from '../utils/f7navigate'
+import styles from './EditNotebookPage.module.css'
 
 const COLORS = [
   { label: 'Red', hex: '#FF3B30' },
@@ -79,7 +80,7 @@ export default function EditNotebookPage({ f7route }) {
     <Page>
       <Navbar>
         <NavLeft>
-          <Link onClick={() => navigateBack()} style={{ paddingLeft: '12px' }}>
+          <Link onClick={() => navigateBack()} className={styles.navCloseLink}>
             <i className="f7-icons">xmark</i>
           </Link>
         </NavLeft>
@@ -88,7 +89,7 @@ export default function EditNotebookPage({ f7route }) {
           <Link
             onClick={handleSave}
             disabled={isPending}
-            style={{ paddingRight: '12px', fontWeight: '600' }}
+            className={styles.navSaveLink}
           >
             {isPending ? 'Guardando...' : 'Guardar'}
           </Link>
@@ -117,21 +118,19 @@ export default function EditNotebookPage({ f7route }) {
 
       <BlockTitle>Color</BlockTitle>
       <Block>
-        <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '4px' }}>
+        <div className={styles.colorRow}>
           {COLORS.map((c) => (
             <div
               key={c.hex}
               onClick={() => setColor(color === c.hex ? null : c.hex)}
+              className={styles.colorSwatch}
               style={{
-                width: '36px', height: '36px', borderRadius: '50%',
-                background: c.hex, flexShrink: 0, cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: c.hex,
                 border: color === c.hex ? '3px solid var(--f7-theme-color)' : '2px solid transparent',
-                boxSizing: 'border-box',
               }}
             >
               {color === c.hex && (
-                <i className="f7-icons" style={{ fontSize: '16px', color: '#fff' }}>checkmark</i>
+                <i className={['f7-icons', styles.checkIcon].join(' ')}>checkmark</i>
               )}
             </div>
           ))}
@@ -158,9 +157,9 @@ export default function EditNotebookPage({ f7route }) {
       </List>
 
       <BlockTitle>Etiquetas</BlockTitle>
-      <Block style={{ marginTop: 0 }}>
+      <Block className={styles.tagsBlock}>
         <Button outline onClick={() => setTagsPopupOpen(true)}>
-          <i className="f7-icons" style={{ marginRight: 6 }}>tag</i>
+          <i className={['f7-icons', styles.tagIcon].join(' ')}>tag</i>
           Gestionar etiquetas
         </Button>
       </Block>

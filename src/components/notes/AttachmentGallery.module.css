@@ -1,0 +1,24 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.headerTitle {
+  font-size: 14px;
+}
+
+.fileInput {
+  display: none;
+}
+
+.addIcon {
+  margin-right: 4px;
+}
+
+.emptyText {
+  opacity: 0.5;
+  font-size: 13px;
+  margin: 0;
+}

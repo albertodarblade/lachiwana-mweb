@@ -1,0 +1,47 @@
+.trigger {
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.triggerChevron {
+  font-size: 16px;
+  opacity: 0.5;
+}
+
+.dragHandle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.15);
+  margin: 12px auto 4px;
+}
+
+.stickySearch {
+  position: sticky;
+  top: 0;
+  background: var(--f7-page-bg-color);
+  z-index: 10;
+  padding-top: 4px;
+}
+
+.emptyBlock {
+  text-align: center;
+  color: var(--f7-block-text-color);
+  opacity: 0.6;
+}
+
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatarIcon {
+  font-size: 40px;
+}
+
+.pageContent {
+  padding: 0 0 32px;
+}

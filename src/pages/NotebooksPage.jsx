@@ -5,6 +5,7 @@ import { getSession } from '../stores/authStore'
 import NotebookCard from '../components/notebooks/NotebookCard'
 import NotebookEmptyState from '../components/notebooks/NotebookEmptyState'
 import { navigate } from '../utils/f7navigate'
+import styles from './NotebooksPage.module.css'
 
 function UserAvatar() {
   const session = getSession()
@@ -19,11 +20,11 @@ function UserAvatar() {
         width={32}
         height={32}
         onError={() => setImgError(true)}
-        style={{ borderRadius: '50%', objectFit: 'cover', display: 'block' }}
+        className={styles.avatar}
       />
     )
   }
-  return <i className="f7-icons" style={{ fontSize: '32px' }}>person_circle</i>
+  return <i className={['f7-icons', styles.avatarIcon].join(' ')}>person_circle</i>
 }
 
 export default function NotebooksPage() {
@@ -38,7 +39,7 @@ export default function NotebooksPage() {
       <Navbar title="Lachiwana">
         <NavRight>
           <div
-            style={{ padding: '0 12px', display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+            className={styles.avatarWrapper}
             onClick={() => navigate('/settings')}
           >
             <UserAvatar />
@@ -47,16 +48,16 @@ export default function NotebooksPage() {
       </Navbar>
 
       {isLoading && (
-        <Block style={{ display: 'flex', justifyContent: 'center', paddingTop: '40px' }}>
+        <Block className={styles.loadingBlock}>
           <Preloader size={44} />
         </Block>
       )}
 
       {isError && (
-        <Block style={{ textAlign: 'center', color: 'var(--f7-color-red)' }}>
+        <Block className={styles.errorBlock}>
           <p>Error al cargar los cuadernos.</p>
           <span
-            style={{ color: 'var(--f7-theme-color)', cursor: 'pointer' }}
+            className={styles.retryLink}
             onClick={() => refetch()}
           >
             Reintentar
@@ -67,7 +68,7 @@ export default function NotebooksPage() {
       {!isLoading && !isError && notebooks.length === 0 && <NotebookEmptyState />}
 
       {!isLoading && !isError && notebooks.length > 0 && (
-        <div style={{ paddingBottom: '80px' }}>
+        <div className={styles.listPadding}>
           {notebooks.map((notebook) => (
             <NotebookCard key={notebook.id} notebook={notebook} />
           ))}

@@ -5,6 +5,7 @@ import {
   Sheet, PageContent, Preloader, f7,
 } from 'framework7-react'
 import { useNote } from '../hooks/useNote'
+import { useNotebook } from '../hooks/useNotebook'
 import { useUpdateNote } from '../hooks/useUpdateNote'
 import { useDeleteNote } from '../hooks/useDeleteNote'
 import { getNote, uploadAttachment, deleteAttachment } from '../api/notes'
@@ -12,8 +13,10 @@ import { prepareFileForUpload } from '../utils/compressImage'
 import NoteEditor from '../components/notes/NoteEditor'
 import NoteEditorHeader from '../components/notes/NoteEditorHeader'
 import SaveStatusIndicator from '../components/notes/SaveStatusIndicator'
+import ThemedButton from '../components/notebooks/ThemedButton'
 import { navigate } from '../utils/f7navigate'
 import queryClient from '../queryClient'
+import styles from './NoteEditorPage.module.css'
 
 const DEBOUNCE_MS = 800
 const COUNTDOWN_START = 5
@@ -24,6 +27,7 @@ export default function NoteEditorPage({ f7route }) {
 
   const { data: noteData, isLoading } = useNote(notebookId, noteId)
   const note = noteData?.data
+  const { data: notebook } = useNotebook(notebookId)
 
   const [selectedTagIds, setSelectedTagIds] = useState([])
   const [saveStatus, setSaveStatus] = useState('saved')
@@ -127,7 +131,7 @@ export default function NoteEditorPage({ f7route }) {
     return (
       <Page pageContent={false}>
         <Navbar title="Nota" backLink="Atrás" />
-        <div className="note-editor-layout" style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <div className={['note-editor-layout', styles.editorLayoutCentered].join(' ')}>
           <Preloader size={44} />
         </div>
       </Page>
@@ -144,9 +148,13 @@ export default function NoteEditorPage({ f7route }) {
         <NavLeft backLink="Atrás" />
         <NavTitle><SaveStatusIndicator status={saveStatus} /></NavTitle>
         <NavRight>
-          <Button onClick={() => setActionsOpen(true)} style={{ color: 'var(--f7-theme-color)', padding: '0 12px' }}>
+          <ThemedButton
+            variant="icon"
+            color={notebook?.color}
+            onClick={() => setActionsOpen(true)}
+          >
             <i className="f7-icons">ellipsis_vertical</i>
-          </Button>
+          </ThemedButton>
         </NavRight>
       </Navbar>
 
@@ -163,6 +171,7 @@ export default function NoteEditorPage({ f7route }) {
           onContentChange={handleContentChange}
           imageUploadHandler={handleImageUpload}
           onDeleteImage={handleDeleteImage}
+          notebookColor={notebook?.color}
         />
       </div>
 
@@ -187,12 +196,12 @@ export default function NoteEditorPage({ f7route }) {
         swipeToClose={false}
         backdrop
       >
-        <PageContent style={{ padding: '24px 16px 40px' }}>
-          <Block style={{ textAlign: 'center', marginBottom: '24px' }}>
-            <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: '600' }}>
+        <PageContent className={styles.deletePageContent}>
+          <Block className={styles.deleteBlock}>
+            <h3 className={styles.deleteHeading}>
               Eliminar Nota
             </h3>
-            <p style={{ margin: 0, opacity: 0.7, fontSize: '14px', lineHeight: 1.5 }}>
+            <p className={styles.deleteBody}>
               ¿Eliminar esta nota? Esta acción eliminará la nota y todos sus archivos.
             </p>
           </Block>
@@ -201,7 +210,7 @@ export default function NoteEditorPage({ f7route }) {
             large fill color="red"
             disabled={countdown > 0 || isDeleting}
             onClick={handleDeleteConfirm}
-            style={{ marginBottom: '12px' }}
+            className={styles.confirmButton}
           >
             {confirmLabel}
           </Button>

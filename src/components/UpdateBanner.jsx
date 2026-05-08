@@ -1,5 +1,6 @@
 import React from 'react'
 import { Block, Link } from 'framework7-react'
+import styles from './UpdateBanner.module.css'
 
 export default function UpdateBanner({ waitingWorker, onDismiss }) {
   if (!waitingWorker) return null
@@ -10,34 +11,14 @@ export default function UpdateBanner({ waitingWorker, onDismiss }) {
   }
 
   return (
-    <Block
-      style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        zIndex: 9000,
-        margin: 0,
-        padding: '10px 16px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: 'var(--f7-color-blue)',
-        color: '#fff',
-        fontSize: '14px',
-        fontWeight: 500,
-      }}
-    >
+    <Block className={styles.banner}>
       <span>Nueva versión disponible</span>
-      <div style={{ display: 'flex', gap: '16px' }}>
-        <Link
-          style={{ color: '#fff', fontWeight: 600, textDecoration: 'underline' }}
-          onClick={handleReload}
-        >
+      <div className={styles.links}>
+        <Link className={styles.updateLink} onClick={handleReload}>
           Actualizar
         </Link>
         {onDismiss && (
-          <Link style={{ color: 'rgba(255,255,255,0.7)' }} onClick={onDismiss}>
+          <Link className={styles.dismissLink} onClick={onDismiss}>
             Ignorar
           </Link>
         )}

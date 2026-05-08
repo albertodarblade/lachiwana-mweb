@@ -1,0 +1,30 @@
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 0;
+  z-index: 9000;
+  border-radius: 12px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  user-select: none;
+  color: #fff;
+}
+
+.online {
+  background-color: var(--f7-color-green);
+}
+
+.offline {
+  background-color: var(--f7-color-red);
+}
+
+.subtext {
+  opacity: 0.8;
+  font-size: 12px;
+}

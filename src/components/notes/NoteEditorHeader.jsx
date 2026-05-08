@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
-import { Block, Button } from 'framework7-react'
+import { Block } from 'framework7-react'
 import { useNotebook } from '../../hooks/useNotebook'
 import TagChip from '../notebooks/TagChip'
+import ThemedButton from '../notebooks/ThemedButton'
 import NoteTagPicker from './NoteTagPicker'
+import styles from './NoteEditorHeader.module.css'
 
 function formatDate(dateStr) {
   if (!dateStr) return ''
@@ -22,18 +24,22 @@ export default function NoteEditorHeader({ notebookId, selectedTagIds, onTagsCon
     .filter(Boolean)
 
   return (
-    <Block style={{ margin: '8px 0 0', paddingTop: 0, paddingBottom: 8 }}>
+    <Block className={styles.block}>
       {notebookTags.length > 0 && (
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center', marginBottom: 6 }}>
-          {resolvedTags.map((tag) => <TagChip key={tag.id} tag={tag} />)}
-          <Button small outline onClick={() => setTagPickerOpen(true)} style={{ flexShrink: 0 }}>
-            <i className="f7-icons" style={{ marginRight: 4, fontSize: 14 }}>tag</i>
+        <div className={styles.tagsRow}>
+          {resolvedTags.map((tag) => <TagChip key={tag.id} tag={tag} color={notebookData?.color} />)}
+          <ThemedButton
+            variant="outline"
+            color={notebookData?.color}
+            onClick={() => setTagPickerOpen(true)}
+          >
+            <i className={['f7-icons', styles.manageIcon].join(' ')}>tag</i>
             {resolvedTags.length > 0 ? 'Gestionar' : 'Agregar etiquetas'}
-          </Button>
+          </ThemedButton>
         </div>
       )}
       {createdAt && (
-        <p style={{ margin: 0, fontSize: 12, opacity: 0.5 }}>
+        <p className={styles.createdAt}>
           Creado: {formatDate(createdAt)}
         </p>
       )}

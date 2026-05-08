@@ -1,35 +1,27 @@
 import React from 'react'
 import { Link } from 'framework7-react'
+import styles from './NotebookCard.module.css'
 
 export default function NotebookCard({ notebook }) {
   return (
     <Link
       href={`/notebooks/${notebook.id}`}
-      style={{
-        display: 'block',
-        margin: '8px 16px',
-        background: 'var(--f7-card-bg-color)',
-        borderRadius: 'var(--f7-card-border-radius, 8px)',
-        boxShadow: 'none',
-        overflow: 'hidden',
-        textDecoration: 'none',
-        color: 'inherit',
-      }}
+      className={styles.card}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px' }}>
-        <div style={{
-          width: '6px',
-          alignSelf: 'stretch',
-          borderRadius: '3px',
-          background: notebook.color ?? 'var(--f7-theme-color)',
-          flexShrink: 0,
-        }} />
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', minWidth: '40px' }}>
-          <i className="f7-icons" style={{ fontSize: '28px', color: notebook.color ?? 'var(--f7-theme-color)' }}>
+      <div className={styles.inner}>
+        <div
+          className={styles.colorBar}
+          style={{ background: notebook.color ?? 'var(--f7-theme-color)' }}
+        />
+        <div className={styles.iconCol}>
+          <i
+            className={['f7-icons', styles.iconGlyph].join(' ')}
+            style={{ color: notebook.color ?? 'var(--f7-theme-color)' }}
+          >
             {notebook.iconName ?? 'book'}
           </i>
         </div>
-        <span style={{ fontSize: '16px', fontWeight: '500', flex: 1 }}>
+        <span className={styles.title}>
           {notebook.title}
         </span>
       </div>

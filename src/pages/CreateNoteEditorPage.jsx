@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react'
 import { Page, Navbar, NavLeft, NavTitle, f7 } from 'framework7-react'
 import { useCreateNote } from '../hooks/useCreateNote'
+import { useNotebook } from '../hooks/useNotebook'
 import { useUpdateNote } from '../hooks/useUpdateNote'
 import { useDeleteNote } from '../hooks/useDeleteNote'
 import { getNote, uploadAttachment, deleteAttachment } from '../api/notes'
@@ -24,6 +25,8 @@ export default function CreateNoteEditorPage({ f7route }) {
   const debounceRef = useRef(null)
   const noteIdRef = useRef(null)
   const isCreatingRef = useRef(false)
+
+  const { data: notebook } = useNotebook(notebookId)
 
   const { mutateAsync: createNote } = useCreateNote(notebookId)
 
@@ -148,6 +151,7 @@ export default function CreateNoteEditorPage({ f7route }) {
           onContentChange={handleContentChange}
           imageUploadHandler={handleImageUpload}
           onDeleteImage={handleDeleteImage}
+          notebookColor={notebook?.color}
           autoFocus
         />
       </div>

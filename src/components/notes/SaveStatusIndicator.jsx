@@ -1,4 +1,5 @@
 import React from 'react'
+import styles from './SaveStatusIndicator.module.css'
 
 const STATES = {
   editing: { color: '#007AFF', label: 'Editando...' },
@@ -11,9 +12,9 @@ export default function SaveStatusIndicator({ status }) {
   const s = STATES[status]
   if (!s) return null
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-      <div style={{ width: 8, height: 8, borderRadius: '50%', background: s.color, flexShrink: 0 }} />
-      <span style={{ fontSize: 14, fontWeight: 400 }}>{s.label}</span>
+    <div className={styles.wrapper}>
+      <div className={styles.dot} style={{ background: s.color }} />
+      <span className={styles.label}>{s.label}</span>
     </div>
   )
 }
