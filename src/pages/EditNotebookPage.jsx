@@ -5,10 +5,13 @@ import {
 } from 'framework7-react'
 import { useNotebook } from '../hooks/useNotebook'
 import { useUpdateNotebook } from '../hooks/useUpdateNotebook'
+import { useDeleteNotebook } from '../hooks/useDeleteNotebook'
 import { useUsers } from '../hooks/useUsers'
+import { getSession } from '../stores/authStore'
 import IconSelector from '../components/notebooks/IconSelector'
 import MemberPicker from '../components/notebooks/MemberPicker'
 import TagsPopup from '../components/notebooks/TagsPopup'
+import DeleteConfirmDialog from '../components/notebooks/DeleteConfirmDialog'
 import { navigateBack } from '../utils/f7navigate'
 import styles from './EditNotebookPage.module.css'
 
@@ -27,6 +30,7 @@ export default function EditNotebookPage({ f7route }) {
   const id = f7route?.params?.id
   const { data: notebook } = useNotebook(id)
   const { mutate, isPending } = useUpdateNotebook()
+  const { mutate: deleteMutate, isPending: isDeleting } = useDeleteNotebook()
   const { data: usersData } = useUsers()
   const allUsers = usersData?.data ?? []
 
@@ -37,6 +41,10 @@ export default function EditNotebookPage({ f7route }) {
   const [selectedIds, setSelectedIds] = useState(new Set())
   const [titleError, setTitleError] = useState(false)
   const [tagsPopupOpen, setTagsPopupOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+
+  const currentUserId = getSession()?.user?.googleId
+  const isOwner = notebook?.owner === currentUserId
 
   useEffect(() => {
     if (notebook) {
@@ -74,6 +82,19 @@ export default function EditNotebookPage({ f7route }) {
         },
       }
     )
+  }
+
+  function handleDeleteConfirm() {
+    deleteMutate(notebook.id, {
+      onSuccess: () => { window.location.replace('/') },
+      onError: (err) => {
+        f7.toast.create({
+          text: err?.message ?? 'Error al eliminar. Intenta de nuevo.',
+          closeTimeout: 3000,
+          position: 'top',
+        }).open()
+      },
+    })
   }
 
   return (
@@ -164,6 +185,17 @@ export default function EditNotebookPage({ f7route }) {
         </Button>
       </Block>
 
+      {isOwner && (
+        <>
+          <BlockTitle>Acciones</BlockTitle>
+          <Block className={styles.actionsBlock}>
+            <Button large outline color="red" onClick={() => setDeleteDialogOpen(true)}>
+              Eliminar cuaderno
+            </Button>
+          </Block>
+        </>
+      )}
+
       <TagsPopup
         mode="edit"
         notebookId={id}
@@ -171,6 +203,14 @@ export default function EditNotebookPage({ f7route }) {
         onTagsChange={() => {}}
         opened={tagsPopupOpen}
         onClose={() => setTagsPopupOpen(false)}
+      />
+
+      <DeleteConfirmDialog
+        notebook={notebook}
+        opened={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        isDeleting={isDeleting}
       />
     </Page>
   )
