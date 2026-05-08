@@ -12,7 +12,6 @@ import queryClient from '../queryClient'
 import DeleteConfirmDialog from '../components/notebooks/DeleteConfirmDialog'
 import NoteCard from '../components/notes/NoteCard'
 import NoteEmptyState from '../components/notes/NoteEmptyState'
-import CreateNotePopup from '../components/notes/CreateNotePopup'
 import { navigate, navigateBack } from '../utils/f7navigate'
 
 export default function NotebookDetailPage({ f7route }) {
@@ -22,8 +21,6 @@ export default function NotebookDetailPage({ f7route }) {
   const notes = notesData?.data ?? []
   const [actionsOpen, setActionsOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [createPopupOpen, setCreatePopupOpen] = useState(false)
-
   const { mutate: deleteMutate, isPending: isDeleting } = useDeleteNotebook()
 
   const currentUserId = getSession()?.user?.googleId
@@ -155,16 +152,10 @@ export default function NotebookDetailPage({ f7route }) {
       <Fab
         position="right-bottom"
         text="Nueva Nota"
-        onClick={() => setCreatePopupOpen(true)}
+        onClick={() => navigate(`/notebooks/${id}/notes/create`)}
       >
         <Icon ios="f7:plus" md="material:add" />
       </Fab>
-
-      <CreateNotePopup
-        notebookId={id}
-        opened={createPopupOpen}
-        onClose={() => setCreatePopupOpen(false)}
-      />
 
       <Actions opened={actionsOpen} onActionsClosed={() => setActionsOpen(false)}>
         <ActionsGroup>

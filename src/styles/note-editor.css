@@ -1,0 +1,72 @@
+/* Full-height flex layout: no position:fixed (breaks during F7 page transitions) */
+.note-editor-layout {
+  position: absolute;
+  top: calc(var(--f7-navbar-height, 44px) + var(--f7-safe-area-top, 0px));
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.note-editor-root {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Make MDXEditor itself a flex column so content grows and toolbar stays at bottom */
+.note-editor-root .mdxeditor {
+  flex: 1;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden;
+  font-family: var(--f7-font-family);
+  font-size: var(--f7-font-size);
+  border: none !important;
+  min-height: 0;
+}
+
+.note-editor-root .mdxeditor-root-contenteditable {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 8px 16px 16px;
+}
+
+.note-editor-root .mdxeditor-root-contenteditable img {
+  max-width: 100%;
+  height: auto;
+  cursor: pointer;
+}
+
+/* MDXEditor appends its popup container to <body> at z-index:2, which sits behind
+   Framework7's .view layer (z-index:500). Push it above all F7 UI. */
+.mdxeditor-popup-container {
+  z-index: 10000 !important;
+}
+
+/* Placeholder shown while imagePreviewHandler fetches an image */
+.note-editor-image-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 80px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  vertical-align: middle;
+}
+
+
+/* Toolbar at bottom via toolbarPosition:'bottom' — no fixed positioning needed */
+.note-editor-root .mdxeditor-toolbar {
+  flex-shrink: 0;
+  border-top: 1px solid var(--f7-list-item-border-color);
+  border-bottom: none !important;
+  background: var(--f7-page-bg-color);
+  padding-bottom: var(--f7-safe-area-bottom, 0px);
+}
