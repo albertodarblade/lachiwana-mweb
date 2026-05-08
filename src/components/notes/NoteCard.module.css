@@ -65,6 +65,13 @@
   font-size: 12px;
 }
 
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
 .footer {
   display: flex;
   align-items: center;

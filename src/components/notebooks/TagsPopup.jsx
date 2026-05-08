@@ -138,6 +138,7 @@ export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTa
           <Block className={styles.formBlock}>
             <List>
               <ListInput
+                autofocus
                 label="Título de la etiqueta"
                 type="text"
                 placeholder="Ej: Urgente"

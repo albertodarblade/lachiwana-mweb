@@ -2,6 +2,7 @@ import React from 'react'
 import Markdown from 'react-markdown'
 import { navigate } from '../../utils/f7navigate'
 import queryClient from '../../queryClient'
+import TagChip from '../notebooks/TagChip'
 import styles from './NoteCard.module.css'
 
 function formatDate(dateStr) {
@@ -25,7 +26,13 @@ function parseContent(markdown) {
 }
 
 export default function NoteCard({ note, notebookId }) {
-  const notebookColor = queryClient.getQueryData(['notebook', notebookId])?.data?.color
+  const notebookCache = queryClient.getQueryData(['notebook', notebookId])?.data
+  const notebookColor = notebookCache?.color
+  const notebookTags = notebookCache?.tags ?? []
+  const resolvedTags = (note.tags ?? [])
+    .map((id) => notebookTags.find((t) => t.id === id))
+    .filter(Boolean)
+
   const { title, body } = parseContent(note.title)
   const hasAttachments = (note.attachments?.length ?? 0) > 0
   const date = note.updatedAt || note.createdAt
@@ -39,6 +46,13 @@ export default function NoteCard({ note, notebookId }) {
       {body && (
         <div className={styles.body}>
           <Markdown>{body}</Markdown>
+        </div>
+      )}
+      {resolvedTags.length > 0 && (
+        <div className={styles.tags}>
+          {resolvedTags.map((tag) => (
+            <TagChip key={tag.id} tag={tag} color={notebookColor} />
+          ))}
         </div>
       )}
       <div className={styles.footer}>
