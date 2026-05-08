@@ -97,6 +97,23 @@ export default function App() {
     setOnUpdateReady(setWaitingWorker)
   }, [])
 
+  // Keep --keyboard-offset in sync with the visual viewport so the note-editor
+  // layout shrinks to exactly the area above the soft keyboard on all platforms.
+  useEffect(() => {
+    const vv = window.visualViewport
+    if (!vv) return
+    const update = () => {
+      const offset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop)
+      document.documentElement.style.setProperty('--keyboard-offset', `${offset}px`)
+    }
+    vv.addEventListener('resize', update)
+    vv.addEventListener('scroll', update)
+    return () => {
+      vv.removeEventListener('resize', update)
+      vv.removeEventListener('scroll', update)
+    }
+  }, [])
+
   return (
     <>
       <OfflineBanner />

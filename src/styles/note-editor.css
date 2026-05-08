@@ -1,8 +1,10 @@
-/* Full-height flex layout: no position:fixed (breaks during F7 page transitions) */
+/* Full-height flex layout: no position:fixed (breaks during F7 page transitions).
+   --keyboard-offset is updated by App.jsx via visualViewport so the layout always
+   ends just above the soft keyboard instead of being hidden behind it. */
 .note-editor-layout {
   position: absolute;
   top: calc(var(--f7-navbar-height, 44px) + var(--f7-safe-area-top, 0px));
-  bottom: 0;
+  bottom: var(--keyboard-offset, 0px);
   left: 0;
   right: 0;
   display: flex;
@@ -68,5 +70,36 @@
   border-top: 1px solid var(--f7-list-item-border-color);
   border-bottom: none !important;
   background: var(--f7-page-bg-color);
-  padding-bottom: var(--f7-safe-area-bottom, 0px);
+  padding: 4px 8px;
+  padding-bottom: calc(4px + var(--f7-safe-area-bottom, 0px));
+  gap: 2px !important;
+  overflow-x: auto;
+}
+
+/* Mobile tap targets: every toolbar item is at least 44 × 44 px */
+.note-editor-root .mdxeditor-toolbar [data-toolbar-item] {
+  min-width: 44px !important;
+  min-height: 44px !important;
+  padding: 0 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 8px !important;
+}
+
+/* Larger icons inside MDXEditor toolbar SVG buttons */
+.note-editor-root .mdxeditor-toolbar svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+/* Custom InsertImageButton sizing to match */
+.note-editor-root .mdxeditor-toolbar .mdxeditor-toolbar-button {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  padding: 0 10px;
 }

@@ -85,7 +85,7 @@ function InsertImageButton() {
         onClick={() => fileInputRef.current?.click()}
         style={{ cursor: isUploading ? 'default' : 'pointer', background: 'none', border: 'none', padding: '4px 6px', opacity: isUploading ? 0.6 : 1 }}
       >
-        <i className="f7-icons" style={{ fontSize: 20 }}>photo</i>
+        <i className="f7-icons" style={{ fontSize: 24 }}>photo</i>
       </button>
     </>
   )

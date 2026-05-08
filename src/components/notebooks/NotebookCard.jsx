@@ -10,7 +10,7 @@ export default function NotebookCard({ notebook }) {
         margin: '8px 16px',
         background: 'var(--f7-card-bg-color)',
         borderRadius: 'var(--f7-card-border-radius, 8px)',
-        boxShadow: 'var(--f7-card-box-shadow)',
+        boxShadow: 'none',
         overflow: 'hidden',
         textDecoration: 'none',
         color: 'inherit',
