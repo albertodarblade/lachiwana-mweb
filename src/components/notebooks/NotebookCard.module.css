@@ -1,42 +1,34 @@
 .card {
   display: block;
-  margin: 8px 16px;
-  background: var(--f7-card-bg-color);
-  border-radius: var(--f7-card-border-radius, 8px);
-  box-shadow: none;
-  overflow: hidden;
   text-decoration: none;
   color: inherit;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .inner {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
+  gap: 16px;
+  padding: 10px 16px;
 }
 
-.colorBar {
-  width: 6px;
-  align-self: stretch;
-  border-radius: 3px;
+.iconContainer {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--card-color, #FFCC00) 14%, #fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
-.iconCol {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  min-width: 40px;
-}
-
 .iconGlyph {
-  font-size: 28px;
+  font-size: 24px;
 }
 
 .title {
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   flex: 1;
 }

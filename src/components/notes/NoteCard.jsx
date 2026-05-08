@@ -33,12 +33,11 @@ export default function NoteCard({ note, notebookId }) {
   return (
     <div
       className={styles.card}
-      style={{ '--card-color': notebookColor ?? '#FFCC00' }}
       onClick={() => navigate(`/notebooks/${notebookId}/notes/${note.id}`)}
     >
       {title && <p className={styles.title}>{title}</p>}
       {body && (
-        <div className={styles.body}>
+        <div className={['note-card-body', styles.body].join(' ')}>
           <Markdown>{body}</Markdown>
         </div>
       )}

@@ -12,7 +12,7 @@ const COLORS = [
   { label: 'Red', hex: '#FF3B30' },
   { label: 'Orange', hex: '#FF9500' },
   { label: 'Yellow', hex: '#FFCC00' },
-  { label: 'Green', hex: '#34C759' },
+  { label: 'Green', hex: '#16A34A' },
   { label: 'Teal', hex: '#5AC8FA' },
   { label: 'Blue', hex: '#007AFF' },
   { label: 'Purple', hex: '#AF52DE' },
