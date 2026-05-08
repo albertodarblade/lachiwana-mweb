@@ -1,61 +1,52 @@
 import React, { useState, useEffect, useRef } from 'react'
 import {
   Page, Navbar, NavLeft, NavTitle, NavRight,
-  List, ListInput, Block, Button, Actions, ActionsGroup, ActionsButton,
-  Sheet, PageContent, Preloader,
+  Block, Button, Actions, ActionsGroup, ActionsButton,
+  Sheet, PageContent, Preloader, f7,
 } from 'framework7-react'
 import { useNote } from '../hooks/useNote'
-import { useNotebook } from '../hooks/useNotebook'
 import { useUpdateNote } from '../hooks/useUpdateNote'
 import { useDeleteNote } from '../hooks/useDeleteNote'
-import AttachmentGallery from '../components/notes/AttachmentGallery'
-import NoteTagPicker from '../components/notes/NoteTagPicker'
-import TagChip from '../components/notebooks/TagChip'
+import { getNote, uploadAttachment, deleteAttachment } from '../api/notes'
+import { prepareFileForUpload } from '../utils/compressImage'
+import NoteEditor from '../components/notes/NoteEditor'
+import NoteEditorHeader from '../components/notes/NoteEditorHeader'
+import SaveStatusIndicator from '../components/notes/SaveStatusIndicator'
 import { navigate } from '../utils/f7navigate'
+import queryClient from '../queryClient'
 
 const DEBOUNCE_MS = 800
 const COUNTDOWN_START = 5
 
-export default function NoteDetailPage({ f7route }) {
+export default function NoteEditorPage({ f7route }) {
   const notebookId = f7route?.params?.notebookId
   const noteId = f7route?.params?.noteId
 
   const { data: noteData, isLoading } = useNote(notebookId, noteId)
   const note = noteData?.data
 
-  const [title, setTitle] = useState('')
-  const [isSaving, setIsSaving] = useState(false)
+  const [selectedTagIds, setSelectedTagIds] = useState([])
+  const [saveStatus, setSaveStatus] = useState('saved')
   const [actionsOpen, setActionsOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
-  const [tagPickerOpen, setTagPickerOpen] = useState(false)
   const [countdown, setCountdown] = useState(COUNTDOWN_START)
 
   const debounceRef = useRef(null)
-  const intervalRef = useRef(null)
+  const contentRef = useRef('')
   const initializedRef = useRef(false)
-
-  const { data: notebookData } = useNotebook(notebookId)
-  const notebookTags = notebookData?.tags ?? []
-  const resolvedTags = (note?.tags ?? [])
-    .map((id) => notebookTags.find((t) => t.id === id))
-    .filter(Boolean)
+  const editorMountedRef = useRef(false)
+  const intervalRef = useRef(null)
 
   const { mutate: updateNote } = useUpdateNote(notebookId, noteId)
   const { mutate: deleteNote, isPending: isDeleting } = useDeleteNote(notebookId, noteId)
 
-  function handleTagsConfirm(newTagIds) {
-    updateNote({ tags: newTagIds })
-  }
-
-  // Initialise title from note data (includes initialData from list cache per FR-018)
   useEffect(() => {
-    if (note?.title !== undefined && !initializedRef.current) {
-      setTitle(note.title)
+    if (note?.tags !== undefined && !initializedRef.current) {
+      setSelectedTagIds(note.tags ?? [])
       initializedRef.current = true
     }
-  }, [note?.title])
+  }, [note?.tags])
 
-  // Countdown for delete dialog
   useEffect(() => {
     if (deleteOpen) {
       setCountdown(COUNTDOWN_START)
@@ -72,16 +63,55 @@ export default function NoteDetailPage({ f7route }) {
     return () => clearInterval(intervalRef.current)
   }, [deleteOpen])
 
-  function handleTitleChange(e) {
-    const value = e.target.value
-    setTitle(value)
+  function handleContentChange(markdown) {
+    contentRef.current = markdown
+
+    // MDXEditor fires onChange once on mount with the initial content — ignore it.
+    if (!editorMountedRef.current) {
+      editorMountedRef.current = true
+      return
+    }
+
+    setSaveStatus('editing')
     clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {
-      setIsSaving(true)
-      updateNote({ title: value }, {
-        onSettled: () => setIsSaving(false),
-      })
+      debounceRef.current = null
+      setSaveStatus('saving')
+      updateNote(
+        { title: markdown },
+        { onSuccess: () => setSaveStatus('saved'), onError: () => setSaveStatus('error') }
+      )
     }, DEBOUNCE_MS)
+  }
+
+  function handleTagsConfirm(newTagIds) {
+    setSelectedTagIds(newTagIds)
+    updateNote({ tags: newTagIds })
+  }
+
+  async function handleImageUpload(file) {
+    const prepared = await prepareFileForUpload(file)
+    const formData = new FormData()
+    formData.append('file', prepared, file.name)
+    const result = await uploadAttachment(notebookId, noteId, formData)
+    await queryClient.invalidateQueries({ queryKey: ['note', notebookId, noteId] })
+    return result?.data?.fileSrcId ?? ''
+  }
+
+  async function handleDeleteImage(fileSrcId) {
+    const fresh = await getNote(notebookId, noteId)
+    const attachment = fresh?.data?.attachments?.find(a => a.fileSrcId === fileSrcId)
+    if (!attachment) return
+    await deleteAttachment(notebookId, noteId, attachment.id)
+    await queryClient.invalidateQueries({ queryKey: ['note', notebookId, noteId] })
+  }
+
+  function flushPendingSave() {
+    if (!debounceRef.current) return
+    clearTimeout(debounceRef.current)
+    debounceRef.current = null
+    const content = contentRef.current
+    if (content) updateNote({ title: content })
   }
 
   function handleDeleteConfirm() {
@@ -95,11 +125,11 @@ export default function NoteDetailPage({ f7route }) {
 
   if (isLoading && !note) {
     return (
-      <Page>
+      <Page pageContent={false}>
         <Navbar title="Nota" backLink="Atrás" />
-        <Block style={{ display: 'flex', justifyContent: 'center', paddingTop: '60px' }}>
+        <div className="note-editor-layout" style={{ justifyContent: 'center', alignItems: 'center' }}>
           <Preloader size={44} />
-        </Block>
+        </div>
       </Page>
     )
   }
@@ -109,10 +139,10 @@ export default function NoteDetailPage({ f7route }) {
     : isDeleting ? 'Eliminando...' : 'Eliminar'
 
   return (
-    <Page>
+    <Page pageContent={false} onPageBeforeOut={flushPendingSave}>
       <Navbar>
         <NavLeft backLink="Atrás" />
-        <NavTitle>Nota</NavTitle>
+        <NavTitle><SaveStatusIndicator status={saveStatus} /></NavTitle>
         <NavRight>
           <Button onClick={() => setActionsOpen(true)} style={{ color: 'var(--f7-theme-color)', padding: '0 12px' }}>
             <i className="f7-icons">ellipsis_vertical</i>
@@ -120,49 +150,21 @@ export default function NoteDetailPage({ f7route }) {
         </NavRight>
       </Navbar>
 
-      <List>
-        <ListInput
-          label="Título"
-          type="text"
-          value={title}
-          onInput={handleTitleChange}
-          placeholder="Título de la nota"
+      <div className="note-editor-layout">
+        <NoteEditorHeader
+          notebookId={notebookId}
+          selectedTagIds={selectedTagIds}
+          onTagsConfirm={handleTagsConfirm}
+          createdAt={note?.createdAt}
         />
-      </List>
-
-      {isSaving && (
-        <Block style={{ paddingTop: 0, paddingBottom: 0 }}>
-          <p style={{ margin: 0, fontSize: '12px', opacity: 0.5 }}>Guardando…</p>
-        </Block>
-      )}
-
-      <Block style={{ marginBottom: 0 }}>
-        {resolvedTags.length > 0 && (
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
-            {resolvedTags.map((tag) => <TagChip key={tag.id} tag={tag} />)}
-          </div>
-        )}
-        {notebookTags.length > 0 && (
-          <Button small outline onClick={() => setTagPickerOpen(true)}>
-            <i className="f7-icons" style={{ marginRight: 4, fontSize: 14 }}>tag</i>
-            {resolvedTags.length > 0 ? 'Gestionar etiquetas' : 'Agregar etiquetas'}
-          </Button>
-        )}
-      </Block>
-
-      <NoteTagPicker
-        notebookTags={notebookTags}
-        selectedTagIds={note?.tags ?? []}
-        onConfirm={handleTagsConfirm}
-        opened={tagPickerOpen}
-        onClose={() => setTagPickerOpen(false)}
-      />
-
-      <AttachmentGallery
-        notebookId={notebookId}
-        noteId={noteId}
-        attachments={note?.attachments ?? []}
-      />
+        <NoteEditor
+          key={noteId}
+          initialContent={note?.title ?? ''}
+          onContentChange={handleContentChange}
+          imageUploadHandler={handleImageUpload}
+          onDeleteImage={handleDeleteImage}
+        />
+      </div>
 
       <Actions opened={actionsOpen} onActionsClosed={() => setActionsOpen(false)}>
         <ActionsGroup>
@@ -191,8 +193,7 @@ export default function NoteDetailPage({ f7route }) {
               Eliminar Nota
             </h3>
             <p style={{ margin: 0, opacity: 0.7, fontSize: '14px', lineHeight: 1.5 }}>
-              ¿Eliminar <strong>«{note?.title ?? ''}»</strong>?
-              Esta acción eliminará la nota y todos sus archivos.
+              ¿Eliminar esta nota? Esta acción eliminará la nota y todos sus archivos.
             </p>
           </Block>
 

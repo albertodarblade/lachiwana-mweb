@@ -7,7 +7,8 @@ import NotebooksPage from './pages/NotebooksPage'
 import CreateNotebookPage from './pages/CreateNotebookPage'
 import NotebookDetailPage from './pages/NotebookDetailPage'
 import EditNotebookPage from './pages/EditNotebookPage'
-import NoteDetailPage from './pages/NoteDetailPage'
+import NoteEditorPage from './pages/NoteEditorPage'
+import CreateNoteEditorPage from './pages/CreateNoteEditorPage'
 import LoginPage from './pages/LoginPage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
 import SettingsPage from './pages/SettingsPage'
@@ -47,10 +48,18 @@ function ProtectedEdit(props) {
   )
 }
 
-function ProtectedNoteDetail(props) {
+function ProtectedNoteEditor(props) {
   return (
     <ProtectedRoute>
-      <NoteDetailPage {...props} />
+      <NoteEditorPage {...props} />
+    </ProtectedRoute>
+  )
+}
+
+function ProtectedCreateNoteEditor(props) {
+  return (
+    <ProtectedRoute>
+      <CreateNoteEditorPage {...props} />
     </ProtectedRoute>
   )
 }
@@ -70,7 +79,8 @@ const routes = [
   { path: '/', component: ProtectedHome },
   { path: '/notebooks/create', component: ProtectedCreate },
   { path: '/notebooks/:id/edit', component: ProtectedEdit },
-  { path: '/notebooks/:notebookId/notes/:noteId', component: ProtectedNoteDetail },
+  { path: '/notebooks/:notebookId/notes/create', component: ProtectedCreateNoteEditor },
+  { path: '/notebooks/:notebookId/notes/:noteId', component: ProtectedNoteEditor },
   { path: '/notebooks/:id', component: ProtectedDetail },
 ]
 

@@ -23,7 +23,19 @@
       "Read(//d/projects/lachiwana/Lachiwana-service/routes/**)",
       "Read(//d/projects/lachiwana/Lachiwana-service/**)",
       "Bash(grep -E \"\\\\.ts$|^d\")",
-      "PowerShell(.specify/extensions/git/scripts/powershell/create-new-feature.ps1 -Json -ShortName \"note-tags\" \"add tags to notes on creation or edition mode\")"
+      "PowerShell(.specify/extensions/git/scripts/powershell/create-new-feature.ps1 -Json -ShortName \"note-tags\" \"add tags to notes on creation or edition mode\")",
+      "Bash(.specify/extensions/git/scripts/bash/create-new-feature.sh *)",
+      "Bash(.specify/scripts/powershell/check-prerequisites.ps1 -Json -PathsOnly)",
+      "Bash(powershell.exe -File .specify/scripts/powershell/check-prerequisites.ps1 -Json -PathsOnly)",
+      "Bash(powershell.exe *)",
+      "WebFetch(domain:mdxeditor.dev)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "Bash(node -e \"const pkg = require\\('./node_modules/@mdxeditor/editor/package.json'\\); console.log\\('peerDeps:', JSON.stringify\\(pkg.peerDependencies, null, 2\\)\\)\")",
+      "Bash(node -e \"const e = require\\('./node_modules/@mdxeditor/editor/dist/index.cjs.js'\\); const exports = Object.keys\\(e\\); ['MDXEditor','toolbarPlugin','listsPlugin','imagePlugin','BoldItalicUnderlineToggles','CodeToggle','ListsToggle','InsertImage','UndoRedo'].forEach\\(k => console.log\\(k, k in e ? '✓' : '✗ MISSING'\\)\\)\")",
+      "Bash(xargs cat *)",
+      "Bash(find D:/projects/lachiwana/lachiwana-mweb/node_modules/framework7* -name \"*.css\")",
+      "Bash(xargs ls *)"
     ]
   }
 }
