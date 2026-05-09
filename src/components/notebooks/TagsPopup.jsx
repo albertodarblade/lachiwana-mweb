@@ -99,7 +99,13 @@ export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTa
   const isMutating = isAdding || isUpdating
 
   return (
-    <Sheet opened={opened} onSheetClosed={onClose} swipeToClose backdrop style={{ height: 'auto' }}>
+    <Sheet
+      opened={opened}
+      onSheetClosed={() => { closeForm(); onClose() }}
+      swipeToClose
+      backdrop
+      style={{ height: 'auto' }}
+    >
       <PageContent className={styles.pageContent}>
         <div className={styles.dragHandle} />
 

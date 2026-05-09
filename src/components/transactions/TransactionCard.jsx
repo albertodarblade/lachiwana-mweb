@@ -11,24 +11,24 @@ function relativeDate(isoDate) {
   return d.toLocaleDateString('es', { day: 'numeric', month: 'short' })
 }
 
-function formatAmount(amount) {
-  const abs = Math.abs(amount)
-  const sign = amount < 0 ? '-' : amount > 0 ? '+' : ''
+function formatAmount(value) {
+  const abs = Math.abs(value)
+  const sign = value < 0 ? '-' : value > 0 ? '+' : ''
   return `${sign}Bs. ${abs}`
 }
 
 export default function TransactionCard({ transaction }) {
-  const { description, amount, date, tags = [], attachments = [] } = transaction
+  const { content, value, date, tags = [], attachments = [] } = transaction
 
   const amountClass =
-    amount < 0 ? styles.negative : amount > 0 ? styles.positive : styles.neutral
+    value < 0 ? styles.negative : value > 0 ? styles.positive : styles.neutral
 
   return (
     <div className={styles.card}>
       <div className={styles.row}>
-        <span className={styles.description}>{description}</span>
+        <span className={styles.description}>{content}</span>
         <span className={[styles.amount, amountClass].join(' ')}>
-          {formatAmount(amount)}
+          {formatAmount(value)}
         </span>
       </div>
       <div className={styles.meta}>

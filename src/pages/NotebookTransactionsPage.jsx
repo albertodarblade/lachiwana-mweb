@@ -1,13 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import {
   Page, Navbar, NavLeft, NavTitle, NavRight,
-  Block, Preloader, Fab, Icon, Link, f7,
+  Block, Preloader, Fab, FabButtons, FabButton, FabBackdrop, Icon, Link, Badge,
 } from 'framework7-react'
 import { useNotebook } from '../hooks/useNotebook'
 import { useTransactions } from '../hooks/useTransactions'
 import MonthSelector from '../components/transactions/MonthSelector'
 import TransactionCard from '../components/transactions/TransactionCard'
 import TransactionEmptyState from '../components/transactions/TransactionEmptyState'
+import TagSelectionSheet from '../components/transactions/TagSelectionSheet'
+import TransactionFormSheet from '../components/transactions/TransactionFormSheet'
+import TransactionFilterPanel from '../components/transactions/TransactionFilterPanel'
+import TagsPopup from '../components/notebooks/TagsPopup'
 import { navigate, navigateBack } from '../utils/f7navigate'
 import styles from './NotebookTransactionsPage.module.css'
 
@@ -17,7 +21,7 @@ function currentYearMonth() {
 }
 
 function sumAmounts(transactions) {
-  return transactions.reduce((acc, t) => acc + (t.amount ?? 0), 0)
+  return transactions.reduce((acc, t) => acc + (t.value ?? 0), 0)
 }
 
 export default function NotebookTransactionsPage({ f7route }) {
@@ -25,14 +29,37 @@ export default function NotebookTransactionsPage({ f7route }) {
   const { data: notebook, isLoading, isError } = useNotebook(id)
   const [cursor, setCursor] = useState(currentYearMonth)
 
+  // Flow state
+  const [transactionType, setTransactionType] = useState(null)
+  const [selectedTagIds, setSelectedTagIds] = useState(new Set())
+  const [isTagSheetOpen, setIsTagSheetOpen] = useState(false)
+  const [isFormSheetOpen, setIsFormSheetOpen] = useState(false)
+  const [isTagsPopupOpen, setIsTagsPopupOpen] = useState(false)
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false)
+  const [filters, setFilters] = useState({ content: '', tagIds: new Set() })
+  const formClosingForBack = useRef(false)
+
   const viewType = notebook?.transactionsViewType ?? 'all'
   const byMonth = viewType === 'by-month'
 
-  const filteredTransactions = useTransactions(id, byMonth ? cursor : {})
-  const allTransactions = useTransactions(id)
+  const activeFilterCount = (filters.content ? 1 : 0) + filters.tagIds.size
+  const filterParams = {
+    ...(byMonth ? cursor : {}),
+    ...(filters.content ? { content: filters.content } : {}),
+    ...(filters.tagIds.size ? { tags: [...filters.tagIds] } : {}),
+  }
 
-  const monthTotal = sumAmounts(filteredTransactions)
-  const allTotal = sumAmounts(allTransactions)
+  const { data: transactions = [] } = useTransactions(id, filterParams)
+
+  const notebookTags = notebook?.tags ?? []
+
+  function resolveTagIds(tagIds = []) {
+    return tagIds
+      .map((tagId) => notebookTags.find((t) => (t.id ?? t._id) === tagId))
+      .filter(Boolean)
+  }
+
+  const total = sumAmounts(transactions)
 
   function prevMonth() {
     setCursor(({ year, month }) => {
@@ -46,6 +73,58 @@ export default function NotebookTransactionsPage({ f7route }) {
       if (month === 12) return { year: year + 1, month: 1 }
       return { year, month: month + 1 }
     })
+  }
+
+  function handleTypeSelect(type) {
+    setTransactionType(type)
+    if (notebook?.tags?.length > 0) {
+      setIsTagSheetOpen(true)
+    } else {
+      setIsFormSheetOpen(true)
+    }
+  }
+
+  function handleTagsConfirm(ids) {
+    setSelectedTagIds(ids)
+    setIsTagSheetOpen(false)
+    setIsFormSheetOpen(true)
+  }
+
+  function handleFormBack() {
+    if (!notebook?.tags?.length) {
+      handleFlowClose()
+      return
+    }
+    formClosingForBack.current = true
+    setIsFormSheetOpen(false)
+    setTimeout(() => setIsTagSheetOpen(true), 300)
+  }
+
+  function handleFormSheetClosed() {
+    if (formClosingForBack.current) {
+      formClosingForBack.current = false
+      return
+    }
+    handleFlowClose()
+  }
+
+  function handleFlowClose() {
+    setTransactionType(null)
+    setSelectedTagIds(new Set())
+    setIsTagSheetOpen(false)
+    setIsFormSheetOpen(false)
+  }
+
+  function handleEditTags() {
+    setIsTagSheetOpen(false)
+    setTimeout(() => setIsTagsPopupOpen(true), 300)
+  }
+
+  function handleTagsPopupClose() {
+    setIsTagsPopupOpen(false)
+    if (transactionType !== null) {
+      setTimeout(() => setIsTagSheetOpen(true), 300)
+    }
   }
 
   if (isLoading) {
@@ -74,6 +153,9 @@ export default function NotebookTransactionsPage({ f7route }) {
   }
 
   const navbarColor = notebook.color ?? 'var(--f7-theme-color)'
+  const selectedTags = (notebook.tags ?? []).filter(
+    (t) => selectedTagIds.has(t.id ?? t._id)
+  )
 
   return (
     <Page>
@@ -96,8 +178,11 @@ export default function NotebookTransactionsPage({ f7route }) {
           </div>
         </NavTitle>
         <NavRight>
-          <Link onClick={() => navigate(`/notebooks/${id}/edit`)}>
+          <Link onClick={() => setIsFilterPanelOpen(true)} className={styles.filterBtn}>
             <i className="f7-icons">slider_horizontal_3</i>
+            {activeFilterCount > 0 && (
+              <Badge color="red" className={styles.filterBadge}>{activeFilterCount}</Badge>
+            )}
           </Link>
         </NavRight>
       </Navbar>
@@ -107,17 +192,17 @@ export default function NotebookTransactionsPage({ f7route }) {
           <MonthSelector
             year={cursor.year}
             month={cursor.month}
-            total={monthTotal}
+            total={total}
             onPrev={prevMonth}
             onNext={nextMonth}
           />
           <div className={styles.sectionTitle}>Movimientos</div>
-          {filteredTransactions.length === 0 ? (
+          {transactions.length === 0 ? (
             <TransactionEmptyState />
           ) : (
             <div className={styles.list}>
-              {filteredTransactions.map((t) => (
-                <TransactionCard key={t._id} transaction={t} />
+              {transactions.map((t) => (
+                <TransactionCard key={t.id} transaction={{ ...t, tags: resolveTagIds(t.tags) }} />
               ))}
             </div>
           )}
@@ -129,37 +214,84 @@ export default function NotebookTransactionsPage({ f7route }) {
             <span
               className={[
                 styles.allSummaryTotal,
-                allTotal < 0 ? styles.negative : allTotal > 0 ? styles.positive : styles.neutral,
+                total < 0 ? styles.negative : total > 0 ? styles.positive : styles.neutral,
               ].join(' ')}
             >
-              {allTotal < 0 ? '-' : allTotal > 0 ? '+' : ''}Bs. {Math.abs(allTotal)}
+              {total < 0 ? '-' : total > 0 ? '+' : ''}Bs. {Math.abs(total)}
             </span>
           </Block>
-          {allTransactions.length === 0 ? (
+          {transactions.length === 0 ? (
             <TransactionEmptyState />
           ) : (
             <div className={styles.list}>
-              {allTransactions.map((t) => (
-                <TransactionCard key={t._id} transaction={t} />
+              {transactions.map((t) => (
+                <TransactionCard key={t.id} transaction={{ ...t, tags: resolveTagIds(t.tags) }} />
               ))}
             </div>
           )}
         </>
       )}
 
-      <Fab
-        position="right-bottom"
-        onClick={() =>
-          f7.toast.create({ text: 'Próximamente', closeTimeout: 2000 }).open()
-        }
-        style={{
-          '--f7-fab-bg-color': navbarColor,
-          '--f7-fab-pressed-bg-color': navbarColor,
-          '--f7-touch-ripple-color': 'rgba(255,255,255,0.25)',
-        }}
-      >
+      <FabBackdrop onClick={handleFlowClose} />
+
+      <Fab position="right-bottom" style={{ '--f7-fab-bg-color': navbarColor, '--f7-fab-pressed-bg-color': navbarColor }}>
         <Icon ios="f7:plus" md="material:add" />
+        <Icon ios="f7:xmark" md="material:close" />
+        <FabButtons position="top">
+          <FabButton
+            fabClose
+            label="Gasto"
+            className={styles.expenseBtn}
+            onClick={() => handleTypeSelect('expense')}
+          >
+            <Icon ios="f7:minus" md="material:remove" />
+          </FabButton>
+          <FabButton
+            fabClose
+            label="Ingreso"
+            className={styles.incomeBtn}
+            onClick={() => handleTypeSelect('income')}
+          >
+            <Icon ios="f7:plus" md="material:add" />
+          </FabButton>
+        </FabButtons>
       </Fab>
+
+      <TagSelectionSheet
+        opened={isTagSheetOpen}
+        tags={notebook.tags ?? []}
+        selectedTagIds={selectedTagIds}
+        onConfirm={handleTagsConfirm}
+        onClose={() => setIsTagSheetOpen(false)}
+        onEditTags={handleEditTags}
+      />
+
+      <TagsPopup
+        mode="edit"
+        notebookId={id}
+        tags={notebook.tags ?? []}
+        onTagsChange={() => {}}
+        opened={isTagsPopupOpen}
+        onClose={handleTagsPopupClose}
+      />
+
+      <TransactionFormSheet
+        opened={isFormSheetOpen}
+        transactionType={transactionType}
+        selectedTags={selectedTags}
+        notebookId={id}
+        onBack={handleFormBack}
+        onClose={handleFormSheetClosed}
+        onSuccess={handleFlowClose}
+      />
+
+      <TransactionFilterPanel
+        opened={isFilterPanelOpen}
+        onClose={() => setIsFilterPanelOpen(false)}
+        tags={notebookTags}
+        filters={filters}
+        onApply={(newFilters) => setFilters(newFilters)}
+      />
     </Page>
   )
 }

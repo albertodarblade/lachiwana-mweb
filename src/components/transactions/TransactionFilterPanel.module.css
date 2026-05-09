@@ -1,0 +1,53 @@
+.panel {
+  --f7-panel-width: 90vw;
+}
+
+.tagsBlock {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 0;
+}
+
+.tagChip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1.5px solid var(--f7-list-item-border-color, rgba(0,0,0,0.12));
+  background: transparent;
+  color: var(--f7-list-item-title-text-color);
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  text-align: left;
+  width: 100%;
+}
+
+.tagChip .f7-icons {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.tagChipActive {
+  background: var(--f7-theme-color);
+  border-color: var(--f7-theme-color);
+  color: #fff;
+}
+
+.footer {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.clearBtn {
+  flex: 1;
+}
+
+.applyBtn {
+  flex: 1;
+}
