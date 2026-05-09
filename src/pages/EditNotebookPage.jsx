@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import {
   Page, Navbar, NavLeft, NavTitle, NavRight,
-  List, ListInput, Block, BlockTitle, Button, Link, f7,
+  List, ListItem, ListInput, Block, BlockTitle, Button, Link, f7,
 } from 'framework7-react'
 import { useNotebook } from '../hooks/useNotebook'
 import { useUpdateNotebook } from '../hooks/useUpdateNotebook'
@@ -12,7 +12,8 @@ import IconSelector from '../components/notebooks/IconSelector'
 import MemberPicker from '../components/notebooks/MemberPicker'
 import TagsPopup from '../components/notebooks/TagsPopup'
 import DeleteConfirmDialog from '../components/notebooks/DeleteConfirmDialog'
-import { navigateBack } from '../utils/f7navigate'
+import TypeSelector from '../components/notebooks/TypeSelector'
+import { navigate, navigateBack } from '../utils/f7navigate'
 import styles from './EditNotebookPage.module.css'
 
 const COLORS = [
@@ -42,6 +43,8 @@ export default function EditNotebookPage({ f7route }) {
   const [titleError, setTitleError] = useState(false)
   const [tagsPopupOpen, setTagsPopupOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [type, setType] = useState('notes')
+  const [transactionsViewType, setTransactionsViewType] = useState('all')
 
   const currentUserId = getSession()?.user?.googleId
   const isOwner = notebook?.owner === currentUserId
@@ -53,6 +56,8 @@ export default function EditNotebookPage({ f7route }) {
       setColor(notebook.color ?? null)
       setIconName(notebook.iconName ?? null)
       setSelectedIds(new Set(notebook.users ?? []))
+      setType(notebook.type ?? 'notes')
+      setTransactionsViewType(notebook.transactionsViewType ?? 'all')
     }
   }, [notebook])
 
@@ -70,9 +75,17 @@ export default function EditNotebookPage({ f7route }) {
         color: color ?? undefined,
         iconName: iconName ?? undefined,
         users: [...selectedIds],
+        type,
+        ...(type === 'transactions' && { transactionsViewType }),
       },
       {
-        onSuccess: () => navigateBack(),
+        onSuccess: () => {
+          const destination =
+            type === 'transactions'
+              ? `/notebooks/${notebook.id}/transactions`
+              : `/notebooks/${notebook.id}/notes`
+          navigate(destination)
+        },
         onError: (err) => {
           f7.toast.create({
             text: err?.message ?? 'Error al guardar. Intenta de nuevo.',
@@ -164,6 +177,35 @@ export default function EditNotebookPage({ f7route }) {
           <IconSelector value={iconName} onChange={setIconName} />
         </li>
       </List>
+
+      <BlockTitle>Tipo</BlockTitle>
+      <TypeSelector value={type} onChange={setType} />
+
+      {type === 'transactions' && (
+        <>
+          <BlockTitle>Vista de transacciones</BlockTitle>
+          <List>
+            <ListItem
+              radio
+              radioIcon="end"
+              name="transactions-view-type"
+              value="all"
+              title="Todas las entradas"
+              checked={transactionsViewType === 'all'}
+              onChange={() => setTransactionsViewType('all')}
+            />
+            <ListItem
+              radio
+              radioIcon="end"
+              name="transactions-view-type"
+              value="by-month"
+              title="Por mes"
+              checked={transactionsViewType === 'by-month'}
+              onChange={() => setTransactionsViewType('by-month')}
+            />
+          </List>
+        </>
+      )}
 
       <BlockTitle>Miembros</BlockTitle>
       <List>

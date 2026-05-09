@@ -1,0 +1,12 @@
+.list {
+  margin: 0;
+}
+
+.optionIcon {
+  font-size: 20px;
+  color: var(--f7-theme-color);
+}
+
+.selected {
+  --f7-list-item-title-font-weight: 600;
+}

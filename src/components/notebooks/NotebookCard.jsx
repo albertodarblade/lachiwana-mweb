@@ -4,9 +4,13 @@ import styles from './NotebookCard.module.css'
 
 export default function NotebookCard({ notebook }) {
   const color = notebook.color ?? '#FFCC00'
+  const destination =
+    notebook.type === 'transactions'
+      ? `/notebooks/${notebook.id}/transactions`
+      : `/notebooks/${notebook.id}/notes`
   return (
     <Link
-      href={`/notebooks/${notebook.id}`}
+      href={destination}
       className={styles.card}
     >
       <div className={styles.inner}>

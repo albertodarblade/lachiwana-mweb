@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Page, Navbar, NavLeft, NavTitle,
   Block, Preloader, Fab, Icon,
@@ -13,14 +13,28 @@ import styles from './NotebookDetailPage.module.css'
 
 export default function NotebookDetailPage({ f7route }) {
   const id = f7route?.params?.id
+  const routePath = f7route?.path ?? ''
   const { data: notebook, isLoading, isError } = useNotebook(id)
   const { data: notesData, isPending: notesLoading, isError: notesError } = useNotes(id)
   const notes = notesData?.data ?? []
 
+  // Fallback redirect for direct /notebooks/:id access (bookmarks, external links).
+  // Skip when already on a typed sub-route (/notes or /transactions).
+  useEffect(() => {
+    if (!notebook) return
+    const onTypedRoute = routePath.endsWith('/notes') || routePath.endsWith('/transactions')
+    if (onTypedRoute) return
+    if (notebook.type === 'transactions') {
+      navigate(`/notebooks/${id}/transactions`)
+    } else {
+      navigate(`/notebooks/${id}/notes`)
+    }
+  }, [notebook, id, routePath])
+
   if (isLoading) {
     return (
       <Page>
-        <Navbar title="Cuaderno" backLink="Atrás" />
+        <Navbar title="Cuaderno" backLink="Atrás" backLinkUrl="/" />
         <Block className={styles.loadingBlock}>
           <Preloader size={44} />
         </Block>
@@ -31,7 +45,7 @@ export default function NotebookDetailPage({ f7route }) {
   if (isError || !notebook) {
     return (
       <Page>
-        <Navbar title="Cuaderno" backLink="Atrás" />
+        <Navbar title="Cuaderno" backLink="Atrás" backLinkUrl="/" />
         <Block className={styles.errorBlock}>
           <p className={styles.notFoundText}>Cuaderno no encontrado.</p>
           <span className={styles.backLink} onClick={() => navigateBack()}>
@@ -53,7 +67,7 @@ export default function NotebookDetailPage({ f7route }) {
   return (
     <Page onPageAfterIn={handlePageAfterIn}>
       <Navbar>
-        <NavLeft backLink="Atrás" />
+        <NavLeft backLink="Atrás" backLinkUrl="/" />
         <NavTitle>
           <div
             className={styles.navTitleInner}

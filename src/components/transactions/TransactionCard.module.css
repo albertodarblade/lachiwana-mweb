@@ -1,0 +1,61 @@
+.card {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--f7-list-item-border-color, rgba(0,0,0,0.08));
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.description {
+  font-size: 15px;
+  color: var(--f7-list-item-title-text-color);
+  flex: 1;
+}
+
+.amount {
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.negative { color: #e53935; }
+.positive { color: #43a047; }
+.neutral  { color: var(--f7-list-item-subtitle-text-color); }
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  gap: 8px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.attachBadge {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  opacity: 0.5;
+}
+
+.attachBadge .f7-icons {
+  font-size: 13px;
+}
+
+.date {
+  font-size: 12px;
+  color: var(--f7-list-item-subtitle-text-color);
+  white-space: nowrap;
+  opacity: 0.7;
+}
