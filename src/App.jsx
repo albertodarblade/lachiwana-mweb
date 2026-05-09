@@ -6,6 +6,7 @@ import { setOnUpdateReady } from './stores/swUpdateStore'
 import NotebooksPage from './pages/NotebooksPage'
 import CreateNotebookPage from './pages/CreateNotebookPage'
 import NotebookDetailPage from './pages/NotebookDetailPage'
+import NotebookTransactionsPage from './pages/NotebookTransactionsPage'
 import EditNotebookPage from './pages/EditNotebookPage'
 import NoteEditorPage from './pages/NoteEditorPage'
 import CreateNoteEditorPage from './pages/CreateNoteEditorPage'
@@ -36,6 +37,14 @@ function ProtectedDetail(props) {
   return (
     <ProtectedRoute>
       <NotebookDetailPage {...props} />
+    </ProtectedRoute>
+  )
+}
+
+function ProtectedTransactions(props) {
+  return (
+    <ProtectedRoute>
+      <NotebookTransactionsPage {...props} />
     </ProtectedRoute>
   )
 }
@@ -81,6 +90,8 @@ const routes = [
   { path: '/notebooks/:id/edit', component: ProtectedEdit },
   { path: '/notebooks/:notebookId/notes/create', component: ProtectedCreateNoteEditor },
   { path: '/notebooks/:notebookId/notes/:noteId', component: ProtectedNoteEditor },
+  { path: '/notebooks/:id/notes', component: ProtectedDetail },
+  { path: '/notebooks/:id/transactions', component: ProtectedTransactions },
   { path: '/notebooks/:id', component: ProtectedDetail },
 ]
 

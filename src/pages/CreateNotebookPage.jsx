@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Page, Navbar, NavLeft, NavTitle, Block, BlockTitle, List, ListInput, Button, f7 } from 'framework7-react'
+import { Page, Navbar, NavLeft, NavTitle, Block, BlockTitle, List, ListItem, ListInput, Button, f7 } from 'framework7-react'
 import { useCreateNotebook } from '../hooks/useCreateNotebook'
 import { useUsers } from '../hooks/useUsers'
 import { getSession } from '../stores/authStore'
 import MemberPicker from '../components/notebooks/MemberPicker'
 import IconSelector from '../components/notebooks/IconSelector'
 import TagsPopup from '../components/notebooks/TagsPopup'
+import TypeSelector from '../components/notebooks/TypeSelector'
 import styles from './CreateNotebookPage.module.css'
 
 const COLORS = [
@@ -28,6 +29,8 @@ export default function CreateNotebookPage() {
   const [titleError, setTitleError] = useState(false)
   const [tags, setTags] = useState([])
   const [tagsPopupOpen, setTagsPopupOpen] = useState(false)
+  const [type, setType] = useState('notes')
+  const [transactionsViewType, setTransactionsViewType] = useState('all')
   const titleContainerRef = useRef(null)
 
   useEffect(() => {
@@ -56,6 +59,8 @@ export default function CreateNotebookPage() {
         iconName: iconName ?? undefined,
         users: [...selectedIds],
         tags: tags.map(({ title: t, icon }) => ({ title: t, icon })),
+        type,
+        ...(type === 'transactions' && { transactionsViewType }),
       },
       {
         onSuccess: () => { window.location.href = '/' },
@@ -122,6 +127,35 @@ export default function CreateNotebookPage() {
           <IconSelector value={iconName} onChange={setIconName} />
         </li>
       </List>
+
+      <BlockTitle>Tipo</BlockTitle>
+      <TypeSelector value={type} onChange={setType} />
+
+      {type === 'transactions' && (
+        <>
+          <BlockTitle>Vista de transacciones</BlockTitle>
+          <List>
+            <ListItem
+              radio
+              radioIcon="end"
+              name="transactions-view-type"
+              value="all"
+              title="Todas las entradas"
+              checked={transactionsViewType === 'all'}
+              onChange={() => setTransactionsViewType('all')}
+            />
+            <ListItem
+              radio
+              radioIcon="end"
+              name="transactions-view-type"
+              value="by-month"
+              title="Por mes"
+              checked={transactionsViewType === 'by-month'}
+              onChange={() => setTransactionsViewType('by-month')}
+            />
+          </List>
+        </>
+      )}
 
       <BlockTitle>Miembros</BlockTitle>
       <List>

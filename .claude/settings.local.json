@@ -35,7 +35,12 @@
       "Bash(node -e \"const e = require\\('./node_modules/@mdxeditor/editor/dist/index.cjs.js'\\); const exports = Object.keys\\(e\\); ['MDXEditor','toolbarPlugin','listsPlugin','imagePlugin','BoldItalicUnderlineToggles','CodeToggle','ListsToggle','InsertImage','UndoRedo'].forEach\\(k => console.log\\(k, k in e ? '✓' : '✗ MISSING'\\)\\)\")",
       "Bash(xargs cat *)",
       "Bash(find D:/projects/lachiwana/lachiwana-mweb/node_modules/framework7* -name \"*.css\")",
-      "Bash(xargs ls *)"
+      "Bash(xargs ls *)",
+      "PowerShell(.specify\\\\extensions\\\\git\\\\scripts\\\\powershell\\\\create-new-feature.ps1 -Json -ShortName \"transactions-notebook-support\" \"Actualiza el Frontend para soportar el nuevo tipo de Notebook de transacciones\")",
+      "PowerShell(.specify\\\\scripts\\\\powershell\\\\setup-plan.ps1 -Json)",
+      "PowerShell(.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1 -Json -PathsOnly)",
+      "PowerShell(.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1 -Json)",
+      "PowerShell(.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks)"
     ]
   }
 }
