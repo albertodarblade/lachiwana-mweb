@@ -78,3 +78,29 @@
 .negative { color: #e53935; }
 .positive { color: #43a047; }
 .neutral  { color: var(--f7-list-item-subtitle-text-color); }
+
+.filterBtn {
+  position: relative;
+  padding: 0 8px;
+}
+
+.filterBadge {
+  position: absolute;
+  top: -4px;
+  right: -2px;
+  min-width: 16px;
+  height: 16px;
+  font-size: 10px;
+  line-height: 16px;
+  padding: 0 4px;
+}
+
+.expenseBtn {
+  --f7-fab-button-bg-color: #e53935 !important;
+  --f7-fab-button-pressed-bg-color: #c62828 !important;
+}
+
+.incomeBtn {
+  --f7-fab-button-bg-color: #43a047 !important;
+  --f7-fab-button-pressed-bg-color: #2e7d32 !important;
+}

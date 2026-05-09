@@ -1,0 +1,46 @@
+.pageContent {
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+.dragHandle {
+  width: 36px;
+  height: 4px;
+  background: var(--f7-list-item-border-color, rgba(0,0,0,0.15));
+  border-radius: 2px;
+  margin: 12px auto 8px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 8px 16px 4px;
+  gap: 12px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--f7-list-item-title-text-color);
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--f7-list-item-subtitle-text-color);
+  margin: 0;
+}
+
+.editBtn {
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.list {
+  margin-top: 8px;
+}
+
+.tagIcon {
+  font-size: 22px;
+  color: var(--f7-theme-color);
+}
