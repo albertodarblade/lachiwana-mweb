@@ -3,6 +3,8 @@ import {
   Page, Navbar, NavLeft, NavTitle,
   Block, Preloader, Fab, Icon,
 } from 'framework7-react'
+import { Book } from 'lucide-react'
+import { LUCIDE_ICONS } from '../components/IconSelector/lucideIcons'
 import { useNotebook } from '../hooks/useNotebook'
 import { useNotes } from '../hooks/useNotes'
 import queryClient from '../queryClient'
@@ -10,6 +12,8 @@ import NoteCard from '../components/notes/NoteCard'
 import NoteEmptyState from '../components/notes/NoteEmptyState'
 import { navigate, navigateBack } from '../utils/f7navigate'
 import styles from './NotebookDetailPage.module.css'
+
+const lucideMap = Object.fromEntries(LUCIDE_ICONS.map(({ name, Icon }) => [name, Icon]))
 
 export default function NotebookDetailPage({ f7route }) {
   const id = f7route?.params?.id
@@ -72,14 +76,13 @@ export default function NotebookDetailPage({ f7route }) {
           <div
             className={styles.navTitleInner}
             onClick={() => navigate(`/notebooks/${notebook.id}/edit`)}
+            data-testid="notebook-detail-edit"
           >
             <div
               className={styles.iconContainer}
               style={{ '--icon-color': navbarColor }}
             >
-              <i className={['f7-icons', styles.navIcon].join(' ')}>
-                {notebook.iconName ?? 'book'}
-              </i>
+              {(() => { const Icon = notebook.iconName ? (lucideMap[notebook.iconName] ?? Book) : Book; return <Icon size={20} className={styles.navIcon} /> })()}
             </div>
             <span className={styles.navTitleText}>{notebook.title}</span>
           </div>
@@ -96,7 +99,7 @@ export default function NotebookDetailPage({ f7route }) {
         {!notesLoading && notesError && (
           <Block className={styles.notesErrorBlock}>
             <p className={styles.notesErrorText}>Error al cargar las notas.</p>
-            <span className={styles.retryLink} onClick={() => window.location.reload()}>
+            <span className={styles.retryLink} onClick={() => window.location.reload()} data-testid="notes-retry">
               Reintentar
             </span>
           </Block>
@@ -117,6 +120,7 @@ export default function NotebookDetailPage({ f7route }) {
         position="right-bottom"
         text="Nueva Nota"
         onClick={() => navigate(`/notebooks/${id}/notes/create`)}
+        data-testid="note-create-fab"
         style={{
           '--f7-fab-bg-color': navbarColor,
           '--f7-fab-pressed-bg-color': navbarColor,

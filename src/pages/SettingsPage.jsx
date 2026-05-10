@@ -42,11 +42,13 @@ export default function SettingsPage() {
           title="iOS"
           after={currentPrefs.theme === 'ios' ? '✓' : ''}
           onClick={() => handleTheme('ios')}
+          data-testid="settings-theme-ios"
         />
         <ListItem
           title="Google"
           after={currentPrefs.theme === 'md' ? '✓' : ''}
           onClick={() => handleTheme('md')}
+          data-testid="settings-theme-md"
         />
       </List>
 
@@ -57,6 +59,7 @@ export default function SettingsPage() {
             slot="after"
             checked={currentPrefs.colorScheme === 'dark'}
             onToggleChange={handleColorScheme}
+            data-testid="settings-dark-mode"
           />
         </ListItem>
       </List>
@@ -66,6 +69,7 @@ export default function SettingsPage() {
           title="Cerrar sesión"
           onClick={handleLogout}
           className={styles.logoutItem}
+          data-testid="settings-logout"
         />
       </List>
     </Page>

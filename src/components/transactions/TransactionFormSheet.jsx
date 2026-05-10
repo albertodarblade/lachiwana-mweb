@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react'
 import {
   Sheet, PageContent, Block, List, ListInput, Button, f7,
 } from 'framework7-react'
@@ -93,18 +94,18 @@ export default function TransactionFormSheet({
     >
       <PageContent className={styles.pageContent}>
         <div className={styles.header}>
-          <button className={styles.backBtn} onClick={onBack} aria-label="Volver">
-            <i className="f7-icons">chevron_left</i>
+          <button className={styles.backBtn} onClick={onBack} aria-label="Volver" data-testid="transaction-back">
+            <ChevronLeft size={20} />
           </button>
           <div className={styles.headerSpacer} />
         </div>
 
         {selectedTags.length > 0 && (
-          <div className={styles.tagsRow} onClick={onBack}>
+          <div className={styles.tagsRow} onClick={onBack} data-testid="transaction-tags-row">
             {selectedTags.map((tag) => (
               <TagChip key={tag.id ?? tag._id} tag={tag} />
             ))}
-            <i className={['f7-icons', styles.tagsChevron].join(' ')}>chevron_right</i>
+            <ChevronRight size={16} className={styles.tagsChevron} />
           </div>
         )}
 
@@ -119,6 +120,7 @@ export default function TransactionFormSheet({
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className={styles.amountInput}
+              data-testid="transaction-amount"
             />
           </li>
         </List>
@@ -130,14 +132,16 @@ export default function TransactionFormSheet({
             value={content}
             onInput={(e) => setContent(e.target.value)}
             clearButton
+            data-testid="transaction-description"
           />
         </List>
 
         <div
           className={styles.dateRow}
           onClick={() => dateInputRef.current?.showPicker?.() ?? dateInputRef.current?.click()}
+          data-testid="transaction-date-picker"
         >
-          <i className={['f7-icons', styles.calendarIcon].join(' ')}>calendar</i>
+          <Calendar size={20} className={styles.calendarIcon} />
           <span className={styles.dateLabel}>{formatDateDisplay(date)}</span>
           <input
             ref={dateInputRef}
@@ -155,6 +159,7 @@ export default function TransactionFormSheet({
             disabled={isPending}
             onClick={handleSubmit}
             className={isExpense ? styles.expenseSubmit : styles.incomeSubmit}
+            data-testid="transaction-submit"
           >
             {submitLabel}
           </Button>

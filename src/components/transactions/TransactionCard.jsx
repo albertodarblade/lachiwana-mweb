@@ -1,4 +1,5 @@
 import React from 'react'
+import { Paperclip } from 'lucide-react'
 import TagChip from '../notebooks/TagChip'
 import styles from './TransactionCard.module.css'
 
@@ -38,7 +39,7 @@ export default function TransactionCard({ transaction }) {
           ))}
           {attachments.length > 0 && (
             <span className={styles.attachBadge}>
-              <i className="f7-icons">paperclip</i>
+              <Paperclip size={14} />
               {attachments.length}
             </span>
           )}

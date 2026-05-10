@@ -15,12 +15,14 @@ export default function ThemedButton({
   onClick,
   disabled = false,
   className,
+  'data-testid': testId,
 }) {
   return (
     <button
       type="button"
       disabled={disabled}
       onClick={onClick}
+      data-testid={testId}
       style={color ? { '--btn-color': color } : undefined}
       className={[styles.btn, styles[variant], className].filter(Boolean).join(' ')}
     >

@@ -14,11 +14,11 @@ export default function UpdateBanner({ waitingWorker, onDismiss }) {
     <Block className={styles.banner}>
       <span>Nueva versión disponible</span>
       <div className={styles.links}>
-        <Link className={styles.updateLink} onClick={handleReload}>
+        <Link className={styles.updateLink} onClick={handleReload} data-testid="update-banner-reload">
           Actualizar
         </Link>
         {onDismiss && (
-          <Link className={styles.dismissLink} onClick={onDismiss}>
+          <Link className={styles.dismissLink} onClick={onDismiss} data-testid="update-banner-dismiss">
             Ignorar
           </Link>
         )}

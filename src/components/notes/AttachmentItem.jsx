@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Image as ImageIcon, FileText, File, Table, Video, Music, Archive, Paperclip } from 'lucide-react'
 import { Preloader, Button, f7 } from 'framework7-react'
 import { useBlobUrl } from '../../hooks/useBlobUrl'
 import { useDeleteAttachment } from '../../hooks/useDeleteAttachment'
@@ -6,16 +7,17 @@ import { getBlob } from '../../api/client'
 import styles from './AttachmentItem.module.css'
 
 const EXT_ICONS = {
-  pdf: 'doc_text',
-  doc: 'doc', docx: 'doc',
-  xls: 'table', xlsx: 'table',
-  mp4: 'videocam', mov: 'videocam', avi: 'videocam', mkv: 'videocam',
-  mp3: 'music_note', wav: 'music_note', m4a: 'music_note',
-  zip: 'archivebox', rar: 'archivebox',
+  pdf: FileText,
+  doc: File, docx: File,
+  xls: Table, xlsx: Table,
+  mp4: Video, mov: Video, avi: Video, mkv: Video,
+  mp3: Music, wav: Music, m4a: Music,
+  zip: Archive, rar: Archive,
 }
 
-function fileIcon(extension) {
-  return EXT_ICONS[extension?.toLowerCase()] ?? 'paperclip'
+function FileIcon({ extension, size, className }) {
+  const Icon = EXT_ICONS[extension?.toLowerCase()] ?? Paperclip
+  return <Icon size={size} className={className} />
 }
 
 function formatSize(bytes) {
@@ -62,7 +64,7 @@ export default function AttachmentItem({ attachment, notebookId, noteId, onImage
   function renderThumbnail() {
     if (isImage) {
       if (isLoading) return <Preloader size={24} />
-      if (isError || !blobData) return <i className={['f7-icons', styles.thumbIconSmall].join(' ')}>photo</i>
+      if (isError || !blobData) return <ImageIcon size={28} className={styles.thumbIconSmall} />
       return (
         <img
           src={blobData.dataUrl}
@@ -72,7 +74,7 @@ export default function AttachmentItem({ attachment, notebookId, noteId, onImage
         />
       )
     }
-    return <i className={['f7-icons', styles.thumbIconLarge].join(' ')}>{fileIcon(attachment.extension)}</i>
+    return <FileIcon extension={attachment.extension} size={32} className={styles.thumbIconLarge} />
   }
 
   const sizeLabel = formatSize(attachment.size)
@@ -82,7 +84,7 @@ export default function AttachmentItem({ attachment, notebookId, noteId, onImage
 
   return (
     <div className={styles.item}>
-      <div className={thumbClass} onClick={isImage && blobData ? onImageTap : undefined}>
+      <div className={thumbClass} onClick={isImage && blobData ? onImageTap : undefined} data-testid={`attachment-thumb-${attachment.id}`}>
         {renderThumbnail()}
       </div>
 
@@ -95,11 +97,11 @@ export default function AttachmentItem({ attachment, notebookId, noteId, onImage
         )}
         <div className={styles.actions}>
           {!isImage && (
-            <Button small outline disabled={isDownloading} onClick={handleDownload}>
+            <Button small outline disabled={isDownloading} onClick={handleDownload} data-testid={`attachment-download-${attachment.id}`}>
               {isDownloading ? '...' : 'Descargar'}
             </Button>
           )}
-          <Button small color="red" outline onClick={handleDelete}>
+          <Button small color="red" outline onClick={handleDelete} data-testid={`attachment-delete-${attachment.id}`}>
             Eliminar
           </Button>
         </div>

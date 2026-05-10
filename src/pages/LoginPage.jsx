@@ -162,6 +162,7 @@ export default function LoginPage() {
           onClick={handleSignIn}
           disabled={loading}
           className={styles.loginButton}
+          data-testid="login-google-signin"
         >
           {loading ? (
             <Preloader color="white" size={24} />

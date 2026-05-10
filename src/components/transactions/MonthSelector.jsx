@@ -1,4 +1,5 @@
 import React from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Block } from 'framework7-react'
 import styles from './MonthSelector.module.css'
 
@@ -22,8 +23,8 @@ export default function MonthSelector({ year, month, total, onPrev, onNext }) {
   return (
     <Block className={styles.block}>
       <div className={styles.nav}>
-        <button className={styles.chevron} onClick={onPrev} aria-label="Mes anterior">
-          <i className="f7-icons">chevron_left</i>
+        <button className={styles.chevron} onClick={onPrev} aria-label="Mes anterior" data-testid="month-selector-prev">
+          <ChevronLeft size={20} />
         </button>
         <div className={styles.center}>
           <span className={styles.monthLabel}>{monthLabel(year, month)}</span>
@@ -31,8 +32,8 @@ export default function MonthSelector({ year, month, total, onPrev, onNext }) {
             {formatTotal(total)}
           </span>
         </div>
-        <button className={styles.chevron} onClick={onNext} aria-label="Mes siguiente">
-          <i className="f7-icons">chevron_right</i>
+        <button className={styles.chevron} onClick={onNext} aria-label="Mes siguiente" data-testid="month-selector-next">
+          <ChevronRight size={20} />
         </button>
       </div>
     </Block>

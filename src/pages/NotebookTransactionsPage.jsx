@@ -3,6 +3,8 @@ import {
   Page, Navbar, NavLeft, NavTitle, NavRight,
   Block, Preloader, Fab, FabButtons, FabButton, FabBackdrop, Icon, Link, Badge,
 } from 'framework7-react'
+import { ArrowLeftRight, SlidersHorizontal } from 'lucide-react'
+import { LUCIDE_ICONS } from '../components/IconSelector/lucideIcons'
 import { useNotebook } from '../hooks/useNotebook'
 import { useTransactions } from '../hooks/useTransactions'
 import MonthSelector from '../components/transactions/MonthSelector'
@@ -14,6 +16,8 @@ import TransactionFilterPanel from '../components/transactions/TransactionFilter
 import TagsPopup from '../components/notebooks/TagsPopup'
 import { navigate, navigateBack } from '../utils/f7navigate'
 import styles from './NotebookTransactionsPage.module.css'
+
+const lucideMap = Object.fromEntries(LUCIDE_ICONS.map(({ name, Icon }) => [name, Icon]))
 
 function currentYearMonth() {
   const now = new Date()
@@ -165,21 +169,20 @@ export default function NotebookTransactionsPage({ f7route }) {
           <div
             className={styles.navTitleInner}
             onClick={() => navigate(`/notebooks/${id}/edit`)}
+            data-testid="transactions-notebook-edit"
           >
             <div
               className={styles.iconContainer}
               style={{ '--icon-color': navbarColor }}
             >
-              <i className={['f7-icons', styles.navIcon].join(' ')}>
-                {notebook.iconName ?? 'arrow_right_arrow_left_square'}
-              </i>
+              {(() => { const Icon = notebook.iconName ? (lucideMap[notebook.iconName] ?? ArrowLeftRight) : ArrowLeftRight; return <Icon size={20} className={styles.navIcon} /> })()}
             </div>
             <span className={styles.navTitleText}>{notebook.title}</span>
           </div>
         </NavTitle>
         <NavRight>
-          <Link onClick={() => setIsFilterPanelOpen(true)} className={styles.filterBtn}>
-            <i className="f7-icons">slider_horizontal_3</i>
+          <Link onClick={() => setIsFilterPanelOpen(true)} className={styles.filterBtn} data-testid="transactions-filter-open">
+            <SlidersHorizontal size={20} />
             {activeFilterCount > 0 && (
               <Badge color="red" className={styles.filterBadge}>{activeFilterCount}</Badge>
             )}

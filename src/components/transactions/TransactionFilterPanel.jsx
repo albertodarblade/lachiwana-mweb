@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react'
+import { ChevronLeft, Tag } from 'lucide-react'
 import {
   Panel, Page, Navbar, NavLeft, NavTitle,
   Block, BlockTitle, List, ListInput, Button, Link,
 } from 'framework7-react'
+import { LUCIDE_ICONS } from '../IconSelector/lucideIcons'
 import styles from './TransactionFilterPanel.module.css'
+
+const lucideMap = Object.fromEntries(LUCIDE_ICONS.map(({ name, Icon }) => [name, Icon]))
 
 export default function TransactionFilterPanel({
   opened,
@@ -54,8 +58,8 @@ export default function TransactionFilterPanel({
       <Page>
         <Navbar>
           <NavLeft>
-            <Link panelClose>
-              <i className="f7-icons">chevron_left</i>
+            <Link panelClose data-testid="filter-close">
+              <ChevronLeft size={20} />
             </Link>
           </NavLeft>
           <NavTitle>Filtrar Transacciones</NavTitle>
@@ -69,6 +73,7 @@ export default function TransactionFilterPanel({
             value={localContent}
             onInput={(e) => setLocalContent(e.target.value)}
             clearButton
+            data-testid="filter-content"
           />
         </List>
 
@@ -84,8 +89,9 @@ export default function TransactionFilterPanel({
                     key={tagId}
                     className={[styles.tagChip, active ? styles.tagChipActive : ''].join(' ')}
                     onClick={() => toggleTag(tagId)}
+                    data-testid={`filter-tag-${tagId}`}
                   >
-                    <i className="f7-icons">{tag.icon}</i>
+                    {(() => { const Icon = tag.icon ? (lucideMap[tag.icon] ?? Tag) : Tag; return <Icon size={16} /> })()}
                     <span>{tag.title}</span>
                   </button>
                 )
@@ -95,10 +101,10 @@ export default function TransactionFilterPanel({
         )}
 
         <Block className={styles.footer}>
-          <Button large outline onClick={handleClear} className={styles.clearBtn}>
+          <Button large outline onClick={handleClear} className={styles.clearBtn} data-testid="filter-clear">
             Limpiar todo
           </Button>
-          <Button large fill onClick={handleApply} className={styles.applyBtn}>
+          <Button large fill onClick={handleApply} className={styles.applyBtn} data-testid="filter-apply">
             Aplicar Filtros
           </Button>
         </Block>

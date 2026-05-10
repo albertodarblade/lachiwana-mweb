@@ -3,14 +3,15 @@ import {
   Sheet, PageContent,
   List, ListInput, Block, Button, Link, f7,
 } from 'framework7-react'
+import { Plus, Pencil, Trash2, Clock, Tag } from 'lucide-react'
 import TagChip from './TagChip'
-import IconSelector from './IconSelector'
+import IconSelector from '../IconSelector/IconSelector'
 import { useAddTag } from '../../hooks/useAddTag'
 import { useUpdateTag } from '../../hooks/useUpdateTag'
 import { useDeleteTag } from '../../hooks/useDeleteTag'
 import styles from './TagsPopup.module.css'
 
-const EMPTY_FORM = { title: '', icon: 'circle_fill' }
+const EMPTY_FORM = { title: '', icon: null }
 
 export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTagsChange, opened, onClose }) {
   const [form, setForm] = useState(EMPTY_FORM)
@@ -30,7 +31,7 @@ export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTa
   }
 
   function openEdit(tag) {
-    setForm({ title: tag.title, icon: tag.icon || 'circle_fill' })
+    setForm({ title: tag.title, icon: tag.icon || null })
     setEditingId(tag.id)
     setTitleError(false)
     setFormOpen(true)
@@ -112,8 +113,8 @@ export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTa
         <div className={styles.header}>
           <span className={styles.headerTitle}>Etiquetas</span>
           {!formOpen && (
-            <Link onClick={openAdd}>
-              <i className="f7-icons">plus</i>
+            <Link onClick={openAdd} data-testid="tags-add-new">
+              <Plus size={20} />
             </Link>
           )}
         </div>
@@ -128,13 +129,13 @@ export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTa
           <div key={tag.id} className={styles.tagRow}>
             <TagChip tag={tag} />
             <div className={styles.tagActions}>
-              <Link onClick={() => openEdit(tag)} disabled={deletingId === tag.id}>
-                <i className={['f7-icons', styles.editIcon].join(' ')}>pencil</i>
+              <Link onClick={() => openEdit(tag)} disabled={deletingId === tag.id} data-testid={`tag-edit-${tag.id}`}>
+                <Pencil size={18} className={styles.editIcon} />
               </Link>
-              <Link onClick={() => handleDelete(tag)} disabled={deletingId === tag.id}>
-                <i className={['f7-icons', styles.deleteIcon].join(' ')}>
-                  {deletingId === tag.id ? 'clock' : 'trash'}
-                </i>
+              <Link onClick={() => handleDelete(tag)} disabled={deletingId === tag.id} data-testid={`tag-delete-${tag.id}`}>
+                {deletingId === tag.id
+                  ? <Clock size={18} className={styles.deleteIcon} />
+                  : <Trash2 size={18} className={styles.deleteIcon} />}
               </Link>
             </div>
           </div>
@@ -155,12 +156,12 @@ export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTa
                 clearButton
               />
               <li>
-                <IconSelector value={form.icon} onChange={(icon) => setForm((f) => ({ ...f, icon: icon || 'circle_fill' }))} />
+                <IconSelector value={form.icon} onChange={(icon) => setForm((f) => ({ ...f, icon: icon }))} />
               </li>
             </List>
             <div className={styles.formButtons}>
-              <Button outline onClick={closeForm} className={styles.formButton}>Cancelar</Button>
-              <Button fill onClick={handleConfirm} disabled={isMutating} className={styles.formButton}>
+              <Button outline onClick={closeForm} className={styles.formButton} data-testid="tag-form-cancel">Cancelar</Button>
+              <Button fill onClick={handleConfirm} disabled={isMutating} className={styles.formButton} data-testid="tag-form-confirm">
                 {isMutating ? 'Guardando...' : editingId ? 'Guardar' : 'Agregar'}
               </Button>
             </div>
@@ -169,8 +170,8 @@ export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTa
 
         {!formOpen && (
           <Block>
-            <Button outline onClick={openAdd}>
-              <i className={['f7-icons', styles.addTagIcon].join(' ')}>tag</i>
+            <Button outline onClick={openAdd} data-testid="tags-add-button">
+              <Tag size={16} className={styles.addTagIcon} />
               Agregar etiqueta
             </Button>
           </Block>

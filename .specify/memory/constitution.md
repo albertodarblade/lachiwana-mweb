@@ -1,12 +1,12 @@
 <!--
 SYNC IMPACT REPORT
-Version change: 1.0.0 → 1.1.0 (MINOR — new principle added)
+Version change: 1.2.0 → 1.3.0 (MINOR — one new principle added)
 Modified principles: none
 Added sections:
-  - XI. CSS Modules for All Styling (Engineering Standards)
+  - XIV. data-testid on Interactive Elements (Engineering Standards)
 Removed sections: none
 Templates requiring updates:
-  - .specify/templates/plan-template.md ✅ updated (XI checklist gate added)
+  - .specify/templates/plan-template.md ✅ updated (XIV checklist gate added)
   - .specify/templates/spec-template.md ✅ no changes required
   - .specify/templates/tasks-template.md ✅ no changes required
 Follow-up TODOs: none
@@ -101,6 +101,40 @@ on every render. Static layout, spacing, typography, borders, and visual appeara
 live in the corresponding `.module.css` file and NEVER in a `style={{}}` prop. This rule
 applies to every `.jsx` component and page in the project without exception.
 
+### XII. Lucide React for All Icons
+
+Lucide React is the EXCLUSIVE source of icons across the entire application. Every icon
+rendered in JSX MUST use a named Lucide React component (e.g. `<Wallet size={20} />`).
+The Framework7 icon font (`f7-icons` CSS class and `<i class="f7-icons">` elements) MUST
+NOT appear in any `.jsx` file. No other icon library may be introduced. When a Lucide
+icon does not exist for a use case, a custom SVG component MUST be built using
+`createLucideIcon` or as a plain SVG — never by falling back to the F7 font or an
+alternative library. Dynamic icon rendering (e.g. user-selected notebook icons) MUST
+resolve names through the shared `LUCIDE_ICONS` registry in
+`src/components/IconSelector/lucideIcons.js`.
+
+### XIII. pnpm as Package Manager
+
+pnpm is the MANDATORY package manager for this project. `npm` and `yarn` MUST NOT be
+used to install, update, remove, or audit packages under any circumstances. All
+`package.json` scripts, CI pipelines, and developer instructions MUST reference `pnpm`.
+The presence of `pnpm-lock.yaml` is the authoritative lock file; `package-lock.json` and
+`yarn.lock` MUST NOT exist in the repository. Any command requiring package management
+MUST be prefixed with `pnpm` (e.g. `pnpm add`, `pnpm run`, `pnpm dlx`).
+
+### XIV. data-testid on Interactive Elements
+
+Every interactive element MUST carry a `data-testid` attribute with a unique,
+descriptive, kebab-case value scoped to its component and action. Interactive elements
+include — but are not limited to — buttons, links, inputs, textareas, selects, clickable
+divs, form elements, and any element with an `onClick`, `onChange`, or `onSubmit`
+handler. Framework7 components that accept native HTML attributes (e.g. `Button`, `Link`,
+`ListInput`) MUST also receive `data-testid`. The value format MUST follow the pattern
+`<component>-<action>` or `<component>-<descriptor>` (e.g. `create-notebook-submit`,
+`icon-selector-trigger`, `tag-delete-button`). This enables reliable debugging via
+browser DevTools and provides anchor points for future automated test targeting without
+coupling tests to implementation details such as class names or element types.
+
 ## Governance
 
 This constitution supersedes all other documented practices and conventions within this
@@ -114,4 +148,4 @@ MUST re-verify compliance after Phase 1 design. Any constitution violation intro
 by implementation necessity MUST be documented in the plan's Complexity Tracking table
 with explicit justification for why a simpler, compliant approach was insufficient.
 
-**Version**: 1.1.0 | **Ratified**: 2026-04-28 | **Last Amended**: 2026-05-07
+**Version**: 1.3.0 | **Ratified**: 2026-04-28 | **Last Amended**: 2026-05-10

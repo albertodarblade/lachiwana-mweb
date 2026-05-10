@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { ChevronRight, CircleUser } from 'lucide-react'
 import { Sheet, PageContent, Block, Searchbar, List, ListItem, Button } from 'framework7-react'
 import styles from './MemberPicker.module.css'
 
@@ -31,9 +32,10 @@ export default function MemberPicker({ allUsers = [], selectedIds, onChange, exc
         onClick={() => setIsOpen(true)}
         className={styles.trigger}
         style={{ color: count > 0 ? 'var(--f7-theme-color)' : 'var(--f7-list-item-subtitle-text-color)' }}
+        data-testid="member-picker-trigger"
       >
         <span>{count > 0 ? `${count} miembro${count !== 1 ? 's' : ''} seleccionado${count !== 1 ? 's' : ''}` : 'Agregar miembros'}</span>
-        <i className={['f7-icons', styles.triggerChevron].join(' ')}>chevron_right</i>
+        <ChevronRight size={16} className={styles.triggerChevron} />
       </div>
 
       <Sheet
@@ -52,6 +54,7 @@ export default function MemberPicker({ allUsers = [], selectedIds, onChange, exc
               value={searchQuery}
               onInput={(e) => setSearchQuery(e.target.value)}
               onSearchbarClear={() => setSearchQuery('')}
+              data-testid="member-picker-search"
             />
           </div>
 
@@ -70,17 +73,18 @@ export default function MemberPicker({ allUsers = [], selectedIds, onChange, exc
                 onChange={() => toggleUser(user.googleId)}
                 title={user.name}
                 subtitle={user.email}
+                data-testid={`member-picker-user-${user.googleId}`}
               >
                 {user.picture
                   ? <img slot="media" src={user.picture} width={40} height={40} className={styles.avatar} alt={user.name} />
-                  : <i slot="media" className={['f7-icons', styles.avatarIcon].join(' ')}>person_circle</i>
+                  : <CircleUser slot="media" size={40} className={styles.avatarIcon} />
                 }
               </ListItem>
             ))}
           </List>
 
           <Block>
-            <Button large fill onClick={() => setIsOpen(false)}>
+            <Button large fill onClick={() => setIsOpen(false)} data-testid="member-picker-done">
               Listo
             </Button>
           </Block>

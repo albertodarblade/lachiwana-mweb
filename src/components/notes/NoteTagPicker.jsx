@@ -51,6 +51,7 @@ export default function NoteTagPicker({ notebookTags = [], selectedTagIds = [], 
                 checkbox
                 checked={localIds.includes(tag.id)}
                 onChange={() => toggle(tag.id)}
+                data-testid={`note-tag-item-${tag.id}`}
               >
                 <div slot="title">
                   <TagChip tag={tag} />
@@ -61,7 +62,7 @@ export default function NoteTagPicker({ notebookTags = [], selectedTagIds = [], 
         )}
 
         <Block className={styles.confirmBlock}>
-          <Button large fill onClick={handleConfirm}>Listo</Button>
+          <Button large fill onClick={handleConfirm} data-testid="note-tag-confirm">Listo</Button>
         </Block>
       </PageContent>
     </Sheet>

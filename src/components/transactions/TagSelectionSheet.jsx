@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import { Tag } from 'lucide-react'
 import { Sheet, PageContent, Block, List, ListItem, Button } from 'framework7-react'
+import { LUCIDE_ICONS } from '../IconSelector/lucideIcons'
 import styles from './TagSelectionSheet.module.css'
+
+const lucideMap = Object.fromEntries(LUCIDE_ICONS.map(({ name, Icon }) => [name, Icon]))
 
 export default function TagSelectionSheet({
   opened,
@@ -41,7 +45,7 @@ export default function TagSelectionSheet({
             <p className={styles.title}>Categoría</p>
             <p className={styles.subtitle}>Elige una o más categorías para tu movimiento.</p>
           </div>
-          <Button outline small className={styles.editBtn} onClick={onEditTags}>
+          <Button outline small className={styles.editBtn} onClick={onEditTags} data-testid="tag-selection-edit">
             Editar
           </Button>
         </div>
@@ -54,16 +58,18 @@ export default function TagSelectionSheet({
               checked={localSelected.has(tag.id ?? tag._id)}
               onChange={() => toggleTag(tag.id ?? tag._id)}
               title={tag.title}
+              data-testid={`tag-selection-item-${tag.id ?? tag._id}`}
             >
-              <i slot="media" className={['f7-icons', styles.tagIcon].join(' ')}>
-                {tag.icon}
-              </i>
+              {(() => {
+                const Icon = tag.icon ? (lucideMap[tag.icon] ?? Tag) : Tag
+                return <Icon slot="media" size={20} className={styles.tagIcon} />
+              })()}
             </ListItem>
           ))}
         </List>
 
         <Block>
-          <Button large fill onClick={() => onConfirm(localSelected)}>
+          <Button large fill onClick={() => onConfirm(localSelected)} data-testid="tag-selection-confirm">
             Confirmar
           </Button>
         </Block>

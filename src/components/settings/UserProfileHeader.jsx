@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { CircleUser } from 'lucide-react'
 import { getSession } from '../../stores/authStore'
 import styles from './UserProfileHeader.module.css'
 
@@ -19,7 +20,7 @@ export default function UserProfileHeader() {
           className={styles.avatar}
         />
       ) : (
-        <i className={['f7-icons', styles.avatarIcon].join(' ')}>person_circle</i>
+        <CircleUser size={64} className={styles.avatarIcon} />
       )}
       <p className={styles.name}>{name}</p>
       <p className={styles.email}>{email}</p>
