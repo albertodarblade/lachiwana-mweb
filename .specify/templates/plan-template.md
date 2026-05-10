@@ -42,6 +42,9 @@
 - [ ] **IX. No Unit Tests** — No unit test files are planned or created.
 - [ ] **X. Maintainability** — Module boundaries and file structure follow the plan; abstractions have ≥3 usages.
 - [ ] **XI. CSS Modules** — All static styles are in `.module.css` files; no inline `style={{}}` props for static values.
+- [ ] **XII. Lucide React Icons** — All icons in JSX use Lucide React components; no `f7-icons` font usage; dynamic icons resolve via the shared `LUCIDE_ICONS` registry.
+- [ ] **XIII. pnpm** — All package management commands use `pnpm`; `npm` and `yarn` are not used.
+- [ ] **XIV. data-testid** — Every interactive element (buttons, links, inputs, clickable divs, onClick handlers) has a unique `data-testid` in the format `<component>-<action>`.
 
 ## Project Structure
 

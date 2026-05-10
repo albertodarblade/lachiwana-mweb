@@ -1,4 +1,5 @@
 import React, { useRef } from 'react'
+import { Paperclip } from 'lucide-react'
 import { Block, Button, PhotoBrowser, f7 } from 'framework7-react'
 import { useQueries } from '@tanstack/react-query'
 import { useUploadAttachment } from '../../hooks/useUploadAttachment'
@@ -75,9 +76,10 @@ export default function AttachmentGallery({ notebookId, noteId, attachments }) {
             type="file"
             className={styles.fileInput}
             onChange={handleFileChange}
+            data-testid="attachment-file-input"
           />
-          <Button small onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-            <i className={['f7-icons', styles.addIcon].join(' ')}>paperclip</i>
+          <Button small onClick={() => fileInputRef.current?.click()} disabled={isUploading} data-testid="attachment-upload-button">
+            <Paperclip size={13} className={styles.addIcon} />
             {isUploading ? 'Subiendo...' : 'Agregar archivo'}
           </Button>
         </div>

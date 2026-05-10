@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Tag } from 'lucide-react'
 import { Block } from 'framework7-react'
 import { useNotebook } from '../../hooks/useNotebook'
 import TagChip from '../notebooks/TagChip'
@@ -32,8 +33,9 @@ export default function NoteEditorHeader({ notebookId, selectedTagIds, onTagsCon
             variant="outline"
             color={notebookData?.color}
             onClick={() => setTagPickerOpen(true)}
+            data-testid="note-tags-manage"
           >
-            <i className={['f7-icons', styles.manageIcon].join(' ')}>tag</i>
+            <Tag size={14} className={styles.manageIcon} />
             {resolvedTags.length > 0 ? 'Gestionar' : 'Agregar etiquetas'}
           </ThemedButton>
         </div>

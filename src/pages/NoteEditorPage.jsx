@@ -13,6 +13,7 @@ import { prepareFileForUpload } from '../utils/compressImage'
 import NoteEditor from '../components/notes/NoteEditor'
 import NoteEditorHeader from '../components/notes/NoteEditorHeader'
 import SaveStatusIndicator from '../components/notes/SaveStatusIndicator'
+import { EllipsisVertical } from 'lucide-react'
 import ThemedButton from '../components/notebooks/ThemedButton'
 import { navigate } from '../utils/f7navigate'
 import queryClient from '../queryClient'
@@ -152,8 +153,9 @@ export default function NoteEditorPage({ f7route }) {
             variant="icon"
             color={notebook?.color}
             onClick={() => setActionsOpen(true)}
+            data-testid="note-actions-open"
           >
-            <i className="f7-icons">ellipsis_vertical</i>
+            <EllipsisVertical size={20} />
           </ThemedButton>
         </NavRight>
       </Navbar>

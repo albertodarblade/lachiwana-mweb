@@ -60,11 +60,12 @@ export default function DeleteConfirmDialog({ notebook, opened, onClose, onConfi
           disabled={countdown > 0 || isDeleting}
           onClick={onConfirm}
           className={styles.confirmButton}
+          data-testid="delete-confirm-submit"
         >
           {confirmLabel}
         </Button>
 
-        <Button large outline onClick={onClose} disabled={isDeleting}>
+        <Button large outline onClick={onClose} disabled={isDeleting} data-testid="delete-confirm-cancel">
           Cancelar
         </Button>
       </PageContent>

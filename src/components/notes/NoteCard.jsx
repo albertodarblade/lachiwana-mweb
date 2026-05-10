@@ -1,4 +1,5 @@
 import React from 'react'
+import { Paperclip } from 'lucide-react'
 import Markdown from 'react-markdown'
 import { navigate } from '../../utils/f7navigate'
 import queryClient from '../../queryClient'
@@ -41,6 +42,7 @@ export default function NoteCard({ note, notebookId }) {
     <div
       className={styles.card}
       onClick={() => navigate(`/notebooks/${notebookId}/notes/${note.id}`)}
+      data-testid={`note-card-${note.id}`}
     >
       {title && <p className={styles.title}>{title}</p>}
       {body && (
@@ -59,7 +61,7 @@ export default function NoteCard({ note, notebookId }) {
         <span className={styles.date}>{formatDate(date)}</span>
         {hasAttachments && (
           <span className={styles.attachBadge}>
-            <i className={['f7-icons', styles.attachIcon].join(' ')}>paperclip</i>
+            <Paperclip size={14} className={styles.attachIcon} />
             <span className={styles.attachCount}>{note.attachments.length}</span>
           </span>
         )}

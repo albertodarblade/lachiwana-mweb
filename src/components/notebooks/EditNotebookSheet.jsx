@@ -3,9 +3,10 @@ import {
   Sheet, PageContent,
   List, ListInput, Block, BlockTitle, Button, f7,
 } from 'framework7-react'
+import { Check, Tag } from 'lucide-react'
 import { useUpdateNotebook } from '../../hooks/useUpdateNotebook'
 import { useUsers } from '../../hooks/useUsers'
-import IconSelector from './IconSelector'
+import IconSelector from '../IconSelector/IconSelector'
 import MemberPicker from './MemberPicker'
 import TagsPopup from './TagsPopup'
 import styles from './EditNotebookSheet.module.css'
@@ -106,12 +107,13 @@ export default function EditNotebookSheet({ notebook, opened, onClose }) {
                 key={c.hex}
                 onClick={() => setColor(color === c.hex ? null : c.hex)}
                 className={styles.colorSwatch}
+                data-testid={`notebook-color-${c.label.toLowerCase()}`}
                 style={{
                   background: c.hex,
                   border: color === c.hex ? '3px solid var(--f7-theme-color)' : '2px solid transparent',
                 }}
               >
-                {color === c.hex && <i className={['f7-icons', styles.checkIcon].join(' ')}>checkmark</i>}
+                {color === c.hex && <Check size={16} className={styles.checkIcon} />}
               </div>
             ))}
           </div>
@@ -138,14 +140,14 @@ export default function EditNotebookSheet({ notebook, opened, onClose }) {
 
         <BlockTitle>Etiquetas</BlockTitle>
         <Block className={styles.tagsBlock}>
-          <Button outline onClick={() => setTagsPopupOpen(true)}>
-            <i className={['f7-icons', styles.tagIcon].join(' ')}>tag</i>
+          <Button outline onClick={() => setTagsPopupOpen(true)} data-testid="notebook-manage-tags">
+            <Tag size={16} className={styles.tagIcon} />
             Gestionar etiquetas
           </Button>
         </Block>
 
         <Block>
-          <Button large fill disabled={isPending} onClick={handleSave}>
+          <Button large fill disabled={isPending} onClick={handleSave} data-testid="notebook-save">
             {isPending ? 'Guardando...' : 'Guardar cambios'}
           </Button>
         </Block>

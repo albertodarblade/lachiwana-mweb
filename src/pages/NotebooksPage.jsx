@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { CircleUser } from 'lucide-react'
 import { Page, Navbar, Block, Preloader, Fab, Icon } from 'framework7-react'
 import { useNotebooks } from '../hooks/useNotebooks'
 import { getSession } from '../stores/authStore'
@@ -24,7 +25,7 @@ function UserAvatar() {
       />
     )
   }
-  return <i className={['f7-icons', styles.avatarIcon].join(' ')}>person_circle</i>
+  return <CircleUser size={36} className={styles.avatarIcon} />
 }
 
 export default function NotebooksPage() {
@@ -44,7 +45,7 @@ export default function NotebooksPage() {
           </svg>
           <span className={styles.brandName}>Lachiwana</span>
         </div>
-        <div className={styles.avatarWrapper} onClick={() => navigate('/settings')}>
+        <div className={styles.avatarWrapper} onClick={() => navigate('/settings')} data-testid="navbar-avatar">
           <UserAvatar />
         </div>
       </Navbar>
@@ -61,6 +62,7 @@ export default function NotebooksPage() {
           <span
             className={styles.retryLink}
             onClick={() => refetch()}
+            data-testid="notebooks-retry"
           >
             Reintentar
           </span>
@@ -77,7 +79,7 @@ export default function NotebooksPage() {
         </div>
       )}
 
-      <Fab position="right-bottom" href="/notebooks/create" text="Crear Cuaderno">
+      <Fab position="right-bottom" href="/notebooks/create" text="Crear Cuaderno" data-testid="notebook-create-fab">
         <Icon f7="plus" />
       </Fab>
     </Page>

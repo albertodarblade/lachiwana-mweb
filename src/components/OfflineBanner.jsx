@@ -14,6 +14,7 @@ export default function OfflineBanner() {
       <div
         className={[styles.toast, styles.online].join(' ')}
         onClick={() => { clearReconnected(); dismissOfflineBanner() }}
+        data-testid="offline-banner-reconnected"
       >
         <span>Conexión restaurada</span>
         <span className={styles.subtext}>Toca para actualizar</span>
@@ -25,6 +26,7 @@ export default function OfflineBanner() {
     <div
       className={[styles.toast, styles.offline].join(' ')}
       onClick={dismissOfflineBanner}
+      data-testid="offline-banner-offline"
     >
       <span>Sin conexión — solo lectura</span>
     </div>

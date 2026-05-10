@@ -8,7 +8,8 @@ import { useUpdateNotebook } from '../hooks/useUpdateNotebook'
 import { useDeleteNotebook } from '../hooks/useDeleteNotebook'
 import { useUsers } from '../hooks/useUsers'
 import { getSession } from '../stores/authStore'
-import IconSelector from '../components/notebooks/IconSelector'
+import { X, Check, Tag } from 'lucide-react'
+import IconSelector from '../components/IconSelector/IconSelector'
 import MemberPicker from '../components/notebooks/MemberPicker'
 import TagsPopup from '../components/notebooks/TagsPopup'
 import DeleteConfirmDialog from '../components/notebooks/DeleteConfirmDialog'
@@ -114,8 +115,8 @@ export default function EditNotebookPage({ f7route }) {
     <Page>
       <Navbar>
         <NavLeft>
-          <Link onClick={() => navigateBack()} className={styles.navCloseLink}>
-            <i className="f7-icons">xmark</i>
+          <Link onClick={() => navigateBack()} className={styles.navCloseLink} data-testid="edit-notebook-close">
+            <X size={20} />
           </Link>
         </NavLeft>
         <NavTitle>Editar Cuaderno</NavTitle>
@@ -124,6 +125,7 @@ export default function EditNotebookPage({ f7route }) {
             onClick={handleSave}
             disabled={isPending}
             className={styles.navSaveLink}
+            data-testid="edit-notebook-save"
           >
             {isPending ? 'Guardando...' : 'Guardar'}
           </Link>
@@ -158,14 +160,13 @@ export default function EditNotebookPage({ f7route }) {
               key={c.hex}
               onClick={() => setColor(color === c.hex ? null : c.hex)}
               className={styles.colorSwatch}
+              data-testid={`edit-notebook-color-${c.label.toLowerCase()}`}
               style={{
                 background: c.hex,
                 border: color === c.hex ? '3px solid var(--f7-theme-color)' : '2px solid transparent',
               }}
             >
-              {color === c.hex && (
-                <i className={['f7-icons', styles.checkIcon].join(' ')}>checkmark</i>
-              )}
+              {color === c.hex && <Check size={16} className={styles.checkIcon} />}
             </div>
           ))}
         </div>
@@ -193,6 +194,7 @@ export default function EditNotebookPage({ f7route }) {
               title="Todas las entradas"
               checked={transactionsViewType === 'all'}
               onChange={() => setTransactionsViewType('all')}
+              data-testid="edit-notebook-view-all"
             />
             <ListItem
               radio
@@ -202,6 +204,7 @@ export default function EditNotebookPage({ f7route }) {
               title="Por mes"
               checked={transactionsViewType === 'by-month'}
               onChange={() => setTransactionsViewType('by-month')}
+              data-testid="edit-notebook-view-by-month"
             />
           </List>
         </>
@@ -221,8 +224,8 @@ export default function EditNotebookPage({ f7route }) {
 
       <BlockTitle>Etiquetas</BlockTitle>
       <Block className={styles.tagsBlock}>
-        <Button outline onClick={() => setTagsPopupOpen(true)}>
-          <i className={['f7-icons', styles.tagIcon].join(' ')}>tag</i>
+        <Button outline onClick={() => setTagsPopupOpen(true)} data-testid="edit-notebook-tags">
+          <Tag size={16} className={styles.tagIcon} />
           Gestionar etiquetas
         </Button>
       </Block>
@@ -231,7 +234,7 @@ export default function EditNotebookPage({ f7route }) {
         <>
           <BlockTitle>Acciones</BlockTitle>
           <Block className={styles.actionsBlock}>
-            <Button large outline color="red" onClick={() => setDeleteDialogOpen(true)}>
+            <Button large outline color="red" onClick={() => setDeleteDialogOpen(true)} data-testid="edit-notebook-delete">
               Eliminar cuaderno
             </Button>
           </Block>

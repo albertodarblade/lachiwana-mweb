@@ -1,4 +1,5 @@
 import React, { useRef, useMemo, useState, createContext, useContext, useCallback } from 'react'
+import { Image as ImageIcon } from 'lucide-react'
 import { f7, Preloader } from 'framework7-react'
 import {
   MDXEditor,
@@ -85,7 +86,7 @@ function InsertImageButton() {
         className={['mdxeditor-toolbar-button', isUploading ? styles.insertImageButtonUploading : styles.insertImageButton].join(' ')}
         onClick={() => fileInputRef.current?.click()}
       >
-        <i className={['f7-icons', styles.buttonIcon].join(' ')}>photo</i>
+        <ImageIcon size={24} className={styles.buttonIcon} />
       </button>
     </>
   )
