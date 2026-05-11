@@ -114,14 +114,25 @@ export default function LoginPage() {
 
     window.addEventListener('storage', handleStorage)
 
-    // If user closes the popup manually, reset the loading state
+    // If user closes the popup manually, reset the loading state.
+    // Also handles the race where the storage event for 'lachiwana_oauth_done'
+    // was queued but not yet processed before pollClosed removed the listener.
     const pollClosed = setInterval(() => {
-      if (popup.closed) {
-        clearInterval(pollClosed)
-        window.removeEventListener('storage', handleStorage)
-        localStorage.removeItem('lachiwana_oauth_popup')
-        setLoading(false)
+      if (!popup.closed) return
+      clearInterval(pollClosed)
+      window.removeEventListener('storage', handleStorage)
+
+      // Check if auth completed just before the popup closed (missed storage event)
+      const missedDestination = localStorage.getItem('lachiwana_oauth_done')
+      if (missedDestination) {
+        localStorage.removeItem('lachiwana_oauth_done')
+        window.location.replace(missedDestination)
+        return
       }
+
+      // Popup was closed manually by the user without completing auth
+      localStorage.removeItem('lachiwana_oauth_popup')
+      setLoading(false)
     }, 500)
   }
 
