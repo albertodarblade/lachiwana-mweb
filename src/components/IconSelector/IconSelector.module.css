@@ -110,3 +110,7 @@
   color: var(--f7-list-item-subtitle-text-color);
   padding: 48px 20px;
 }
+
+.searchbarContainer {
+  padding: 16px;
+}

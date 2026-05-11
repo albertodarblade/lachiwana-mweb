@@ -205,7 +205,7 @@ export default function NotebookTransactionsPage({ f7route }) {
           ) : (
             <div className={styles.list}>
               {transactions.map((t) => (
-                <TransactionCard key={t.id} transaction={{ ...t, tags: resolveTagIds(t.tags) }} />
+                <TransactionCard key={t.id} transaction={{ ...t, tags: resolveTagIds(t.tags) }} onClick={() => { setIsFilterPanelOpen(false); navigate(`/notebooks/${id}/transactions/${t.id}/edit`) }} />
               ))}
             </div>
           )}
@@ -228,7 +228,7 @@ export default function NotebookTransactionsPage({ f7route }) {
           ) : (
             <div className={styles.list}>
               {transactions.map((t) => (
-                <TransactionCard key={t.id} transaction={{ ...t, tags: resolveTagIds(t.tags) }} />
+                <TransactionCard key={t.id} transaction={{ ...t, tags: resolveTagIds(t.tags) }} onClick={() => { setIsFilterPanelOpen(false); navigate(`/notebooks/${id}/transactions/${t.id}/edit`) }} />
               ))}
             </div>
           )}
@@ -295,6 +295,7 @@ export default function NotebookTransactionsPage({ f7route }) {
         filters={filters}
         onApply={(newFilters) => setFilters(newFilters)}
       />
+
     </Page>
   )
 }

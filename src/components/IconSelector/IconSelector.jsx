@@ -95,13 +95,16 @@ export default function IconSelector({ value, onChange }) {
           {/* Fixed header — drag handle + searchbar + result count, never scrolls */}
           <div className={styles.header}>
             <div className={styles.dragHandle} />
-            <Searchbar
-              placeholder="Buscar ícono..."
-              value={query}
-              onInput={(e) => setQuery(e.target.value)}
-              onSearchbarClear={() => setQuery('')}
-              data-testid="icon-selector-search"
-            />
+            <div className={styles.searchbarContainer}>
+              <Searchbar
+                placeholder="Buscar ícono..."
+                value={query}
+                onInput={(e) => setQuery(e.target.value)}
+                onSearchbarClear={() => setQuery('')}
+                data-testid="icon-selector-search"
+              />
+            </div>
+           
             <p className={styles.resultCount}>
               {debouncedQuery.trim()
                 ? `${filtered.length} resultado${filtered.length !== 1 ? 's' : ''}`
