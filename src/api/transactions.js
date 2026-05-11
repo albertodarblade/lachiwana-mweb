@@ -1,4 +1,4 @@
-import { get, post } from './client'
+import { get, post, patch } from './client'
 
 export const fetchTransactions = (notebookId, params = {}) => {
   const query = new URLSearchParams()
@@ -12,3 +12,9 @@ export const fetchTransactions = (notebookId, params = {}) => {
 
 export const createTransaction = (notebookId, payload) =>
   post(`/api/v1/notebooks/${notebookId}/transactions`, payload)
+
+export const updateTransaction = (notebookId, transactionId, payload) =>
+  patch(`/api/v1/notebooks/${notebookId}/transactions/${transactionId}`, payload)
+
+export const fetchTransaction = (notebookId, transactionId) =>
+  get(`/api/v1/notebooks/${notebookId}/transactions/${transactionId}`)

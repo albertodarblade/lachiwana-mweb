@@ -18,14 +18,14 @@ function formatAmount(value) {
   return `${sign}Bs. ${abs}`
 }
 
-export default function TransactionCard({ transaction }) {
+export default function TransactionCard({ transaction, onClick }) {
   const { content, value, date, tags = [], attachments = [] } = transaction
 
   const amountClass =
     value < 0 ? styles.negative : value > 0 ? styles.positive : styles.neutral
 
   return (
-    <div className={styles.card}>
+    <div className={styles.card} onClick={onClick} data-testid={`transaction-card-${transaction.id}`}>
       <div className={styles.row}>
         <span className={styles.description}>{content}</span>
         <span className={[styles.amount, amountClass].join(' ')}>

@@ -10,6 +10,7 @@ import NotebookTransactionsPage from './pages/NotebookTransactionsPage'
 import EditNotebookPage from './pages/EditNotebookPage'
 import NoteEditorPage from './pages/NoteEditorPage'
 import CreateNoteEditorPage from './pages/CreateNoteEditorPage'
+import TransactionEditPage from './pages/TransactionEditPage'
 import LoginPage from './pages/LoginPage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
 import SettingsPage from './pages/SettingsPage'
@@ -81,6 +82,14 @@ function ProtectedSettings(props) {
   )
 }
 
+function ProtectedTransactionEdit(props) {
+  return (
+    <ProtectedRoute>
+      <TransactionEditPage {...props} />
+    </ProtectedRoute>
+  )
+}
+
 const routes = [
   { path: '/login', component: LoginPage },
   { path: '/auth/callback', component: AuthCallbackPage },
@@ -91,6 +100,7 @@ const routes = [
   { path: '/notebooks/:notebookId/notes/create', component: ProtectedCreateNoteEditor },
   { path: '/notebooks/:notebookId/notes/:noteId', component: ProtectedNoteEditor },
   { path: '/notebooks/:id/notes', component: ProtectedDetail },
+  { path: '/notebooks/:notebookId/transactions/:transactionId/edit', component: ProtectedTransactionEdit },
   { path: '/notebooks/:id/transactions', component: ProtectedTransactions },
   { path: '/notebooks/:id', component: ProtectedDetail },
 ]
