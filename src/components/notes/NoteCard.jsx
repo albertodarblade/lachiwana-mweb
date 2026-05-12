@@ -1,6 +1,8 @@
 import React from 'react'
 import { Paperclip } from 'lucide-react'
 import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 import { navigate } from '../../utils/f7navigate'
 import queryClient from '../../queryClient'
 import TagChip from '../notebooks/TagChip'
@@ -46,8 +48,11 @@ export default function NoteCard({ note, notebookId }) {
     >
       {title && <p className={styles.title}>{title}</p>}
       {body && (
-        <div className={styles.body}>
-          <Markdown>{body}</Markdown>
+        <div
+          className={styles.body}
+          style={notebookColor ? { '--notebook-color': notebookColor } : undefined}
+        >
+          <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{body}</Markdown>
         </div>
       )}
       {resolvedTags.length > 0 && (

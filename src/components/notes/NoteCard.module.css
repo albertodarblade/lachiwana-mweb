@@ -48,6 +48,61 @@
   margin: 0;
 }
 
+/* ── Task list (checklist) ───────────────────────────────────────────────── */
+.body :global(.contains-task-list) {
+  padding-left: 0;
+  list-style: none;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.body :global(.task-list-item) {
+  list-style: none;
+  position: relative;
+  padding-left: 2rem;
+  margin-bottom: 8px;
+}
+
+/* Hide native input */
+.body :global(.task-list-item) :global(input[type="checkbox"]) {
+  display: none;
+}
+
+/* Circle */
+.body :global(.task-list-item)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  background: transparent;
+  box-sizing: border-box;
+}
+
+/* Checked circle */
+.body :global(.task-list-item):has(:global(input:checked))::before {
+  background-color: var(--notebook-color, var(--f7-theme-color));
+  border-color: var(--notebook-color, var(--f7-theme-color));
+}
+
+/* Tick mark for checked items */
+.body :global(.task-list-item):has(:global(input:checked))::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: calc(50% - 5px);
+  width: 4px;
+  height: 8px;
+  border-style: solid;
+  border-color: white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
 .body :global(h1),
 .body :global(h2),
 .body :global(h3) {

@@ -51,7 +51,9 @@
       "PowerShell(.specify\\\\extensions\\\\git\\\\scripts\\\\powershell\\\\create-new-feature.ps1 -Json -ShortName \"edit-transaction\" \"edit transaction feature — edit tags, amount, content, date, income/expense type, auto-save debounced\")",
       "Bash(grep -o '\"[a-zA-Z$_][a-zA-Z$_0-9]*\"' D:/projects/lachiwana/lachiwana-mweb/node_modules/@mdxeditor/editor/dist/index.js)",
       "Bash(grep \"applyFormat\\\\$\\\\|applyListType\\\\$\\\\|currentFormat\\\\$\\\\|currentListType\\\\$\\\\|usePublisher\\\\b\" node_modules/@mdxeditor/editor/dist/index.d.ts)",
-      "Bash(grep \"iconComponentFor\\\\$\\\\|iconComponentFor\\\\b\\\\|defaultSvgIcons\" D:/projects/lachiwana/lachiwana-mweb/node_modules/@mdxeditor/editor/dist/index.d.ts)"
+      "Bash(grep \"iconComponentFor\\\\$\\\\|iconComponentFor\\\\b\\\\|defaultSvgIcons\" D:/projects/lachiwana/lachiwana-mweb/node_modules/@mdxeditor/editor/dist/index.d.ts)",
+      "Bash(grep -E \"^rehype-raw$|^remark-gfm$\")",
+      "Bash(python3 *)"
     ]
   }
 }

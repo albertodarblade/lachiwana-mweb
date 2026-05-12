@@ -170,7 +170,6 @@ export default function NoteEditorPage({ f7route }) {
           notebookId={notebookId}
           selectedTagIds={selectedTagIds}
           onTagsConfirm={handleTagsConfirm}
-          createdAt={note?.createdAt}
         />
         <NoteEditor
           key={noteId}

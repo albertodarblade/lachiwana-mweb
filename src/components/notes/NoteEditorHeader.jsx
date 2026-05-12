@@ -7,16 +7,7 @@ import ThemedButton from '../notebooks/ThemedButton'
 import NoteTagPicker from './NoteTagPicker'
 import styles from './NoteEditorHeader.module.css'
 
-function formatDate(dateStr) {
-  if (!dateStr) return ''
-  return new Date(dateStr).toLocaleDateString('es', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
-}
-
-export default function NoteEditorHeader({ notebookId, selectedTagIds, onTagsConfirm, createdAt }) {
+export default function NoteEditorHeader({ notebookId, selectedTagIds, onTagsConfirm }) {
   const [tagPickerOpen, setTagPickerOpen] = useState(false)
   const { data: notebookData } = useNotebook(notebookId)
   const notebookTags = notebookData?.tags ?? []
@@ -40,12 +31,7 @@ export default function NoteEditorHeader({ notebookId, selectedTagIds, onTagsCon
           </ThemedButton>
         </div>
       )}
-      {createdAt && (
-        <p className={styles.createdAt}>
-          Creado: {formatDate(createdAt)}
-        </p>
-      )}
-      <NoteTagPicker
+<NoteTagPicker
         notebookTags={notebookTags}
         selectedTagIds={selectedTagIds}
         onConfirm={onTagsConfirm}
