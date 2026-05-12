@@ -1,4 +1,4 @@
-import { get, post, patch } from './client'
+import { get, post, patch, del } from './client'
 
 export const fetchTransactions = (notebookId, params = {}) => {
   const query = new URLSearchParams()
@@ -18,3 +18,6 @@ export const updateTransaction = (notebookId, transactionId, payload) =>
 
 export const fetchTransaction = (notebookId, transactionId) =>
   get(`/api/v1/notebooks/${notebookId}/transactions/${transactionId}`)
+
+export const deleteTransaction = (notebookId, transactionId) =>
+  del(`/api/v1/notebooks/${notebookId}/transactions/${transactionId}`)

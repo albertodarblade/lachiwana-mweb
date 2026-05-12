@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Tag } from 'lucide-react'
-import { Sheet, PageContent, Block, List, ListItem, Button } from 'framework7-react'
+import { Sheet, List, ListItem, Button } from 'framework7-react'
 import { LUCIDE_ICONS } from '../IconSelector/lucideIcons'
 import styles from './TagSelectionSheet.module.css'
 
@@ -35,45 +35,53 @@ export default function TagSelectionSheet({
       onSheetClosed={onClose}
       swipeToClose
       backdrop
-      style={{ height: 'auto', maxHeight: '80vh' }}
+      style={{ height: '70vh' }}
     >
-      <PageContent className={styles.pageContent}>
-        <div className={styles.dragHandle} />
+      <div className={styles.sheetOuter}>
 
-        <div className={styles.header}>
-          <div>
-            <p className={styles.title}>Categoría</p>
-            <p className={styles.subtitle}>Elige una o más categorías para tu movimiento.</p>
+        {/* Fixed header — drag handle + title + edit button */}
+        <div className={styles.fixedHeader}>
+          <div className={styles.dragHandle} />
+          <div className={styles.header}>
+            <div>
+              <p className={styles.title}>Categoría</p>
+              <p className={styles.subtitle}>Elige una o más categorías para tu movimiento.</p>
+            </div>
+            <Button outline small className={styles.editBtn} onClick={onEditTags} data-testid="tag-selection-edit">
+              Editar
+            </Button>
           </div>
-          <Button outline small className={styles.editBtn} onClick={onEditTags} data-testid="tag-selection-edit">
-            Editar
-          </Button>
         </div>
 
-        <List className={styles.list}>
-          {tags.map((tag) => (
-            <ListItem
-              key={tag.id ?? tag._id}
-              checkbox
-              checked={localSelected.has(tag.id ?? tag._id)}
-              onChange={() => toggleTag(tag.id ?? tag._id)}
-              title={tag.title}
-              data-testid={`tag-selection-item-${tag.id ?? tag._id}`}
-            >
-              {(() => {
-                const Icon = tag.icon ? (lucideMap[tag.icon] ?? Tag) : Tag
-                return <Icon slot="media" size={20} className={styles.tagIcon} />
-              })()}
-            </ListItem>
-          ))}
-        </List>
+        {/* Scrollable tag list */}
+        <div className={styles.scrollArea}>
+          <List className={styles.list}>
+            {tags.map((tag) => (
+              <ListItem
+                key={tag.id ?? tag._id}
+                checkbox
+                checked={localSelected.has(tag.id ?? tag._id)}
+                onChange={() => toggleTag(tag.id ?? tag._id)}
+                title={tag.title}
+                data-testid={`tag-selection-item-${tag.id ?? tag._id}`}
+              >
+                {(() => {
+                  const Icon = tag.icon ? (lucideMap[tag.icon] ?? Tag) : Tag
+                  return <Icon slot="media" size={20} className={styles.tagIcon} />
+                })()}
+              </ListItem>
+            ))}
+          </List>
+        </div>
 
-        <Block>
+        {/* Confirm button always visible at the bottom */}
+        <div className={styles.footer}>
           <Button large fill onClick={() => onConfirm(localSelected)} data-testid="tag-selection-confirm">
             Confirmar
           </Button>
-        </Block>
-      </PageContent>
+        </div>
+
+      </div>
     </Sheet>
   )
 }

@@ -1,19 +1,25 @@
 import { useState, useEffect, useRef } from 'react'
-import { ChevronRight, Calendar } from 'lucide-react'
+import { Tag, Calendar, EllipsisVertical } from 'lucide-react'
 import {
-  Page, Navbar, NavLeft, NavTitle,
-  Block, List, ListInput, Preloader, f7,
+  Page, Navbar, NavLeft, NavTitle, NavRight,
+  Block, List, ListInput, Preloader,
+  Actions, ActionsGroup, ActionsButton,
+  Sheet, PageContent, Button, f7,
 } from 'framework7-react'
 import { useTransaction } from '../hooks/useTransaction'
 import { useNotebook } from '../hooks/useNotebook'
 import { useUpdateTransaction } from '../hooks/useUpdateTransaction'
+import { useDeleteTransaction } from '../hooks/useDeleteTransaction'
 import SaveStatusIndicator from '../components/notes/SaveStatusIndicator'
 import TagChip from '../components/notebooks/TagChip'
+import ThemedButton from '../components/notebooks/ThemedButton'
 import TagSelectionSheet from '../components/transactions/TagSelectionSheet'
 import TagsPopup from '../components/notebooks/TagsPopup'
+import { navigate } from '../utils/f7navigate'
 import styles from './TransactionEditPage.module.css'
 
 const DEBOUNCE_MS = 300
+const COUNTDOWN_START = 5
 
 function formatDateDisplay(isoDate) {
   if (!isoDate) return ''
@@ -29,10 +35,12 @@ export default function TransactionEditPage({ f7route }) {
   const notebookId = f7route?.params?.notebookId
   const transactionId = f7route?.params?.transactionId
 
-  const { data: transaction, isLoading, isFetching } = useTransaction(notebookId, transactionId)
+  const [deleted, setDeleted] = useState(false)
+  const { data: transaction, isLoading, isFetching } = useTransaction(notebookId, transactionId, { enabled: !deleted })
   const { data: notebook } = useNotebook(notebookId)
   const notebookTags = notebook?.tags ?? []
   const { mutate } = useUpdateTransaction(notebookId, transactionId)
+  const { mutate: deleteTransaction, isPending: isDeleting } = useDeleteTransaction(notebookId, transactionId)
 
   const [saveStatus, setSaveStatus] = useState('saved')
   const [amount, setAmount] = useState('')
@@ -42,12 +50,15 @@ export default function TransactionEditPage({ f7route }) {
   const [selectedTagIds, setSelectedTagIds] = useState([])
   const [tagSheetOpen, setTagSheetOpen] = useState(false)
   const [tagsPopupOpen, setTagsPopupOpen] = useState(false)
+  const [actionsOpen, setActionsOpen] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [countdown, setCountdown] = useState(COUNTDOWN_START)
 
   const debounceRef = useRef(null)
   const dateInputRef = useRef(null)
   const needsInitRef = useRef(true)
+  const intervalRef = useRef(null)
 
-  // Re-initialize form fields on every page visit.
   function handlePageBeforeIn() {
     needsInitRef.current = true
   }
@@ -64,6 +75,23 @@ export default function TransactionEditPage({ f7route }) {
       setSaveStatus('saved')
     }
   }, [transaction])
+
+  // Countdown timer for delete confirmation
+  useEffect(() => {
+    if (deleteOpen) {
+      setCountdown(COUNTDOWN_START)
+      intervalRef.current = setInterval(() => {
+        setCountdown((n) => {
+          if (n <= 1) { clearInterval(intervalRef.current); return 0 }
+          return n - 1
+        })
+      }, 1000)
+    } else {
+      clearInterval(intervalRef.current)
+      setCountdown(COUNTDOWN_START)
+    }
+    return () => clearInterval(intervalRef.current)
+  }, [deleteOpen])
 
   function save(payload) {
     setSaveStatus('saving')
@@ -131,10 +159,23 @@ export default function TransactionEditPage({ f7route }) {
     setTimeout(() => setTagSheetOpen(true), 300)
   }
 
+  function handleDeleteConfirm() {
+    deleteTransaction(undefined, {
+      onSuccess: () => {
+        setDeleted(true) // Disable useTransaction to prevent 404 refetch
+        setDeleteOpen(false)
+        navigate(`/notebooks/${notebookId}/transactions`)
+      },
+    })
+  }
+
   const resolvedTags = selectedTagIds
     .map((tagId) => notebookTags.find((t) => (t.id ?? t._id) === tagId))
     .filter(Boolean)
 
+  const confirmLabel = countdown > 0
+    ? `Espera ${countdown}s`
+    : isDeleting ? 'Eliminando...' : 'Eliminar'
 
   return (
     <>
@@ -144,12 +185,23 @@ export default function TransactionEditPage({ f7route }) {
           <NavTitle>
             <SaveStatusIndicator status={saveStatus} />
           </NavTitle>
+          <NavRight>
+            <ThemedButton
+              variant="icon"
+              color={notebook?.color}
+              onClick={() => setActionsOpen(true)}
+              data-testid="edit-transaction-actions-open"
+            >
+              <EllipsisVertical size={20} />
+            </ThemedButton>
+          </NavRight>
         </Navbar>
 
+        {/* Backdrop spinner — only when no data has arrived yet */}
         {(isLoading || isFetching) && !transaction && (
-          <Block className={styles.loadingBlock}>
-            <Preloader size={44} />
-          </Block>
+          <div className={styles.loadingBackdrop}>
+            <Preloader size={44} color="white" />
+          </div>
         )}
 
         <div className={styles.typeRow}>
@@ -171,15 +223,19 @@ export default function TransactionEditPage({ f7route }) {
           </button>
         </div>
 
-        <div
-          className={styles.tagsRow}
-          onClick={() => setTagSheetOpen(true)}
-          data-testid="edit-transaction-tags-row"
-        >
-          {resolvedTags.length > 0
-            ? resolvedTags.map((tag) => <TagChip key={tag.id ?? tag._id} tag={tag} />)
-            : <span className={styles.tagsPlaceholder}>Agregar etiquetas</span>}
-          <ChevronRight size={16} className={styles.tagsChevron} />
+        <div className={styles.tagsRow}>
+          {resolvedTags.map((tag) => (
+            <TagChip key={tag.id ?? tag._id} tag={tag} />
+          ))}
+          <ThemedButton
+            variant="outline"
+            color={notebook?.color}
+            onClick={() => setTagSheetOpen(true)}
+            data-testid="edit-transaction-tags-row"
+          >
+            <Tag size={14} className={styles.tagsIcon} />
+            {resolvedTags.length > 0 ? 'Gestionar' : 'Agregar etiquetas'}
+          </ThemedButton>
         </div>
 
         <List className={styles.amountList}>
@@ -241,6 +297,60 @@ export default function TransactionEditPage({ f7route }) {
           opened={tagsPopupOpen}
           onClose={handleTagsPopupClose}
         />
+              {/* Actions menu */}
+      <Actions opened={actionsOpen} onActionsClosed={() => setActionsOpen(false)}>
+        <ActionsGroup>
+          <ActionsButton
+            color="red"
+            onClick={() => { setActionsOpen(false); setDeleteOpen(true) }}
+            data-testid="edit-transaction-delete-action"
+          >
+            Eliminar movimiento
+          </ActionsButton>
+        </ActionsGroup>
+        <ActionsGroup>
+          <ActionsButton bold onClick={() => setActionsOpen(false)}>
+            Cancelar
+          </ActionsButton>
+        </ActionsGroup>
+      </Actions>
+
+      {/* Delete confirmation sheet with countdown */}
+      <Sheet
+        opened={deleteOpen}
+        onSheetClosed={() => setDeleteOpen(false)}
+        style={{ height: 'auto' }}
+        swipeToClose={false}
+        backdrop
+      >
+        <PageContent className={styles.deletePageContent}>
+          <Block className={styles.deleteBlock}>
+            <h3 className={styles.deleteHeading}>Eliminar Movimiento</h3>
+            <p className={styles.deleteBody}>
+              ¿Eliminar este movimiento? Esta acción no se puede deshacer.
+            </p>
+          </Block>
+
+          <Button
+            large fill color="red"
+            disabled={countdown > 0 || isDeleting}
+            onClick={handleDeleteConfirm}
+            className={styles.confirmButton}
+            data-testid="edit-transaction-delete-confirm"
+          >
+            {confirmLabel}
+          </Button>
+
+          <Button
+            large outline
+            disabled={isDeleting}
+            onClick={() => setDeleteOpen(false)}
+            data-testid="edit-transaction-delete-cancel"
+          >
+            Cancelar
+          </Button>
+        </PageContent>
+      </Sheet>
       </Page>
     </>
   )

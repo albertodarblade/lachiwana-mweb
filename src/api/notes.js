@@ -1,7 +1,14 @@
 import { get, post, patch, del, postForm } from './client'
 
-export const listNotes = (notebookId) =>
-  get(`/api/v1/notebooks/${notebookId}/notes`)
+export const listNotes = (notebookId, params = {}) => {
+  const query = new URLSearchParams()
+  if (params.content) query.set('content', params.content)
+  if (params.from) query.set('from', params.from)
+  if (params.to) query.set('to', params.to)
+  if (params.tags?.length) params.tags.forEach((t) => query.append('tags', t))
+  const qs = query.toString()
+  return get(`/api/v1/notebooks/${notebookId}/notes${qs ? `?${qs}` : ''}`)
+}
 
 export const createNote = (notebookId, payload) =>
   post(`/api/v1/notebooks/${notebookId}/notes`, payload)

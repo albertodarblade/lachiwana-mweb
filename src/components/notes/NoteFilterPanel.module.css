@@ -1,0 +1,49 @@
+.panel {
+  width: 80vw;
+  max-width: 360px;
+}
+
+.tagsBlock {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.tagChip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--f7-list-item-border-color, rgba(0,0,0,0.12));
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--f7-list-item-title-text-color);
+}
+
+.tagChipIcon {
+  flex-shrink: 0;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.tagChipActive {
+  border-color: var(--f7-theme-color);
+  color: var(--f7-theme-color);
+  background: color-mix(in srgb, var(--f7-theme-color) 10%, transparent);
+}
+
+.footer {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.clearBtn {
+  flex: 1;
+}
+
+.applyBtn {
+  flex: 1;
+}

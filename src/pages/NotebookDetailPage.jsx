@@ -1,15 +1,16 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
-  Page, Navbar, NavLeft, NavTitle,
-  Block, Preloader, Fab, Icon,
+  Page, Navbar, NavLeft, NavTitle, NavRight,
+  Block, Preloader, Fab, Icon, Link, Badge,
 } from 'framework7-react'
-import { Book } from 'lucide-react'
+import { Book, SlidersHorizontal } from 'lucide-react'
 import { LUCIDE_ICONS } from '../components/IconSelector/lucideIcons'
 import { useNotebook } from '../hooks/useNotebook'
 import { useNotes } from '../hooks/useNotes'
 import queryClient from '../queryClient'
 import NoteCard from '../components/notes/NoteCard'
 import NoteEmptyState from '../components/notes/NoteEmptyState'
+import NoteFilterPanel from '../components/notes/NoteFilterPanel'
 import { navigate, navigateBack } from '../utils/f7navigate'
 import styles from './NotebookDetailPage.module.css'
 
@@ -19,11 +20,24 @@ export default function NotebookDetailPage({ f7route }) {
   const id = f7route?.params?.id
   const routePath = f7route?.path ?? ''
   const { data: notebook, isLoading, isError } = useNotebook(id)
-  const { data: notesData, isPending: notesLoading, isError: notesError } = useNotes(id)
-  const notes = notesData?.data ?? []
+
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false)
+  const [filters, setFilters] = useState({ content: '', tagIds: new Set() })
+
+  const activeFilterCount =
+    (filters.content ? 1 : 0) +
+    filters.tagIds.size
+
+  const queryParams = {
+    ...(filters.content ? { content: filters.content } : {}),
+    ...(filters.tagIds.size ? { tags: [...filters.tagIds] } : {}),
+  }
+
+  const { data: notes = [], isPending: notesLoading, isError: notesError } = useNotes(id, queryParams)
+
+  const notebookTags = notebook?.tags ?? []
 
   // Fallback redirect for direct /notebooks/:id access (bookmarks, external links).
-  // Skip when already on a typed sub-route (/notes or /transactions).
   useEffect(() => {
     if (!notebook) return
     const onTypedRoute = routePath.endsWith('/notes') || routePath.endsWith('/transactions')
@@ -63,9 +77,7 @@ export default function NotebookDetailPage({ f7route }) {
   const navbarColor = notebook.color ?? 'var(--f7-theme-color)'
 
   function handlePageAfterIn() {
-    if (queryClient.getQueryState(['notes', id])?.isInvalidated) {
-      queryClient.refetchQueries({ queryKey: ['notes', id] })
-    }
+    queryClient.invalidateQueries({ queryKey: ['notes', id] })
   }
 
   return (
@@ -87,6 +99,18 @@ export default function NotebookDetailPage({ f7route }) {
             <span className={styles.navTitleText}>{notebook.title}</span>
           </div>
         </NavTitle>
+        <NavRight>
+          <Link
+            onClick={() => setIsFilterPanelOpen(true)}
+            className={styles.filterBtn}
+            data-testid="notes-filter-open"
+          >
+            <SlidersHorizontal size={20} />
+            {activeFilterCount > 0 && (
+              <Badge color="red" className={styles.filterBadge}>{activeFilterCount}</Badge>
+            )}
+          </Link>
+        </NavRight>
       </Navbar>
 
       <div>
@@ -105,7 +129,15 @@ export default function NotebookDetailPage({ f7route }) {
           </Block>
         )}
 
-        {!notesLoading && !notesError && notes.length === 0 && <NoteEmptyState />}
+        {!notesLoading && !notesError && notes.length === 0 && (
+          activeFilterCount > 0
+            ? (
+              <Block className={styles.notesErrorBlock}>
+                <p className={styles.notesErrorText}>Sin resultados para los filtros aplicados.</p>
+              </Block>
+            )
+            : <NoteEmptyState />
+        )}
 
         {!notesLoading && !notesError && notes.length > 0 && (
           <div className={styles.notesGrid}>
@@ -131,6 +163,14 @@ export default function NotebookDetailPage({ f7route }) {
       >
         <Icon ios="f7:plus" md="material:add" />
       </Fab>
+
+      <NoteFilterPanel
+        opened={isFilterPanelOpen}
+        onClose={() => setIsFilterPanelOpen(false)}
+        filters={filters}
+        onApply={(newFilters) => setFilters(newFilters)}
+        tags={notebookTags}
+      />
     </Page>
   )
 }
