@@ -71,10 +71,13 @@ export default function NoteEditorPage({ f7route }) {
   function handleContentChange(markdown) {
     contentRef.current = markdown
 
-    // MDXEditor fires onChange once on mount with the initial content — ignore it.
+    // MDXEditor fires onChange on mount (Lexical batches the import asynchronously).
+    // Only skip that fire if the content truly matches what's on the server —
+    // if the user typed before the mount fire arrived, the content won't match
+    // and we must NOT skip it.
     if (!editorMountedRef.current) {
       editorMountedRef.current = true
-      return
+      if (markdown === (note?.content ?? '')) return
     }
 
     setSaveStatus('editing')
