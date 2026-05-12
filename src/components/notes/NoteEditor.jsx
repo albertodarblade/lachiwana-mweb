@@ -1,5 +1,9 @@
-import React, { useRef, useMemo, useState, createContext, useContext, useCallback } from 'react'
-import { Image as ImageIcon } from 'lucide-react'
+import React, { useRef, useMemo, useState, useEffect, createContext, useContext, useCallback } from 'react'
+import ReactDOM from 'react-dom'
+import {
+  Bold, Italic, Underline, Code, ListOrdered, ListChecks,
+  Undo2, Redo2, Image as ImageIcon, Link, List,
+} from 'lucide-react'
 import { f7, Preloader } from 'framework7-react'
 import {
   MDXEditor,
@@ -17,7 +21,26 @@ import { getBlob } from '../../api/client'
 import queryClient from '../../queryClient'
 import styles from './NoteEditor.module.css'
 
-const UploadContext = createContext({ uploadImage: null, isUploading: false })
+const UploadContext = createContext({ uploadImage: null, isUploading: false, saveStatus: 'saved' })
+
+const ICON_SIZE = 18
+
+const LUCIDE_ICON_MAP = {
+  format_bold:           <Bold size={ICON_SIZE} />,
+  format_italic:         <Italic size={ICON_SIZE} />,
+  format_underlined:     <Underline size={ICON_SIZE} />,
+  code:                  <Code size={ICON_SIZE} />,
+  format_list_numbered:  <ListOrdered size={ICON_SIZE} />,
+  format_list_checked:   <ListChecks size={ICON_SIZE} />,
+  format_list_bulleted:  <List size={ICON_SIZE} />,
+  undo:                  <Undo2 size={ICON_SIZE} />,
+  redo:                  <Redo2 size={ICON_SIZE} />,
+  link:                  <Link size={ICON_SIZE} />,
+}
+
+function iconComponentFor(name) {
+  return LUCIDE_ICON_MAP[name] ?? null
+}
 
 const BROKEN_IMAGE_MARKER = 'imgLoadError'
 const TRANSPARENT_GIF_MARKER = 'R0lGODlh'
@@ -92,13 +115,27 @@ function InsertImageButton() {
   )
 }
 
+function UndoRedoPortal() {
+  const [slot, setSlot] = useState(null)
+
+  useEffect(() => {
+    setSlot(document.querySelector('[data-undoredo-slot]'))
+  }, [])
+
+  if (!slot) return null
+  return ReactDOM.createPortal(
+    <div className={styles.undoRedoSlot}><UndoRedo /></div>,
+    slot,
+  )
+}
+
 const toolbarContents = () => (
   <>
     <BoldItalicUnderlineToggles />
     <CodeToggle />
     <ListsToggle options={['number', 'check']} />
     <InsertImageButton />
-    <UndoRedo />
+    <UndoRedoPortal />
   </>
 )
 
@@ -129,6 +166,7 @@ export default function NoteEditor({
   imageUploadHandler,
   onDeleteImage,
   notebookColor,
+  saveStatus = 'saved',
   placeholder = 'Start writing...',
   autoFocus = false,
 }) {
@@ -157,7 +195,7 @@ export default function NoteEditor({
     }
   }, [])
 
-  const contextValue = useMemo(() => ({ uploadImage, isUploading }), [uploadImage, isUploading])
+  const contextValue = useMemo(() => ({ uploadImage, isUploading, saveStatus }), [uploadImage, isUploading, saveStatus])
 
   const plugins = useMemo(() => [
     listsPlugin(),
@@ -244,6 +282,7 @@ export default function NoteEditor({
           autoFocus={autoFocus}
           onChange={onContentChange}
           plugins={plugins}
+          iconComponentFor={iconComponentFor}
         />
       </div>
     </UploadContext.Provider>

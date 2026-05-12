@@ -1,3 +1,9 @@
+.navTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .editorLayoutCentered {
   justify-content: center;
   align-items: center;

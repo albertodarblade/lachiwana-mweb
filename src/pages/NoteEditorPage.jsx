@@ -147,7 +147,12 @@ export default function NoteEditorPage({ f7route }) {
     <Page pageContent={false} onPageBeforeOut={flushPendingSave}>
       <Navbar>
         <NavLeft backLink="Atrás" />
-        <NavTitle><SaveStatusIndicator status={saveStatus} /></NavTitle>
+        <NavTitle>
+          <div className={styles.navTitleRow}>
+            <span data-undoredo-slot />
+            <SaveStatusIndicator status={saveStatus} />
+          </div>
+        </NavTitle>
         <NavRight>
           <ThemedButton
             variant="icon"
@@ -174,6 +179,7 @@ export default function NoteEditorPage({ f7route }) {
           imageUploadHandler={handleImageUpload}
           onDeleteImage={handleDeleteImage}
           notebookColor={notebook?.color}
+          saveStatus={saveStatus}
         />
       </div>
 
