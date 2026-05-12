@@ -124,19 +124,21 @@ function UndoRedoPortal() {
 
   if (!slot) return null
   return ReactDOM.createPortal(
-    <div className={styles.undoRedoSlot}><UndoRedo /></div>,
+    <div className={styles.undoRedoSlot} onMouseDown={(e) => e.preventDefault()}><UndoRedo /></div>,
     slot,
   )
 }
 
+const preventFocusLoss = (e) => e.preventDefault()
+
 const toolbarContents = () => (
-  <>
+  <div onMouseDown={preventFocusLoss} style={{ display: 'contents' }}>
     <BoldItalicUnderlineToggles />
     <CodeToggle />
     <ListsToggle options={['number', 'check']} />
     <InsertImageButton />
     <UndoRedoPortal />
-  </>
+  </div>
 )
 
 function buildNavbar() {
