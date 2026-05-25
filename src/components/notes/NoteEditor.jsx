@@ -83,7 +83,8 @@ const EmptyEditToolbar = () => null
 function InsertImageButton() {
   const { uploadImage, isUploading } = useContext(UploadContext)
   const insertImage = usePublisher(insertImage$)
-  const fileInputRef = useRef(null)
+  const galleryRef = useRef(null)
+  const cameraRef = useRef(null)
 
   async function handleFileChange(e) {
     const file = e.target.files?.[0]
@@ -93,21 +94,32 @@ function InsertImageButton() {
     if (src) insertImage({ src, altText: '' })
   }
 
+  function handleClick() {
+    f7.actions.create({
+      buttons: [
+        {
+          text: 'Cámara',
+          onClick: () => cameraRef.current?.click(),
+        },
+        {
+          text: 'Biblioteca de fotos',
+          onClick: () => galleryRef.current?.click(),
+        },
+        { text: 'Cancelar', color: 'red' },
+      ],
+    }).open()
+  }
+
   return (
     <>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        className={styles.fileInput}
-        onChange={handleFileChange}
-      />
+      <input ref={galleryRef} type="file" accept="image/*" className={styles.fileInput} onChange={handleFileChange} />
+      <input ref={cameraRef} type="file" accept="image/*" capture="environment" className={styles.fileInput} onChange={handleFileChange} />
       <button
         type="button"
         title="Insert image"
         disabled={isUploading}
         className={['mdxeditor-toolbar-button', isUploading ? styles.insertImageButtonUploading : styles.insertImageButton].join(' ')}
-        onClick={() => fileInputRef.current?.click()}
+        onClick={handleClick}
       >
         <ImageIcon size={24} className={styles.buttonIcon} />
       </button>

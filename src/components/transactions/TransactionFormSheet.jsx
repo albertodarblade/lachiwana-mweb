@@ -48,20 +48,20 @@ export default function TransactionFormSheet({
     }
   }, [opened])
 
+  const amountValid = !!amount && !isNaN(parseFloat(amount)) && parseFloat(amount) !== 0
+
   function handleSubmit() {
+    if (!amountValid) return
     const raw = parseFloat(amount)
-    if (!amount || isNaN(raw) || raw === 0) {
-      f7.toast.create({ text: 'Ingresa un monto válido.', closeTimeout: 2500 }).open()
-      return
-    }
     const value = transactionType === 'expense' ? -Math.abs(raw) : Math.abs(raw)
     const tagIds = selectedTags.map((t) => t.id ?? t._id).filter(Boolean)
+    const trimmedContent = content.trim()
 
     mutate(
       {
         value,
         date,
-        ...(content.trim() && { content: content.trim() }),
+        content: trimmedContent || 'otros',
         ...(tagIds.length && { tags: tagIds }),
       },
       {
@@ -156,7 +156,7 @@ export default function TransactionFormSheet({
           <Button
             large
             fill
-            disabled={isPending}
+            disabled={isPending || !amountValid}
             onClick={handleSubmit}
             className={isExpense ? styles.expenseSubmit : styles.incomeSubmit}
             data-testid="transaction-submit"
