@@ -53,7 +53,11 @@
       "Bash(grep \"applyFormat\\\\$\\\\|applyListType\\\\$\\\\|currentFormat\\\\$\\\\|currentListType\\\\$\\\\|usePublisher\\\\b\" node_modules/@mdxeditor/editor/dist/index.d.ts)",
       "Bash(grep \"iconComponentFor\\\\$\\\\|iconComponentFor\\\\b\\\\|defaultSvgIcons\" D:/projects/lachiwana/lachiwana-mweb/node_modules/@mdxeditor/editor/dist/index.d.ts)",
       "Bash(grep -E \"^rehype-raw$|^remark-gfm$\")",
-      "Bash(python3 *)"
+      "Bash(python3 *)",
+      "PowerShell(& \".specify\\\\extensions\\\\git\\\\scripts\\\\powershell\\\\create-new-feature.ps1\" -Json -ShortName \"pin-notebooks\" \"The user should be allowed to pin notebooks, sorted by pinnedDate stored in localStorage tied to loggedUserID\")",
+      "PowerShell(& \".specify\\\\scripts\\\\powershell\\\\setup-plan.ps1\" -Json)",
+      "PowerShell(& \".specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1\" -Json)",
+      "PowerShell(& \".specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1\" -Json -RequireTasks -IncludeTasks)"
     ]
   }
 }

@@ -59,3 +59,12 @@
 .listPadding {
   padding-bottom: 80px;
 }
+
+.sectionLabel {
+  padding: 12px 16px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--f7-list-group-title-text-color, #999);
+}
