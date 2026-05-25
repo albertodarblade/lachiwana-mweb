@@ -1,5 +1,15 @@
 .card {
-  display: block;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cardLink {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
   text-decoration: none;
   color: inherit;
   -webkit-tap-highlight-color: transparent;
@@ -10,6 +20,7 @@
   align-items: center;
   gap: 16px;
   padding: 10px 16px;
+  width: 100%;
 }
 
 .iconContainer {
@@ -31,4 +42,26 @@
   font-size: 14px;
   font-weight: 500;
   flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pinButton {
+  background: none;
+  border: none;
+  padding: 8px;
+  width: 48px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #ccc;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pinButton.active {
+  color: var(--f7-theme-color, #B45309);
 }

@@ -3,6 +3,7 @@ import { CircleUser } from 'lucide-react'
 import { Page, Navbar, Block, Preloader, Fab, Icon } from 'framework7-react'
 import { useNotebooks } from '../hooks/useNotebooks'
 import { getSession } from '../stores/authStore'
+import { usePinnedNotebooks } from '../hooks/usePinnedNotebooks'
 import NotebookCard from '../components/notebooks/NotebookCard'
 import NotebookEmptyState from '../components/notebooks/NotebookEmptyState'
 import { navigate } from '../utils/f7navigate'
@@ -30,10 +31,30 @@ function UserAvatar() {
 
 export default function NotebooksPage() {
   const { data, isLoading, isError, refetch } = useNotebooks()
+  const userId = getSession()?.user?.googleId ?? ''
+  const { pins, pinNotebook, unpinNotebook, isPinned } = usePinnedNotebooks(userId)
 
-  const notebooks = [...(data?.data ?? [])].sort(
+  const sortedNotebooks = [...(data?.data ?? [])].sort(
     (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
   )
+
+  const pinnedMap = Object.fromEntries(pins.map(p => [p.notebookId, p.pinnedDate]))
+
+  const pinnedNotebooks = sortedNotebooks
+    .filter(n => pinnedMap[n.id])
+    .sort((a, b) => new Date(pinnedMap[b.id]) - new Date(pinnedMap[a.id]))
+
+  const unpinnedNotebooks = sortedNotebooks.filter(n => !pinnedMap[n.id])
+
+  const hasPinned = pinnedNotebooks.length > 0
+
+  function handlePinToggle(notebookId) {
+    if (isPinned(notebookId)) {
+      unpinNotebook(notebookId)
+    } else {
+      pinNotebook(notebookId)
+    }
+  }
 
   return (
     <Page>
@@ -69,12 +90,35 @@ export default function NotebooksPage() {
         </Block>
       )}
 
-      {!isLoading && !isError && notebooks.length === 0 && <NotebookEmptyState />}
+      {!isLoading && !isError && sortedNotebooks.length === 0 && <NotebookEmptyState />}
 
-      {!isLoading && !isError && notebooks.length > 0 && (
+      {!isLoading && !isError && sortedNotebooks.length > 0 && (
         <div className={styles.listPadding}>
-          {notebooks.map((notebook) => (
-            <NotebookCard key={notebook.id} notebook={notebook} />
+          {hasPinned && (
+            <div className={styles.sectionLabel} data-testid="notebooks-section-pinned">
+              Pinned
+            </div>
+          )}
+          {pinnedNotebooks.map((notebook) => (
+            <NotebookCard
+              key={notebook.id}
+              notebook={notebook}
+              isPinned={true}
+              onPinToggle={handlePinToggle}
+            />
+          ))}
+          {hasPinned && (
+            <div className={styles.sectionLabel} data-testid="notebooks-section-all">
+              All
+            </div>
+          )}
+          {unpinnedNotebooks.map((notebook) => (
+            <NotebookCard
+              key={notebook.id}
+              notebook={notebook}
+              isPinned={false}
+              onPinToggle={handlePinToggle}
+            />
           ))}
         </div>
       )}
