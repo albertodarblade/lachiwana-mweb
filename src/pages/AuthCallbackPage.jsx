@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { Page, Preloader } from 'framework7-react'
-import { setSession } from '../stores/authStore'
+import { setToken } from '../stores/tokenStore'
+import { setUser } from '../stores/authStore'
 
 function finish(destination) {
   if (localStorage.getItem('lachiwana_oauth_popup') === '1') {
@@ -10,7 +11,6 @@ function finish(destination) {
     localStorage.setItem('lachiwana_oauth_done', destination)
     window.close()
   } else {
-    // Redirect flow (popup was blocked) — navigate directly
     window.location.replace(destination)
   }
 }
@@ -19,7 +19,8 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const error = params.get('error')
-    const token = params.get('token')
+    const accessToken = params.get('accessToken')
+    const expiresAt = params.get('expiresAt')
     const userRaw = params.get('user')
 
     if (error) {
@@ -27,14 +28,14 @@ export default function AuthCallbackPage() {
       return
     }
 
-    if (!token || !userRaw) {
+    if (!accessToken || !userRaw) {
       finish('/login?error=auth_failed')
       return
     }
 
+    let user
     try {
-      const user = JSON.parse(userRaw)
-      setSession({ token, user })
+      user = JSON.parse(decodeURIComponent(userRaw))
     } catch {
       finish('/login?error=auth_failed')
       return
@@ -42,7 +43,21 @@ export default function AuthCallbackPage() {
 
     const destination = localStorage.getItem('lachiwana_pending_redirect') || '/'
     localStorage.removeItem('lachiwana_pending_redirect')
-    finish(destination)
+
+    setUser(user)
+
+    if (localStorage.getItem('lachiwana_oauth_popup') === '1') {
+      // Popup flow: hand off token to main window via transient localStorage key
+      localStorage.setItem('lachiwana_oauth_token', JSON.stringify({ accessToken, expiresAt }))
+      console.debug('[auth] token captured at callback (popup)')
+      finish(destination)
+    } else {
+      // Redirect flow: store token in memory directly, clear URL params
+      setToken(accessToken, expiresAt)
+      console.debug('[auth] token captured at callback (redirect)')
+      window.history.replaceState({}, '', destination)
+      window.location.replace(destination)
+    }
   }, [])
 
   return (

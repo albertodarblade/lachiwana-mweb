@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { App as F7App, View } from 'framework7-react'
+import { App as F7App, View, Preloader } from 'framework7-react'
 import OfflineBanner from './components/OfflineBanner'
 import UpdateBanner from './components/UpdateBanner'
 import { setOnUpdateReady } from './stores/swUpdateStore'
@@ -15,8 +15,10 @@ import LoginPage from './pages/LoginPage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
 import SettingsPage from './pages/SettingsPage'
 import ProtectedRoute from './components/ProtectedRoute'
-import { getSession } from './stores/authStore'
+import { getUser } from './stores/authStore'
 import { getPrefs } from './stores/settingsStore'
+import { getToken, setToken } from './stores/tokenStore'
+import { refreshToken } from './api/auth'
 
 function ProtectedHome(props) {
   return (
@@ -107,15 +109,38 @@ const routes = [
 
 const f7params = {
   name: 'Lachiwana',
-  theme: getPrefs(getSession()?.user?.googleId ?? '').theme,
+  theme: getPrefs(getUser()?.googleId ?? '').theme,
   routes,
 }
 
 export default function App() {
   const [waitingWorker, setWaitingWorker] = useState(null)
+  const [sessionChecked, setSessionChecked] = useState(false)
 
   useEffect(() => {
     setOnUpdateReady(setWaitingWorker)
+  }, [])
+
+  useEffect(() => {
+    const path = window.location.pathname
+    if (path === '/auth/callback' || path.startsWith('/login')) {
+      setSessionChecked(true)
+      return
+    }
+    if (getToken()) {
+      setSessionChecked(true)
+      return
+    }
+    refreshToken()
+      .then(({ accessToken, expiresAt }) => {
+        setToken(accessToken, expiresAt)
+      })
+      .catch(() => {
+        // No valid session — ProtectedRoute will redirect to /login
+      })
+      .finally(() => {
+        setSessionChecked(true)
+      })
   }, [])
 
   // Keep --keyboard-offset in sync with the visual viewport so the note-editor
@@ -134,6 +159,17 @@ export default function App() {
       vv.removeEventListener('scroll', update)
     }
   }, [])
+
+  if (!sessionChecked) {
+    return (
+      <div
+        data-testid="app-session-loading"
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}
+      >
+        <Preloader size={44} />
+      </div>
+    )
+  }
 
   return (
     <>

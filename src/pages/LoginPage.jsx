@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Page, Block, Preloader, Button } from 'framework7-react'
-import { getSession, isTokenExpired } from '../stores/authStore'
+import { getToken, setToken } from '../stores/tokenStore'
 import styles from './LoginPage.module.css'
 
 const COLORS = {
@@ -68,9 +68,9 @@ export default function LoginPage() {
     // Clean up any leftover OAuth state from an interrupted popup flow
     localStorage.removeItem('lachiwana_oauth_popup')
     localStorage.removeItem('lachiwana_oauth_done')
+    localStorage.removeItem('lachiwana_oauth_token')
 
-    const session = getSession()
-    if (session && !isTokenExpired(session.token)) {
+    if (getToken()) {
       const destination = params.get('redirect') || '/'
       window.location.replace(destination)
     }
@@ -94,6 +94,17 @@ export default function LoginPage() {
       return
     }
 
+    function _capturePopupToken() {
+      const raw = localStorage.getItem('lachiwana_oauth_token')
+      if (!raw) return
+      try {
+        const { accessToken, expiresAt } = JSON.parse(raw)
+        setToken(accessToken, expiresAt)
+        console.debug('[auth] token captured from popup handoff')
+      } catch {}
+      localStorage.removeItem('lachiwana_oauth_token')
+    }
+
     // Signal to AuthCallbackPage that it's running inside a popup.
     // postMessage can't be used here because Google's COOP header
     // (Cross-Origin-Opener-Policy: same-origin) destroys window.opener
@@ -108,6 +119,7 @@ export default function LoginPage() {
       window.removeEventListener('storage', handleStorage)
       clearInterval(pollClosed)
       localStorage.removeItem('lachiwana_oauth_done')
+      _capturePopupToken()
       try { popup.close() } catch {}
       window.location.replace(destination)
     }
@@ -126,6 +138,7 @@ export default function LoginPage() {
       const missedDestination = localStorage.getItem('lachiwana_oauth_done')
       if (missedDestination) {
         localStorage.removeItem('lachiwana_oauth_done')
+        _capturePopupToken()
         window.location.replace(missedDestination)
         return
       }
