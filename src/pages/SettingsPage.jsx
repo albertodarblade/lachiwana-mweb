@@ -1,20 +1,24 @@
 import React, { useState } from 'react'
 import { Page, Navbar, List, ListItem, BlockTitle, Toggle, f7 } from 'framework7-react'
 import UserProfileHeader from '../components/settings/UserProfileHeader'
-import { getSession, clearSession } from '../stores/authStore'
+import { getUser, clearSession } from '../stores/authStore'
 import { getPrefs, setPrefs } from '../stores/settingsStore'
-import queryClient from '../queryClient'
+import { signOut } from '../api/auth'
 import styles from './SettingsPage.module.css'
 
 export default function SettingsPage() {
   const [, rerender] = useState(0)
-  const userId = getSession()?.user?.googleId ?? ''
+  const userId = getUser()?.googleId ?? ''
   const currentPrefs = getPrefs(userId)
 
-  function handleLogout() {
-    f7.dialog.confirm('¿Cerrar sesión?', 'Cerrar sesión', () => {
+  async function handleLogout() {
+    f7.dialog.confirm('¿Cerrar sesión?', 'Cerrar sesión', async () => {
+      try {
+        await signOut()
+      } catch {
+        // Idempotent — proceed to local cleanup even if the call fails
+      }
       clearSession()
-      queryClient.clear()
       window.location.replace('/login')
     })
   }
@@ -69,7 +73,7 @@ export default function SettingsPage() {
           title="Cerrar sesión"
           onClick={handleLogout}
           className={styles.logoutItem}
-          data-testid="settings-logout"
+          data-testid="settings-signout"
         />
       </List>
     </Page>

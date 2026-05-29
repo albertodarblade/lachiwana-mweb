@@ -1,3 +1,5 @@
+import { clearToken } from './tokenStore'
+
 const SESSION_KEY = 'lachiwana_session'
 
 export function getSession() {
@@ -9,20 +11,16 @@ export function getSession() {
   }
 }
 
-export function setSession(session) {
-  localStorage.setItem(SESSION_KEY, JSON.stringify(session))
+export function getUser() {
+  return getSession()?.user ?? null
+}
+
+export function setUser(user) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify({ user }))
 }
 
 export function clearSession() {
+  clearToken()
   localStorage.removeItem(SESSION_KEY)
   localStorage.removeItem('LACHIWANA_QUERY_CACHE')
-}
-
-export function isTokenExpired(token) {
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]))
-    return payload.exp * 1000 < Date.now()
-  } catch {
-    return true
-  }
 }
