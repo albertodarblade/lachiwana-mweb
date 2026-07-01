@@ -136,22 +136,10 @@ function UndoRedoPortal() {
 
   if (!slot) return null
   return ReactDOM.createPortal(
-    <div className={styles.undoRedoSlot} onMouseDown={(e) => e.preventDefault()}><UndoRedo /></div>,
+    <div className={styles.undoRedoSlot}><UndoRedo /></div>,
     slot,
   )
 }
-
-const preventFocusLoss = (e) => e.preventDefault()
-
-const toolbarContents = () => (
-  <div onMouseDown={preventFocusLoss} style={{ display: 'contents' }}>
-    <BoldItalicUnderlineToggles />
-    <CodeToggle />
-    <ListsToggle options={['number', 'check']} />
-    <InsertImageButton />
-    <UndoRedoPortal />
-  </div>
-)
 
 function buildNavbar() {
   // Use <span> (not <a>) to avoid F7's global router click handler swallowing the tap.
@@ -211,6 +199,16 @@ export default function NoteEditor({
 
   const contextValue = useMemo(() => ({ uploadImage, isUploading, saveStatus }), [uploadImage, isUploading, saveStatus])
 
+  const toolbarContents = useCallback(() => (
+    <div onPointerDown={() => mdxEditorRef.current?.focus?.()} style={{ display: 'flex', alignItems: 'center' }}>
+      <BoldItalicUnderlineToggles />
+      <CodeToggle />
+      <ListsToggle options={['number', 'check']} />
+      <InsertImageButton />
+      <UndoRedoPortal />
+    </div>
+  ), [])
+
   const plugins = useMemo(() => [
     listsPlugin(),
     imagePlugin({
@@ -224,7 +222,7 @@ export default function NoteEditor({
       toolbarPosition: 'bottom',
       toolbarContents,
     }),
-  ], [])
+  ], [toolbarContents])
 
   function handleEditorClick(e) {
     const img = e.target.closest('img')
