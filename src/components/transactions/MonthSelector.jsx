@@ -16,7 +16,7 @@ function formatTotal(total) {
   return `${sign}Bs. ${abs}`
 }
 
-export default function MonthSelector({ year, month, total, onPrev, onNext }) {
+export default function MonthSelector({ year, month, total, totalExpenses, totalIncome, onPrev, onNext }) {
   const totalClass =
     total < 0 ? styles.negative : total > 0 ? styles.positive : styles.neutral
 
@@ -28,9 +28,21 @@ export default function MonthSelector({ year, month, total, onPrev, onNext }) {
         </button>
         <div className={styles.center}>
           <span className={styles.monthLabel}>{monthLabel(year, month)}</span>
-          <span className={[styles.total, totalClass].join(' ')}>
-            {formatTotal(total)}
-          </span>
+          {totalExpenses && totalIncome ? (
+            <div className={styles.breakdown}>
+              <span className={styles.expenses}>-{Math.abs(totalExpenses)}</span>
+              <span className={styles.separator}>|</span>
+              <span className={styles.income}>+{totalIncome}</span>
+              <span className={styles.separator}>|</span>
+              <span className={[styles.total, totalClass].join(' ')}>
+                {formatTotal(total)}
+              </span>
+            </div>
+          ) : (
+            <span className={[styles.total, totalClass].join(' ')}>
+              {formatTotal(total)}
+            </span>
+          )}
         </div>
         <button className={styles.chevron} onClick={onNext} aria-label="Mes siguiente" data-testid="month-selector-next">
           <ChevronRight size={20} />

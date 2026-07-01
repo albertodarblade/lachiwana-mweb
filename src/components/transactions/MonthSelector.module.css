@@ -52,3 +52,28 @@
 .negative { color: #e53935; }
 .positive { color: #43a047; }
 .neutral  { color: var(--f7-list-item-subtitle-text-color); }
+
+.breakdown {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.expenses {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e53935;
+}
+
+.income {
+  font-size: 13px;
+  font-weight: 600;
+  color: #43a047;
+}
+
+.separator {
+  font-size: 12px;
+  color: var(--f7-list-item-subtitle-text-color);
+  opacity: 0.4;
+}

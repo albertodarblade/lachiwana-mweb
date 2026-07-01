@@ -1,10 +1,4 @@
-# Reglas de Contexto
-- El backend vive en un repositorio hermano: `../Lachiwana-service`
-- NO intentes escribir en el backend.
-- Usa el comando `cat` para leer archivos del repo hermano si necesitas contexto adicional.
+# Lachiwana MWeb
 
-<!-- SPECKIT START -->
-For additional context about technologies to be used, project structure,
-shell commands, and other important information, read the current plan
-at `specs/015-sliding-session-auth/plan.md`.
-<!-- SPECKIT END -->
+Lee AGENTS.md para instrucciones completas del proyecto.
+Read AGENTS.md for full project instructions.

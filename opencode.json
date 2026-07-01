@@ -1,0 +1,61 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "build": {
+      "permission": {
+        "bash": {
+          "*": "ask",
+          "pnpm *": "allow",
+          "npm *": "allow",
+          "node *": "allow",
+          "grep *": "allow",
+          "xargs *": "allow",
+          "cat *": "allow",
+          "find *": "allow",
+          "ls *": "allow",
+          "python3 *": "allow",
+          "python *": "allow"
+        },
+        "external_directory": {
+          "../Lachiwana-service/**": "allow",
+          "../Lachiwana-service/routes/**": "allow"
+        }
+      }
+    },
+    "plan": {
+      "permission": {
+        "edit": "deny",
+        "bash": "deny",
+        "write": "deny",
+        "webfetch": "allow",
+        "websearch": "allow"
+      }
+    },
+    "explore": {
+      "permission": {
+        "external_directory": {
+          "../Lachiwana-service/**": "allow"
+        }
+      }
+    },
+    "general": {
+      "permission": {
+        "external_directory": {
+          "../Lachiwana-service/**": "allow"
+        }
+      }
+    }
+  },
+  "permission": {
+    "webfetch": "allow",
+    "websearch": "allow",
+    "external_directory": {
+      "../Lachiwana-service/**": "allow"
+    }
+  },
+  "formatter": true,
+  "instructions": [
+    "AGENTS.md",
+    "specs/015-sliding-session-auth/plan.md"
+  ]
+}

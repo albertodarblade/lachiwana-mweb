@@ -53,7 +53,7 @@ export default function NotebookTransactionsPage({ f7route }) {
     ...(filters.tagIds.size ? { tags: [...filters.tagIds] } : {}),
   }
 
-  const { data: transactions = [] } = useTransactions(id, filterParams)
+  const { data: transactions = [], isFetching: transactionsLoading } = useTransactions(id, filterParams)
 
   const notebookTags = notebook?.tags ?? []
 
@@ -64,6 +64,8 @@ export default function NotebookTransactionsPage({ f7route }) {
   }
 
   const total = sumAmounts(transactions)
+  const totalExpenses = sumAmounts(transactions.filter((t) => (t.value ?? 0) < 0))
+  const totalIncome = sumAmounts(transactions.filter((t) => (t.value ?? 0) > 0))
 
   function prevMonth() {
     setCursor(({ year, month }) => {
@@ -196,11 +198,17 @@ export default function NotebookTransactionsPage({ f7route }) {
             year={cursor.year}
             month={cursor.month}
             total={total}
+            totalExpenses={totalExpenses}
+            totalIncome={totalIncome}
             onPrev={prevMonth}
             onNext={nextMonth}
           />
           <div className={styles.sectionTitle}>Movimientos</div>
-          {transactions.length === 0 ? (
+          {transactionsLoading ? (
+            <Block className={styles.centered}>
+              <Preloader size={44} />
+            </Block>
+          ) : transactions.length === 0 ? (
             <TransactionEmptyState />
           ) : (
             <div className={styles.list}>
@@ -223,7 +231,11 @@ export default function NotebookTransactionsPage({ f7route }) {
               {total < 0 ? '-' : total > 0 ? '+' : ''}Bs. {Math.abs(total)}
             </span>
           </Block>
-          {transactions.length === 0 ? (
+          {transactionsLoading ? (
+            <Block className={styles.centered}>
+              <Preloader size={44} />
+            </Block>
+          ) : transactions.length === 0 ? (
             <TransactionEmptyState />
           ) : (
             <div className={styles.list}>
