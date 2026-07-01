@@ -98,8 +98,9 @@ export default function LoginPage() {
       const raw = localStorage.getItem('lachiwana_oauth_token')
       if (!raw) return
       try {
-        const { accessToken, expiresAt } = JSON.parse(raw)
+        const { accessToken, expiresAt, refreshToken } = JSON.parse(raw)
         setToken(accessToken, expiresAt)
+        if (refreshToken) localStorage.setItem('lachiwana_rt', refreshToken)
         console.debug('[auth] token captured from popup handoff')
       } catch {}
       localStorage.removeItem('lachiwana_oauth_token')

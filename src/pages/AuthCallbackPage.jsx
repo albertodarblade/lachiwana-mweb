@@ -22,6 +22,8 @@ export default function AuthCallbackPage() {
     const accessToken = params.get('accessToken')
     const expiresAt = params.get('expiresAt')
     const userRaw = params.get('user')
+    const refreshToken = params.get('refreshToken')
+    if (refreshToken) localStorage.setItem('lachiwana_rt', refreshToken)
 
     if (error) {
       finish(`/login?error=${encodeURIComponent(error)}`)
@@ -48,7 +50,7 @@ export default function AuthCallbackPage() {
 
     if (localStorage.getItem('lachiwana_oauth_popup') === '1') {
       // Popup flow: hand off token to main window via transient localStorage key
-      localStorage.setItem('lachiwana_oauth_token', JSON.stringify({ accessToken, expiresAt }))
+      localStorage.setItem('lachiwana_oauth_token', JSON.stringify({ accessToken, expiresAt, refreshToken }))
       console.debug('[auth] token captured at callback (popup)')
       finish(destination)
     } else {
