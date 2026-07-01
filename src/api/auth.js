@@ -16,7 +16,6 @@ async function _doRefresh() {
     const res = await fetch(`${BASE}/refresh`, {
       method: 'POST',
       headers,
-      credentials: 'include',
     })
     if (!res.ok) {
       const err = new Error('refresh_failed')
@@ -39,6 +38,5 @@ export async function signOut() {
   await fetch(`${BASE}/signout`, {
     method: 'POST',
     headers,
-    credentials: 'include',
   })
 }
