@@ -6,8 +6,6 @@ import { refreshToken } from './auth'
 
 const BASE_URL = import.meta.env.LACHIWANA_SERVICE_URL
 
-let _refreshPromise = null
-
 function _authHeaders() {
   const token = getToken()
   return token ? { Authorization: `Bearer ${token}` } : {}
@@ -20,9 +18,7 @@ function _handleAuthFailure() {
 }
 
 async function _silentRefresh() {
-  if (_refreshPromise) return _refreshPromise
-  _refreshPromise = refreshToken().finally(() => { _refreshPromise = null })
-  return _refreshPromise
+  return refreshToken()
 }
 
 async function _request(method, path, { body, isForm, isBlob } = {}) {
