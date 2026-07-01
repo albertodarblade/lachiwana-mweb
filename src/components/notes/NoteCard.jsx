@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Paperclip } from 'lucide-react'
+import { Actions, ActionsGroup, ActionsButton } from 'framework7-react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
@@ -40,37 +41,73 @@ export default function NoteCard({ note, notebookId }) {
   const hasAttachments = (note.attachments?.length ?? 0) > 0
   const date = note.updatedAt || note.createdAt
 
+  const [actionsOpen, setActionsOpen] = useState(false)
+  const [pendingLinkUrl, setPendingLinkUrl] = useState(null)
+
+  function handleCardClick(e) {
+    const link = e.target.closest('a')
+    if (link) {
+      e.preventDefault()
+      setPendingLinkUrl(link.href)
+      setActionsOpen(true)
+    } else {
+      navigate(`/notebooks/${notebookId}/notes/${note.id}`)
+    }
+  }
+
+  function handleOpenLink() {
+    setActionsOpen(false)
+    window.open(pendingLinkUrl, '_blank')
+  }
+
+  function handleOpenNote() {
+    setActionsOpen(false)
+    navigate(`/notebooks/${notebookId}/notes/${note.id}`)
+  }
+
   return (
-    <div
-      className={styles.card}
-      onClick={() => navigate(`/notebooks/${notebookId}/notes/${note.id}`)}
-      data-testid={`note-card-${note.id}`}
-    >
-      {title && <p className={styles.title}>{title}</p>}
-      {body && (
-        <div
-          className={styles.body}
-          style={notebookColor ? { '--notebook-color': notebookColor } : undefined}
-        >
-          <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{body}</Markdown>
-        </div>
-      )}
-      {resolvedTags.length > 0 && (
-        <div className={styles.tags}>
-          {resolvedTags.map((tag) => (
-            <TagChip key={tag.id} tag={tag} color={notebookColor} />
-          ))}
-        </div>
-      )}
-      <div className={styles.footer}>
-        <span className={styles.date}>{formatDate(date)}</span>
-        {hasAttachments && (
-          <span className={styles.attachBadge}>
-            <Paperclip size={14} className={styles.attachIcon} />
-            <span className={styles.attachCount}>{note.attachments.length}</span>
-          </span>
+    <>
+      <div
+        className={styles.card}
+        onClick={handleCardClick}
+        data-testid={`note-card-${note.id}`}
+      >
+        {title && <p className={styles.title}>{title}</p>}
+        {body && (
+          <div
+            className={styles.body}
+            style={notebookColor ? { '--notebook-color': notebookColor } : undefined}
+          >
+            <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{body}</Markdown>
+          </div>
         )}
+        {resolvedTags.length > 0 && (
+          <div className={styles.tags}>
+            {resolvedTags.map((tag) => (
+              <TagChip key={tag.id} tag={tag} color={notebookColor} />
+            ))}
+          </div>
+        )}
+        <div className={styles.footer}>
+          <span className={styles.date}>{formatDate(date)}</span>
+          {hasAttachments && (
+            <span className={styles.attachBadge}>
+              <Paperclip size={14} className={styles.attachIcon} />
+              <span className={styles.attachCount}>{note.attachments.length}</span>
+            </span>
+          )}
+        </div>
       </div>
-    </div>
+
+      <Actions opened={actionsOpen} onActionsClosed={() => setActionsOpen(false)}>
+        <ActionsGroup>
+          <ActionsButton onClick={handleOpenLink}>Abrir link</ActionsButton>
+          <ActionsButton onClick={handleOpenNote}>Abrir nota</ActionsButton>
+        </ActionsGroup>
+        <ActionsGroup>
+          <ActionsButton bold onClick={() => setActionsOpen(false)}>Cancelar</ActionsButton>
+        </ActionsGroup>
+      </Actions>
+    </>
   )
 }
