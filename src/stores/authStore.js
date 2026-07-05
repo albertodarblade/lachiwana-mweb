@@ -22,6 +22,5 @@ export function setUser(user) {
 export function clearSession() {
   clearToken()
   localStorage.removeItem(SESSION_KEY)
-  localStorage.removeItem('LACHIWANA_QUERY_CACHE')
   localStorage.removeItem('lachiwana_rt')
 }

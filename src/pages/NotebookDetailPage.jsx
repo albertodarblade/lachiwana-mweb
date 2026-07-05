@@ -33,7 +33,7 @@ export default function NotebookDetailPage({ f7route }) {
     ...(filters.tagIds.size ? { tags: [...filters.tagIds] } : {}),
   }
 
-  const { data: notes = [], isPending: notesLoading, isError: notesError } = useNotes(id, queryParams)
+  const { data: notes = [], isPending: notesLoading, isError: notesError, fetchStatus: notesFetchStatus } = useNotes(id, queryParams)
 
   const notebookTags = notebook?.tags ?? []
 
@@ -125,7 +125,13 @@ export default function NotebookDetailPage({ f7route }) {
       </Navbar>
 
       <div>
-        {notesLoading && (
+        {notesLoading && notesFetchStatus === 'paused' && (
+          <Block className={styles.notesErrorBlock}>
+            <p className={styles.notesErrorText}>Sin conexión — mostrando datos guardados.</p>
+          </Block>
+        )}
+
+        {notesLoading && notesFetchStatus !== 'paused' && (
           <Block className={styles.notesLoadingBlock}>
             <Preloader size={44} />
           </Block>

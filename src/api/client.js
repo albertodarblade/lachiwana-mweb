@@ -1,5 +1,4 @@
 import { f7 } from 'framework7-react'
-import queryClient from '../queryClient'
 import { getToken, setToken } from '../stores/tokenStore'
 import { clearSession } from '../stores/authStore'
 import { refreshToken } from './auth'
@@ -13,7 +12,6 @@ function _authHeaders() {
 
 function _handleAuthFailure() {
   clearSession()
-  queryClient.clear()
   window.location.replace('/login?expired=1')
 }
 

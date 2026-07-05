@@ -36,7 +36,7 @@ export default function TransactionEditPage({ f7route }) {
   const transactionId = f7route?.params?.transactionId
 
   const [deleted, setDeleted] = useState(false)
-  const { data: transaction, isLoading, isFetching } = useTransaction(notebookId, transactionId, { enabled: !deleted })
+  const { data: transaction, isLoading, isFetching, fetchStatus } = useTransaction(notebookId, transactionId, { enabled: !deleted })
   const { data: notebook } = useNotebook(notebookId)
   const notebookTags = notebook?.tags ?? []
   const { mutate } = useUpdateTransaction(notebookId, transactionId)
@@ -198,7 +198,12 @@ export default function TransactionEditPage({ f7route }) {
         </Navbar>
 
         {/* Backdrop spinner — only when no data has arrived yet */}
-        {(isLoading || isFetching) && !transaction && (
+        {fetchStatus === 'paused' && !transaction && (
+          <div className={styles.loadingBackdrop}>
+            <p style={{ color: 'white', textAlign: 'center', padding: '2rem' }}>Sin conexión — no hay datos guardados.</p>
+          </div>
+        )}
+        {(isLoading || isFetching) && !transaction && fetchStatus !== 'paused' && (
           <div className={styles.loadingBackdrop}>
             <Preloader size={44} color="white" />
           </div>

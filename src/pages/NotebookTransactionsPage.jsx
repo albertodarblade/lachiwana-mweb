@@ -53,7 +53,7 @@ export default function NotebookTransactionsPage({ f7route }) {
     ...(filters.tagIds.size ? { tags: [...filters.tagIds] } : {}),
   }
 
-  const { data: transactions = [], isFetching: transactionsLoading } = useTransactions(id, filterParams)
+  const { data: transactions = [], isPending: transactionsLoading, isError: transactionsError, fetchStatus: transactionsFetchStatus } = useTransactions(id, filterParams)
 
   const notebookTags = notebook?.tags ?? []
 
@@ -215,9 +215,17 @@ export default function NotebookTransactionsPage({ f7route }) {
             onNext={nextMonth}
           />
           <div className={styles.sectionTitle}>Movimientos</div>
-          {transactionsLoading ? (
+          {transactionsLoading && transactionsFetchStatus === 'paused' ? (
+            <Block className={styles.centered}>
+              <p>Sin conexión — mostrando datos guardados.</p>
+            </Block>
+          ) : transactionsLoading ? (
             <Block className={styles.centered}>
               <Preloader size={44} />
+            </Block>
+          ) : transactionsError ? (
+            <Block className={styles.centered}>
+              <p>Error al cargar los movimientos.</p>
             </Block>
           ) : transactions.length === 0 ? (
             <TransactionEmptyState />
@@ -242,9 +250,17 @@ export default function NotebookTransactionsPage({ f7route }) {
               {total < 0 ? '-' : total > 0 ? '+' : ''}Bs. {Math.abs(total)}
             </span>
           </Block>
-          {transactionsLoading ? (
+          {transactionsLoading && transactionsFetchStatus === 'paused' ? (
+            <Block className={styles.centered}>
+              <p>Sin conexión — mostrando datos guardados.</p>
+            </Block>
+          ) : transactionsLoading ? (
             <Block className={styles.centered}>
               <Preloader size={44} />
+            </Block>
+          ) : transactionsError ? (
+            <Block className={styles.centered}>
+              <p>Error al cargar los movimientos.</p>
             </Block>
           ) : transactions.length === 0 ? (
             <TransactionEmptyState />
