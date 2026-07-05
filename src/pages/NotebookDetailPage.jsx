@@ -19,7 +19,7 @@ const lucideMap = Object.fromEntries(LUCIDE_ICONS.map(({ name, Icon }) => [name,
 export default function NotebookDetailPage({ f7route }) {
   const id = f7route?.params?.id
   const routePath = f7route?.path ?? ''
-  const { data: notebook, isLoading, isError } = useNotebook(id)
+  const { data: notebook, isLoading, isPending, isError, fetchStatus } = useNotebook(id)
 
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false)
   const [filters, setFilters] = useState({ content: '', tagIds: new Set() })
@@ -48,6 +48,17 @@ export default function NotebookDetailPage({ f7route }) {
       navigate(`/notebooks/${id}/notes`)
     }
   }, [notebook, id, routePath])
+
+  if (isPending && fetchStatus === 'paused') {
+    return (
+      <Page>
+        <Navbar title="Cuaderno" backLink="Atrás" backLinkUrl="/" />
+        <Block className={styles.loadingBlock}>
+          <p>Sin conexión — no hay datos guardados.</p>
+        </Block>
+      </Page>
+    )
+  }
 
   if (isLoading) {
     return (

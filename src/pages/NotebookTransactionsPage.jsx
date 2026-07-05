@@ -30,7 +30,7 @@ function sumAmounts(transactions) {
 
 export default function NotebookTransactionsPage({ f7route }) {
   const id = f7route?.params?.id
-  const { data: notebook, isLoading, isError } = useNotebook(id)
+  const { data: notebook, isLoading, isPending, isError, fetchStatus } = useNotebook(id)
   const [cursor, setCursor] = useState(currentYearMonth)
 
   // Flow state
@@ -131,6 +131,17 @@ export default function NotebookTransactionsPage({ f7route }) {
     if (transactionType !== null) {
       setTimeout(() => setIsTagSheetOpen(true), 300)
     }
+  }
+
+  if (isPending && fetchStatus === 'paused') {
+    return (
+      <Page>
+        <Navbar title="Cuaderno" backLink="Atrás" backLinkUrl="/" />
+        <Block className={styles.centered}>
+          <p>Sin conexión — no hay datos guardados.</p>
+        </Block>
+      </Page>
+    )
   }
 
   if (isLoading) {

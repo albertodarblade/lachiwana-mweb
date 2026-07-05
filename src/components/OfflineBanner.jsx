@@ -25,10 +25,9 @@ export default function OfflineBanner() {
   return (
     <div
       className={[styles.toast, styles.offline].join(' ')}
-      onClick={dismissOfflineBanner}
       data-testid="offline-banner-offline"
     >
-      <span>Sin conexión — solo lectura</span>
+      <span>Sin conexión — mostrando datos guardados</span>
     </div>
   )
 }

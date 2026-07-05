@@ -30,7 +30,7 @@ function UserAvatar() {
 }
 
 export default function NotebooksPage() {
-  const { data, isLoading, isError, refetch } = useNotebooks()
+  const { data, isLoading, isPending, isError, refetch, fetchStatus } = useNotebooks()
   const userId = getSession()?.user?.googleId ?? ''
   const { pins, pinNotebook, unpinNotebook, isPinned } = usePinnedNotebooks(userId)
 
@@ -70,6 +70,12 @@ export default function NotebooksPage() {
           <UserAvatar />
         </div>
       </Navbar>
+
+      {isPending && fetchStatus === 'paused' && (
+        <Block className={styles.loadingBlock}>
+          <p>Sin conexión — no hay datos guardados.</p>
+        </Block>
+      )}
 
       {isLoading && (
         <Block className={styles.loadingBlock}>

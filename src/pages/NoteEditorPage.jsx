@@ -26,7 +26,7 @@ export default function NoteEditorPage({ f7route }) {
   const notebookId = f7route?.params?.notebookId
   const noteId = f7route?.params?.noteId
 
-  const { data: noteData, isLoading } = useNote(notebookId, noteId)
+  const { data: noteData, isLoading, isPending, fetchStatus } = useNote(notebookId, noteId)
   const note = noteData?.data
   const { data: notebook } = useNotebook(notebookId)
 
@@ -129,6 +129,17 @@ export default function NoteEditorPage({ f7route }) {
         navigate(`/notebooks/${notebookId}`)
       },
     })
+  }
+
+  if (isPending && fetchStatus === 'paused') {
+    return (
+      <Page pageContent={false}>
+        <Navbar title="Nota" backLink="Atrás" />
+        <div className={['note-editor-layout', styles.editorLayoutCentered].join(' ')}>
+          <p>Sin conexión — no hay datos guardados.</p>
+        </div>
+      </Page>
+    )
   }
 
   if (isLoading && !note) {
