@@ -8,7 +8,7 @@ const WEEK_MS = 7 * DAY_MS
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 1,
+      retry: 3,
       staleTime: 300_000,
       gcTime: WEEK_MS,
     },

@@ -26,7 +26,7 @@ export default function NoteEditorPage({ f7route }) {
   const notebookId = f7route?.params?.notebookId
   const noteId = f7route?.params?.noteId
 
-  const { data: noteData, isLoading, isPending, fetchStatus } = useNote(notebookId, noteId)
+  const { data: noteData, isLoading, isPending, isError, fetchStatus } = useNote(notebookId, noteId)
   const note = noteData?.data
   const { data: notebook } = useNotebook(notebookId)
 
@@ -153,12 +153,32 @@ export default function NoteEditorPage({ f7route }) {
     )
   }
 
+  if (isError && !note) {
+    return (
+      <Page pageContent={false}>
+        <Navbar title="Nota" backLink="Atrás" />
+        <div className={['note-editor-layout', styles.editorLayoutCentered].join(' ')}>
+          <p>Error al cargar la nota.</p>
+          <Button onClick={() => window.location.reload()} style={{ marginTop: 16 }}>Reintentar</Button>
+        </div>
+      </Page>
+    )
+  }
+
+  const [dismissNoteError, setDismissNoteError] = useState(false)
+
   const confirmLabel = countdown > 0
     ? `Espera ${countdown}s`
     : isDeleting ? 'Eliminando...' : 'Eliminar'
 
   return (
     <Page pageContent={false} onPageBeforeOut={flushPendingSave}>
+      {isError && note && !dismissNoteError && (
+        <div style={{ background: '#FEF3C7', borderBottom: '1px solid #F59E0B', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 14 }}>
+          <span>Error al cargar. Mostrando datos guardados.</span>
+          <span style={{ color: '#92400E', fontWeight: 600, cursor: 'pointer', marginLeft: 12 }} onClick={() => setDismissNoteError(true)}>×</span>
+        </div>
+      )}
       <Navbar>
         <NavLeft backLink="Atrás" />
         <NavTitle>

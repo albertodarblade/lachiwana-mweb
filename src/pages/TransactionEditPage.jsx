@@ -36,7 +36,7 @@ export default function TransactionEditPage({ f7route }) {
   const transactionId = f7route?.params?.transactionId
 
   const [deleted, setDeleted] = useState(false)
-  const { data: transaction, isLoading, isFetching, fetchStatus } = useTransaction(notebookId, transactionId, { enabled: !deleted })
+  const { data: transaction, isLoading, isFetching, isError, fetchStatus } = useTransaction(notebookId, transactionId, { enabled: !deleted })
   const { data: notebook } = useNotebook(notebookId)
   const notebookTags = notebook?.tags ?? []
   const { mutate } = useUpdateTransaction(notebookId, transactionId)
@@ -53,6 +53,7 @@ export default function TransactionEditPage({ f7route }) {
   const [actionsOpen, setActionsOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [countdown, setCountdown] = useState(COUNTDOWN_START)
+  const [dismissTxError, setDismissTxError] = useState(false)
 
   const debounceRef = useRef(null)
   const dateInputRef = useRef(null)
@@ -197,6 +198,15 @@ export default function TransactionEditPage({ f7route }) {
           </NavRight>
         </Navbar>
 
+        {isError && !transaction && (
+          <div className={styles.loadingBackdrop}>
+            <div style={{ background: 'white', borderRadius: 12, padding: '2rem', maxWidth: 300, textAlign: 'center' }}>
+              <p style={{ margin: '0 0 12px' }}>Error al cargar el movimiento.</p>
+              <Button onClick={() => window.location.reload()} style={{ marginTop: 8 }}>Reintentar</Button>
+            </div>
+          </div>
+        )}
+
         {/* Backdrop spinner — only when no data has arrived yet */}
         {fetchStatus === 'paused' && !transaction && (
           <div className={styles.loadingBackdrop}>
@@ -206,6 +216,13 @@ export default function TransactionEditPage({ f7route }) {
         {(isLoading || isFetching) && !transaction && fetchStatus !== 'paused' && (
           <div className={styles.loadingBackdrop}>
             <Preloader size={44} color="white" />
+          </div>
+        )}
+
+        {isError && transaction && !dismissTxError && (
+          <div style={{ background: '#FEF3C7', borderBottom: '1px solid #F59E0B', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 14 }}>
+            <span>Error al cargar. Mostrando datos guardados.</span>
+            <span style={{ color: '#92400E', fontWeight: 600, cursor: 'pointer', marginLeft: 12 }} onClick={() => setDismissTxError(true)}>×</span>
           </div>
         )}
 

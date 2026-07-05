@@ -41,6 +41,7 @@ export default function NotebookTransactionsPage({ f7route }) {
   const [isTagsPopupOpen, setIsTagsPopupOpen] = useState(false)
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false)
   const [filters, setFilters] = useState({ content: '', tagIds: new Set() })
+  const [dismissTxError, setDismissTxError] = useState(false)
   const formClosingForBack = useRef(false)
 
   const viewType = notebook?.transactionsViewType ?? 'all'
@@ -215,6 +216,12 @@ export default function NotebookTransactionsPage({ f7route }) {
             onNext={nextMonth}
           />
           <div className={styles.sectionTitle}>Movimientos</div>
+          {transactionsError && transactions.length > 0 && !dismissTxError && (
+            <Block className={styles.centered}>
+              <p>Error al cargar. Mostrando datos guardados.</p>
+              <span style={{ color: 'var(--f7-theme-color)', cursor: 'pointer' }} onClick={() => setDismissTxError(true)}>Descartar</span>
+            </Block>
+          )}
           {transactionsLoading && transactionsFetchStatus === 'paused' ? (
             <Block className={styles.centered}>
               <p>Sin conexión — mostrando datos guardados.</p>
@@ -223,7 +230,7 @@ export default function NotebookTransactionsPage({ f7route }) {
             <Block className={styles.centered}>
               <Preloader size={44} />
             </Block>
-          ) : transactionsError ? (
+          ) : transactionsError && transactions.length === 0 ? (
             <Block className={styles.centered}>
               <p>Error al cargar los movimientos.</p>
             </Block>
@@ -250,6 +257,12 @@ export default function NotebookTransactionsPage({ f7route }) {
               {total < 0 ? '-' : total > 0 ? '+' : ''}Bs. {Math.abs(total)}
             </span>
           </Block>
+          {transactionsError && transactions.length > 0 && !dismissTxError && (
+            <Block className={styles.centered}>
+              <p>Error al cargar. Mostrando datos guardados.</p>
+              <span style={{ color: 'var(--f7-theme-color)', cursor: 'pointer' }} onClick={() => setDismissTxError(true)}>Descartar</span>
+            </Block>
+          )}
           {transactionsLoading && transactionsFetchStatus === 'paused' ? (
             <Block className={styles.centered}>
               <p>Sin conexión — mostrando datos guardados.</p>
@@ -258,7 +271,7 @@ export default function NotebookTransactionsPage({ f7route }) {
             <Block className={styles.centered}>
               <Preloader size={44} />
             </Block>
-          ) : transactionsError ? (
+          ) : transactionsError && transactions.length === 0 ? (
             <Block className={styles.centered}>
               <p>Error al cargar los movimientos.</p>
             </Block>

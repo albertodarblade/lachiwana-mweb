@@ -23,6 +23,8 @@ export default function NotebookDetailPage({ f7route }) {
 
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false)
   const [filters, setFilters] = useState({ content: '', tagIds: new Set() })
+  const [dismissNotebookError, setDismissNotebookError] = useState(false)
+  const [dismissNotesError, setDismissNotesError] = useState(false)
 
   const activeFilterCount =
     (filters.content ? 1 : 0) +
@@ -71,7 +73,7 @@ export default function NotebookDetailPage({ f7route }) {
     )
   }
 
-  if (isError || !notebook) {
+  if (isError && !notebook) {
     return (
       <Page>
         <Navbar title="Cuaderno" backLink="Atrás" backLinkUrl="/" />
@@ -125,6 +127,13 @@ export default function NotebookDetailPage({ f7route }) {
       </Navbar>
 
       <div>
+        {isError && notebook && !dismissNotebookError && (
+          <Block className={styles.notesErrorBlock}>
+            <p className={styles.notesErrorText}>Error al cargar. Mostrando datos guardados.</p>
+            <span className={styles.retryLink} onClick={() => setDismissNotebookError(true)}>Descartar</span>
+          </Block>
+        )}
+
         {notesLoading && notesFetchStatus === 'paused' && (
           <Block className={styles.notesErrorBlock}>
             <p className={styles.notesErrorText}>Sin conexión — mostrando datos guardados.</p>
@@ -137,7 +146,14 @@ export default function NotebookDetailPage({ f7route }) {
           </Block>
         )}
 
-        {!notesLoading && notesError && (
+        {!notesLoading && notesError && notes.length > 0 && !dismissNotesError && (
+          <Block className={styles.notesErrorBlock}>
+            <p className={styles.notesErrorText}>Error al cargar. Mostrando datos guardados.</p>
+            <span className={styles.retryLink} onClick={() => setDismissNotesError(true)}>Descartar</span>
+          </Block>
+        )}
+
+        {!notesLoading && notesError && notes.length === 0 && (
           <Block className={styles.notesErrorBlock}>
             <p className={styles.notesErrorText}>Error al cargar las notas.</p>
             <span className={styles.retryLink} onClick={() => window.location.reload()} data-testid="notes-retry">
@@ -156,7 +172,7 @@ export default function NotebookDetailPage({ f7route }) {
             : <NoteEmptyState />
         )}
 
-        {!notesLoading && !notesError && notes.length > 0 && (
+        {!notesLoading && notes.length > 0 && (
           <div className={styles.notesGrid}>
             {notes.map((note) => (
               <NoteCard key={note.id} note={note} notebookId={id} />

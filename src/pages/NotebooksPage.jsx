@@ -34,6 +34,7 @@ export default function NotebooksPage() {
   const userId = getSession()?.user?.googleId ?? ''
   const { pins, pinNotebook, unpinNotebook, isPinned } = usePinnedNotebooks(userId)
 
+  const [dismissError, setDismissError] = useState(false)
   const sortedNotebooks = [...(data?.data ?? [])].sort(
     (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
   )
@@ -83,7 +84,19 @@ export default function NotebooksPage() {
         </Block>
       )}
 
-      {isError && (
+      {isError && sortedNotebooks.length > 0 && !dismissError && (
+        <Block className={styles.errorBlock}>
+          <p>Error al cargar. Mostrando datos guardados.</p>
+          <span
+            className={styles.retryLink}
+            onClick={() => setDismissError(true)}
+          >
+            Descartar
+          </span>
+        </Block>
+      )}
+
+      {isError && sortedNotebooks.length === 0 && (
         <Block className={styles.errorBlock}>
           <p>Error al cargar los cuadernos.</p>
           <span
@@ -96,9 +109,9 @@ export default function NotebooksPage() {
         </Block>
       )}
 
-      {!isLoading && !isError && sortedNotebooks.length === 0 && <NotebookEmptyState />}
+      {!isLoading && sortedNotebooks.length === 0 && !isError && <NotebookEmptyState />}
 
-      {!isLoading && !isError && sortedNotebooks.length > 0 && (
+      {!isLoading && sortedNotebooks.length > 0 && (
         <div className={styles.listPadding}>
           {hasPinned && (
             <div className={styles.sectionLabel} data-testid="notebooks-section-pinned">
