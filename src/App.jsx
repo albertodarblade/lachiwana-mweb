@@ -131,16 +131,43 @@ export default function App() {
       setSessionChecked(true)
       return
     }
-    refreshToken()
-      .then(({ accessToken, expiresAt }) => {
-        setToken(accessToken, expiresAt)
-      })
-      .catch(() => {
-        // No valid session — ProtectedRoute will redirect to /login
-      })
-      .finally(() => {
-        setSessionChecked(true)
-      })
+
+    let cancelled = false
+    let attempts = 0
+    const maxAttempts = 2
+
+    function doRefresh() {
+      if (cancelled) return
+      attempts++
+      const hasRt = !!localStorage.getItem('lachiwana_rt')
+      console.debug(`[auth] startup refresh attempt ${attempts}/${maxAttempts}`, { hasRt })
+
+      refreshToken()
+        .then(({ accessToken, expiresAt }) => {
+          if (cancelled) return
+          setToken(accessToken, expiresAt)
+          console.debug(`[auth] startup refresh succeeded (attempt ${attempts})`)
+          setSessionChecked(true)
+        })
+        .catch((err) => {
+          if (cancelled) return
+          const status = err?.status
+          const isAuthError = status === 401
+          console.debug(
+            `[auth] startup refresh failed (attempt ${attempts})`,
+            { status: status ?? 'network', isAuthError, hasRt }
+          )
+          if (isAuthError || attempts >= maxAttempts) {
+            setSessionChecked(true)
+            return
+          }
+          setTimeout(doRefresh, 1000)
+        })
+    }
+
+    doRefresh()
+
+    return () => { cancelled = true }
   }, [])
 
   // Keep --keyboard-offset in sync with the visual viewport so the note-editor
