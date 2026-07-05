@@ -2,26 +2,15 @@
   "$schema": "https://opencode.ai/config.json",
   "agent": {
     "build": {
-      "permission": {
-        "bash": {
-          "*": "ask",
-          "pnpm *": "allow",
-          "npm *": "allow",
-          "node *": "allow",
-          "grep *": "allow",
-          "xargs *": "allow",
-          "cat *": "allow",
-          "find *": "allow",
-          "ls *": "allow",
-          "python3 *": "allow",
-          "python *": "allow"
-        },
-        "external_directory": {
-          "../Lachiwana-service/**": "allow",
-          "../Lachiwana-service/routes/**": "allow"
+        "permission": {
+          "bash": {
+            "*": "allow"
+          },
+          "external_directory": {
+            "../Lachiwana-service/**": "allow"
+          }
         }
-      }
-    },
+      },
     "plan": {
       "permission": {
         "edit": "deny",
