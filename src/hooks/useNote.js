@@ -17,5 +17,6 @@ export function useNote(notebookId, noteId) {
     },
     initialDataUpdatedAt: () =>
       queryClient.getQueryState(['notes', notebookId])?.dataUpdatedAt,
+    staleTime: 0,
   })
 }

@@ -29,5 +29,6 @@ export function useTransaction(notebookId, transactionId, { enabled = true } = {
       }
       return undefined
     },
+    staleTime: 0,
   })
 }
