@@ -46,9 +46,13 @@ async function _request(method, path, { body, isForm, isBlob } = {}) {
         f7.toast.create({ text: 'Demasiadas solicitudes, espera un momento.', closeTimeout: 3000 }).open()
         throw new Error('Rate limited')
       }
-      console.debug('[auth] refresh failed, signing out')
-      _handleAuthFailure()
-      throw new Error('Session expired')
+      if (err?.status === 401) {
+        console.debug('[auth] refresh failed, signing out')
+        _handleAuthFailure()
+        throw new Error('Session expired')
+      }
+      console.debug('[auth] refresh failed — network error, deferring')
+      throw err
     }
 
     // Retry once with the new token
