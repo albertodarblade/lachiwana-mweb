@@ -35,6 +35,7 @@ export default function NoteEditorPage({ f7route }) {
   const [actionsOpen, setActionsOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [countdown, setCountdown] = useState(COUNTDOWN_START)
+  const [dismissNoteError, setDismissNoteError] = useState(false)
 
   const debounceRef = useRef(null)
   const contentRef = useRef('')
@@ -164,8 +165,6 @@ export default function NoteEditorPage({ f7route }) {
       </Page>
     )
   }
-
-  const [dismissNoteError, setDismissNoteError] = useState(false)
 
   const confirmLabel = countdown > 0
     ? `Espera ${countdown}s`
