@@ -72,13 +72,13 @@ export default function NotebooksPage() {
         </div>
       </Navbar>
 
-      {isPending && fetchStatus === 'paused' && (
+      {isPending && fetchStatus === 'paused' && sortedNotebooks.length === 0 && (
         <Block className={styles.loadingBlock}>
           <p>Sin conexión — no hay datos guardados.</p>
         </Block>
       )}
 
-      {isLoading && (
+      {isLoading && sortedNotebooks.length === 0 && (
         <Block className={styles.loadingBlock}>
           <Preloader size={44} />
         </Block>

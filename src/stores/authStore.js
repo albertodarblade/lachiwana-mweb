@@ -1,4 +1,5 @@
 import { clearToken } from './tokenStore'
+import { clearUserCache } from '../lib/db'
 
 const SESSION_KEY = 'lachiwana_session'
 
@@ -20,7 +21,9 @@ export function setUser(user) {
 }
 
 export function clearSession() {
+  const userId = getUser()?.googleId
   clearToken()
   localStorage.removeItem(SESSION_KEY)
   localStorage.removeItem('lachiwana_rt')
+  if (userId) clearUserCache(userId)
 }

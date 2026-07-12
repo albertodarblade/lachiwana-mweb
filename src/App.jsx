@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { App as F7App, View, Preloader } from 'framework7-react'
+import { App as F7App, View } from 'framework7-react'
 import OfflineBanner from './components/OfflineBanner'
 import UpdateBanner from './components/UpdateBanner'
 import { setOnUpdateReady } from './stores/swUpdateStore'
@@ -17,8 +17,6 @@ import SettingsPage from './pages/SettingsPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { getUser } from './stores/authStore'
 import { getPrefs } from './stores/settingsStore'
-import { getToken, setToken } from './stores/tokenStore'
-import { refreshToken } from './api/auth'
 
 function ProtectedHome(props) {
   return (
@@ -115,59 +113,9 @@ const f7params = {
 
 export default function App() {
   const [waitingWorker, setWaitingWorker] = useState(null)
-  const [sessionChecked, setSessionChecked] = useState(false)
 
   useEffect(() => {
     setOnUpdateReady(setWaitingWorker)
-  }, [])
-
-  useEffect(() => {
-    const path = window.location.pathname
-    if (path === '/auth/callback' || path.startsWith('/login')) {
-      setSessionChecked(true)
-      return
-    }
-    if (getToken()) {
-      setSessionChecked(true)
-      return
-    }
-
-    let cancelled = false
-    let attempts = 0
-    const maxAttempts = 2
-
-    function doRefresh() {
-      if (cancelled) return
-      attempts++
-      const hasRt = !!localStorage.getItem('lachiwana_rt')
-      console.debug(`[auth] startup refresh attempt ${attempts}/${maxAttempts}`, { hasRt })
-
-      refreshToken()
-        .then(({ accessToken, expiresAt }) => {
-          if (cancelled) return
-          setToken(accessToken, expiresAt)
-          console.debug(`[auth] startup refresh succeeded (attempt ${attempts})`)
-          setSessionChecked(true)
-        })
-        .catch((err) => {
-          if (cancelled) return
-          const status = err?.status
-          const isAuthError = status === 401
-          console.debug(
-            `[auth] startup refresh failed (attempt ${attempts})`,
-            { status: status ?? 'network', isAuthError, hasRt }
-          )
-          if (isAuthError || attempts >= maxAttempts) {
-            setSessionChecked(true)
-            return
-          }
-          setTimeout(doRefresh, 1000)
-        })
-    }
-
-    doRefresh()
-
-    return () => { cancelled = true }
   }, [])
 
   // Keep --keyboard-offset in sync with the visual viewport so the note-editor
@@ -186,17 +134,6 @@ export default function App() {
       vv.removeEventListener('scroll', update)
     }
   }, [])
-
-  if (!sessionChecked) {
-    return (
-      <div
-        data-testid="app-session-loading"
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}
-      >
-        <Preloader size={44} />
-      </div>
-    )
-  }
 
   return (
     <>
