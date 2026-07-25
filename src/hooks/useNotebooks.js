@@ -31,6 +31,7 @@ export function useNotebooks() {
 
   return {
     ...query,
+    isLoading: query.isLoading && cached === null,
     data: cached ?? query.data,
   }
 }
