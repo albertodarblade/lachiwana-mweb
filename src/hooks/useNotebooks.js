@@ -12,6 +12,7 @@ export function useNotebooks() {
     if (!userId) return
     let cancelled = false
     getNotebooks(userId).then((data) => {
+      console.log('data', data);
       if (!cancelled) setCached(data)
     })
     return () => { cancelled = true }
@@ -22,16 +23,17 @@ export function useNotebooks() {
     queryFn: fetchNotebooks,
     staleTime: Infinity,
     enabled: !!userId,
-    onSuccess: (data) => {
-      if (userId && data?.data) {
-        saveNotebooks(userId, data.data)
-      }
-    },
   })
+
+  useEffect(() => {
+    if (userId && query.data?.data) {
+      saveNotebooks(userId, query.data.data)
+    }
+  }, [userId, query.data])
 
   return {
     ...query,
     isLoading: query.isLoading && cached === null,
-    data: cached ?? query.data,
+    data: query.data  || cached ? { data: cached } : [],
   }
 }

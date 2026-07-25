@@ -57,6 +57,7 @@ export default function NotebooksPage() {
     }
   }
 
+  console.log('betto', isLoading, sortedNotebooks.length)
   return (
     <Page>
       <Navbar innerClass={styles.navbarInner}>
