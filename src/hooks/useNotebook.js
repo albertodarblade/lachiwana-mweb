@@ -1,20 +1,42 @@
+import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { fetchNotebook } from '../api/notebooks'
-import queryClient from '../queryClient'
+import { getUser } from '../stores/authStore'
+import { getNotebook, saveNotebook } from '../lib/db'
 
 export function useNotebook(id) {
-  return useQuery({
+  const userId = getUser()?.googleId
+  const [cached, setCached] = useState(null)
+
+  const getCachedNotebook = async () => {
+    if (!id) return
+    const data = await getNotebook(id)
+    setCached(data)
+  }
+
+  useEffect(() => {
+    getCachedNotebook()
+  }, [id])
+
+  const query = useQuery({
     queryKey: ['notebook', id],
     queryFn: () => fetchNotebook(id),
+    staleTime: 0,
     enabled: !!id,
     select: (data) => data?.data,
-    initialData: () => {
-      const list = queryClient.getQueryData(['notebooks'])
-      const notebook = list?.data?.find((n) => n.id === id)
-      if (!notebook) return undefined
-      return { ...list, data: notebook }
-    },
-    initialDataUpdatedAt: () =>
-      queryClient.getQueryState(['notebooks'])?.dataUpdatedAt,
   })
+
+  useEffect(() => {
+    if (id && query.data) {
+      saveNotebook(id, query.data)
+    }
+  }, [id, query.data])
+
+  const data = query.data === undefined ? (cached ?? null) : query.data
+
+  return {
+    ...query,
+    isLoading: query.isLoading && cached === null,
+    data,
+  }
 }

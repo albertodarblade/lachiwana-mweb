@@ -54,7 +54,7 @@ export default function NotebookTransactionsPage({ f7route }) {
     ...(filters.tagIds.size ? { tags: [...filters.tagIds] } : {}),
   }
 
-  const { data: transactions = [], isPending: transactionsLoading, isError: transactionsError, fetchStatus: transactionsFetchStatus } = useTransactions(id, filterParams)
+  const { data: transactions = [], isLoading: transactionsLoading, isError: transactionsError, fetchStatus: transactionsFetchStatus } = useTransactions(id, filterParams)
 
   const notebookTags = notebook?.tags ?? []
 
@@ -178,7 +178,7 @@ export default function NotebookTransactionsPage({ f7route }) {
   return (
     <Page>
       <Navbar>
-        <NavLeft backLink="Atrás" backLinkUrl="/" />
+        <NavLeft backLink="Atrás" backLinkUrl="/" backLinkForce />
         <NavTitle>
           <div
             className={styles.navTitleInner}
