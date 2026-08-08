@@ -1,0 +1,31 @@
+.card {
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
+
+.list {
+  margin: 0;
+}
+
+.value {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.negative { color: #e53935; }
+.positive { color: #43a047; }
+.totalPositive { color: #43a047; }
+.totalNegative { color: #e53935; }
+.totalNeutral { color: var(--f7-list-item-subtitle-text-color); }
+.placeholder { color: var(--f7-list-item-subtitle-text-color); }
+
+.totalRow :global(.item-inner) {
+  border-top: 1px solid var(--f7-list-border-color);
+  margin-top: 6px;
+  padding-top: 6px;
+}
+
+.totalTitle {
+  font-size: 14px;
+  font-weight: 600;
+}

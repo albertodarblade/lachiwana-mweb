@@ -13,7 +13,7 @@ function relativeDate(isoDate) {
 }
 
 function formatAmount(value) {
-  const abs = Math.abs(value)
+  const abs = Math.abs(value).toFixed(2)
   const sign = value < 0 ? '-' : value > 0 ? '+' : ''
   return `${sign}Bs. ${abs}`
 }

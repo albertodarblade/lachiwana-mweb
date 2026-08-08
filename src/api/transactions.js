@@ -16,6 +16,9 @@ export const createTransaction = (notebookId, payload) =>
 export const updateTransaction = (notebookId, transactionId, payload) =>
   patch(`/api/v1/notebooks/${notebookId}/transactions/${transactionId}`, payload)
 
+export const fetchTransactionSummary = (notebookId) =>
+  get(`/api/v1/notebooks/${notebookId}/transactions/summary`)
+
 export const fetchTransaction = (notebookId, transactionId) =>
   get(`/api/v1/notebooks/${notebookId}/transactions/${transactionId}`)
 

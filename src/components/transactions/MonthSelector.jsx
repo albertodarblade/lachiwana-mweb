@@ -1,6 +1,6 @@
 import React from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Block } from 'framework7-react'
+import { Block, Link } from 'framework7-react'
 import styles from './MonthSelector.module.css'
 
 function monthLabel(year, month) {
@@ -10,43 +10,19 @@ function monthLabel(year, month) {
   })
 }
 
-function formatTotal(total) {
-  const abs = Math.abs(total)
-  const sign = total < 0 ? '-' : total > 0 ? '+' : ''
-  return `${sign}Bs. ${abs}`
-}
-
-export default function MonthSelector({ year, month, total, totalExpenses, totalIncome, onPrev, onNext }) {
-  const totalClass =
-    total < 0 ? styles.negative : total > 0 ? styles.positive : styles.neutral
-
+export default function MonthSelector({ year, month, onPrev, onNext }) {
   return (
     <Block className={styles.block}>
       <div className={styles.nav}>
-        <button className={styles.chevron} onClick={onPrev} aria-label="Mes anterior" data-testid="month-selector-prev">
+        <Link className={styles.chevron} onClick={onPrev} aria-label="Mes anterior" data-testid="month-selector-prev">
           <ChevronLeft size={20} />
-        </button>
+        </Link>
         <div className={styles.center}>
           <span className={styles.monthLabel}>{monthLabel(year, month)}</span>
-          {totalExpenses && totalIncome ? (
-            <div className={styles.breakdown}>
-              <span className={styles.expenses}>-{Math.abs(totalExpenses)}</span>
-              <span className={styles.separator}>|</span>
-              <span className={styles.income}>+{totalIncome}</span>
-              <span className={styles.separator}>|</span>
-              <span className={[styles.total, totalClass].join(' ')}>
-                {formatTotal(total)}
-              </span>
-            </div>
-          ) : (
-            <span className={[styles.total, totalClass].join(' ')}>
-              {formatTotal(total)}
-            </span>
-          )}
         </div>
-        <button className={styles.chevron} onClick={onNext} aria-label="Mes siguiente" data-testid="month-selector-next">
+        <Link className={styles.chevron} onClick={onNext} aria-label="Mes siguiente" data-testid="month-selector-next">
           <ChevronRight size={20} />
-        </button>
+        </Link>
       </div>
     </Block>
   )

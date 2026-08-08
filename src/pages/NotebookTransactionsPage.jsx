@@ -7,7 +7,10 @@ import { ArrowLeftRight, SlidersHorizontal } from 'lucide-react'
 import { LUCIDE_ICONS } from '../components/IconSelector/lucideIcons'
 import { useNotebook } from '../hooks/useNotebook'
 import { useTransactions } from '../hooks/useTransactions'
+import { useTransactionSummary } from '../hooks/useTransactionSummary'
 import MonthSelector from '../components/transactions/MonthSelector'
+import MonthSummaryCard from '../components/transactions/MonthSummaryCard'
+import TransactionsSummaryCard from '../components/transactions/TransactionsSummaryCard'
 import TransactionCard from '../components/transactions/TransactionCard'
 import TransactionEmptyState from '../components/transactions/TransactionEmptyState'
 import TagSelectionSheet from '../components/transactions/TagSelectionSheet'
@@ -33,6 +36,9 @@ export default function NotebookTransactionsPage({ f7route }) {
   const { data: notebook, isLoading, isPending, isError, fetchStatus } = useNotebook(id)
   const [cursor, setCursor] = useState(currentYearMonth)
 
+  const { year: currentYear, month: currentMonth } = currentYearMonth()
+  const isCurrentMonth = cursor.year === currentYear && cursor.month === currentMonth
+
   // Flow state
   const [transactionType, setTransactionType] = useState(null)
   const [selectedTagIds, setSelectedTagIds] = useState(new Set())
@@ -56,6 +62,8 @@ export default function NotebookTransactionsPage({ f7route }) {
 
   const { data: transactions = [], isLoading: transactionsLoading, isError: transactionsError, fetchStatus: transactionsFetchStatus } = useTransactions(id, filterParams)
 
+  const { data: summary } = useTransactionSummary(id)
+
   const notebookTags = notebook?.tags ?? []
 
   function resolveTagIds(tagIds = []) {
@@ -64,7 +72,6 @@ export default function NotebookTransactionsPage({ f7route }) {
       .filter(Boolean)
   }
 
-  const total = sumAmounts(transactions)
   const totalExpenses = sumAmounts(transactions.filter((t) => (t.value ?? 0) < 0))
   const totalIncome = sumAmounts(transactions.filter((t) => (t.value ?? 0) > 0))
 
@@ -209,11 +216,14 @@ export default function NotebookTransactionsPage({ f7route }) {
           <MonthSelector
             year={cursor.year}
             month={cursor.month}
-            total={total}
-            totalExpenses={totalExpenses}
-            totalIncome={totalIncome}
             onPrev={prevMonth}
             onNext={nextMonth}
+          />
+          <MonthSummaryCard
+            expenses={totalExpenses}
+            income={totalIncome}
+            totalNotebook={summary?.total}
+            showAccumulated={isCurrentMonth}
           />
           <div className={styles.sectionTitle}>Movimientos</div>
           {transactionsError && transactions.length > 0 && !dismissTxError && (
@@ -246,17 +256,13 @@ export default function NotebookTransactionsPage({ f7route }) {
         </>
       ) : (
         <>
-          <Block className={styles.allSummary}>
-            <span className={styles.allSummaryLabel}>Balance total</span>
-            <span
-              className={[
-                styles.allSummaryTotal,
-                total < 0 ? styles.negative : total > 0 ? styles.positive : styles.neutral,
-              ].join(' ')}
-            >
-              {total < 0 ? '-' : total > 0 ? '+' : ''}Bs. {Math.abs(total)}
-            </span>
-          </Block>
+          <TransactionsSummaryCard
+            expensesLabel="Gastos totales"
+            incomeLabel="Ingresos totales"
+            expenses={summary?.expenses}
+            income={summary?.income}
+            total={summary?.total}
+          />
           {transactionsError && transactions.length > 0 && !dismissTxError && (
             <Block className={styles.centered}>
               <p>Error al cargar. Mostrando datos guardados.</p>
