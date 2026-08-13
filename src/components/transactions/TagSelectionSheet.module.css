@@ -13,12 +13,17 @@
   background: var(--f7-page-bg-color, #efeff4);
 }
 
+/* Touch zone for swipe-to-close (also selected via .tag-swipe-handle) */
+.swipeZone {
+  padding: 12px 0 8px;
+}
+
 .dragHandle {
   width: 36px;
   height: 4px;
   background: var(--f7-list-item-border-color, rgba(0,0,0,0.15));
   border-radius: 2px;
-  margin: 12px auto 8px;
+  margin: 0 auto;
 }
 
 .header {

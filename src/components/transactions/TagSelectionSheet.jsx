@@ -34,13 +34,17 @@ export default function TagSelectionSheet({
       opened={opened}
       onSheetClosed={onClose}
       backdrop
+      swipeToClose
+      swipeHandler=".tag-swipe-handle"
       style={{ height: '90vh' }}
     >
       <div className={styles.sheetOuter}>
 
         {/* Fixed header — drag handle + title + edit button */}
         <div className={styles.fixedHeader}>
-          <div className={styles.dragHandle} />
+          <div className={`${styles.swipeZone} tag-swipe-handle`}>
+            <div className={styles.dragHandle} />
+          </div>
           <div className={styles.header}>
             <div>
               <p className={styles.title}>Categoría</p>
