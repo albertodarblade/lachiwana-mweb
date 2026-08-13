@@ -15,6 +15,7 @@ import TagChip from '../components/notebooks/TagChip'
 import ThemedButton from '../components/notebooks/ThemedButton'
 import TagSelectionSheet from '../components/transactions/TagSelectionSheet'
 import TagsPopup from '../components/notebooks/TagsPopup'
+import Calculator from '../components/transactions/Calculator/Calculator'
 import { navigate } from '../utils/f7navigate'
 import styles from './TransactionEditPage.module.css'
 
@@ -121,6 +122,11 @@ export default function TransactionEditPage({ f7route }) {
     const parsed = parseFloat(raw)
     if (!raw || isNaN(parsed) || parsed === 0) { setSaveStatus('editing'); return }
     triggerDebounced({ value: isExpense ? -Math.abs(parsed) : Math.abs(parsed) })
+  }
+
+  function handleCalculationConfirm(value) {
+    setAmount(String(value))
+    triggerDebounced({ value: isExpense ? -Math.abs(value) : Math.abs(value) })
   }
 
   function handleTypeToggle(toExpense) {
@@ -272,10 +278,15 @@ export default function TransactionEditPage({ f7route }) {
               className={styles.amountInput}
               data-testid="edit-transaction-amount"
             />
+            <Calculator
+              initialValue={amount}
+              onCalculationConfirm={handleCalculationConfirm}
+            />
           </li>
         </List>
 
-        <List>
+        <List className={styles.descriptionRow}>
+          
           <ListInput
             type="text"
             placeholder="Descripción"

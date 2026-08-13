@@ -93,8 +93,9 @@
 }
 
 .amountInput {
-  flex: 1;
   font-size: 32px;
+  width: calc(100% - 96px) !important;
+  flex-shrink: 0;
   font-weight: 700;
   border: none;
   background: transparent;
@@ -143,3 +144,6 @@
   cursor: pointer;
 }
 
+.descriptionRow {
+  padding: 0 16px;
+}
