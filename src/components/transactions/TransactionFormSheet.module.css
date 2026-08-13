@@ -70,7 +70,8 @@
 }
 
 .amountInput {
-  flex: 1;
+  flex-shrink: 0;
+  width: calc(100% - 96px) !important;
   font-size: 32px;
   font-weight: 700;
   border: none;

@@ -33,9 +33,8 @@ export default function TagSelectionSheet({
     <Sheet
       opened={opened}
       onSheetClosed={onClose}
-      swipeToClose
       backdrop
-      style={{ height: '70vh' }}
+      style={{ height: '90vh' }}
     >
       <div className={styles.sheetOuter}>
 
@@ -45,10 +44,10 @@ export default function TagSelectionSheet({
           <div className={styles.header}>
             <div>
               <p className={styles.title}>Categoría</p>
-              <p className={styles.subtitle}>Elige una o más categorías para tu movimiento.</p>
+              <p className={styles.subtitle}>Elige una o más categorías.</p>
             </div>
             <Button outline small className={styles.editBtn} onClick={onEditTags} data-testid="tag-selection-edit">
-              Editar
+              Gestionar
             </Button>
           </div>
         </div>

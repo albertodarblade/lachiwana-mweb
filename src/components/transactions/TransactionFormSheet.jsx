@@ -5,6 +5,7 @@ import {
 } from 'framework7-react'
 import { useCreateTransaction } from '../../hooks/useCreateTransaction'
 import TagChip from '../notebooks/TagChip'
+import Calculator from './Calculator/Calculator'
 import styles from './TransactionFormSheet.module.css'
 
 function todayISO() {
@@ -121,6 +122,10 @@ export default function TransactionFormSheet({
               onChange={(e) => setAmount(e.target.value)}
               className={styles.amountInput}
               data-testid="transaction-amount"
+            />
+            <Calculator
+              initialValue={amount}
+              onCalculationConfirm={(value) => setAmount(String(value))}
             />
           </li>
         </List>
