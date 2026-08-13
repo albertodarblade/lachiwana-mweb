@@ -130,7 +130,7 @@ export default function TransactionFormSheet({
           </li>
         </List>
 
-        <List>
+        <List className={styles.descriptionField}>
           <ListInput
             type="text"
             placeholder="Descripción"

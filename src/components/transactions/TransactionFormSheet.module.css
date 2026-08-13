@@ -132,3 +132,7 @@
   --f7-button-bg-color: #43a047;
   --f7-button-pressed-bg-color: #2e7d32;
 }
+
+.descriptionField {
+  padding: 0 16px;
+}
