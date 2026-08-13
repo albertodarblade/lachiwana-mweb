@@ -105,7 +105,7 @@ export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTa
       onSheetClosed={() => { closeForm(); onClose() }}
       swipeToClose
       backdrop
-      style={{ height: 'auto' }}
+      style={{ height: '99vh' }}
     >
       <PageContent className={styles.pageContent}>
         <div className={styles.dragHandle} />

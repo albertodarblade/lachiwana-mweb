@@ -86,8 +86,7 @@ export default function IconSelector({ value, onChange }) {
         opened={isOpen}
         onSheetClosed={close}
         swipeToClose
-        backdrop
-        style={{ height: '70vh' }}
+        style={{ height: '99vh' }}
       >
         {/* Outer wrapper: flex column that fills the sheet height */}
         <div className={styles.sheetOuter}>

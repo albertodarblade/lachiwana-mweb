@@ -28,7 +28,7 @@ export default function NoteTagPicker({ notebookTags = [], selectedTagIds = [], 
       onSheetClosed={onClose}
       swipeToClose
       backdrop
-      style={{ height: 'auto' }}
+      style={{ height: '99vh' }}
     >
       <PageContent className={styles.pageContent}>
         <div className={styles.dragHandle} />
