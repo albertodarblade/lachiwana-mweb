@@ -105,7 +105,7 @@ export default function TaskAttachmentItem({ attachment, onImageTap, onDownload,
         <FileIcon extension={attachment.extension} size={20} />
       </div>
       <div className={styles.fileMeta}>
-        <p className={styles.fileName}>{extLabel || 'ARCHIVO'}</p>
+        <p className={styles.fileName}>{attachment.originalName || `Archivo ${extLabel}`}</p>
         {sizeLabel && <p className={styles.fileInfo}>{sizeLabel}</p>}
       </div>
       <div className={styles.fileActions}>
@@ -122,7 +122,7 @@ export default function TaskAttachmentItem({ attachment, onImageTap, onDownload,
           onClick={handleDelete}
           data-testid={`task-attachment-delete-${attachment.id}`}
         >
-          <X size={16} />
+          <Trash2 size={16} />
         </button>
       </div>
     </div>

@@ -20,7 +20,7 @@ async function downloadAttachment(att) {
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = `archivo-${att.id}${att.extension ? `.${att.extension}` : ''}`
+  a.download = att.originalName || `archivo-${att.id}${att.extension ? `.${att.extension}` : ''}`
   a.click()
   URL.revokeObjectURL(url)
 }
