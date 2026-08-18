@@ -1,7 +1,7 @@
 import imageCompression from 'browser-image-compression'
 
-// Vercel serverless limit is 4.5 MB — keep non-images well under that.
-export const MAX_FILE_MB = 4
+// Telegram Bot API supports up to 50 MB uploads.
+export const MAX_FILE_MB = 50
 // Accept large originals and compress them down.
 export const MAX_IMAGE_ORIGINAL_MB = 20
 
