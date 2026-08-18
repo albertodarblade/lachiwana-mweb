@@ -42,10 +42,12 @@ export default function NotebookDetailPage({ f7route }) {
   // Fallback redirect for direct /notebooks/:id access (bookmarks, external links).
   useEffect(() => {
     if (!notebook) return
-    const onTypedRoute = routePath.endsWith('/notes') || routePath.endsWith('/transactions')
+    const onTypedRoute = routePath.endsWith('/notes') || routePath.endsWith('/transactions') || routePath.endsWith('/tasks')
     if (onTypedRoute) return
     if (notebook.type === 'transactions') {
       navigate(`/notebooks/${id}/transactions`)
+    } else if (notebook.type === 'tasks') {
+      navigate(`/notebooks/${id}/tasks`)
     } else {
       navigate(`/notebooks/${id}/notes`)
     }

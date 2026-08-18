@@ -1,11 +1,12 @@
 import React from 'react'
-import { FileText, ArrowLeftRight } from 'lucide-react'
+import { FileText, ArrowLeftRight, CheckSquare } from 'lucide-react'
 import { List, ListItem } from 'framework7-react'
 import styles from './TypeSelector.module.css'
 
 const OPTIONS = [
   { value: 'notes', label: 'Notas', Icon: FileText },
   { value: 'transactions', label: 'Transacciones', Icon: ArrowLeftRight },
+  { value: 'tasks', label: 'Tareas', Icon: CheckSquare },
 ]
 
 export default function TypeSelector({ value, onChange, disabled = false }) {

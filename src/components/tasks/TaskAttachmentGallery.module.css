@@ -1,0 +1,81 @@
+.wrapper {
+  padding: 0 16px 8px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.headerTitle {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--f7-list-item-subtitle-text-color);
+}
+
+.fileInput {
+  display: none;
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  background: var(--f7-theme-color);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  opacity: 0.9;
+  transition: opacity 0.15s;
+}
+
+.addBtn:active {
+  opacity: 1;
+}
+
+.addBtnFull {
+  width: 100%;
+  justify-content: center;
+}
+
+.emptyText {
+  opacity: 0.4;
+  font-size: 13px;
+  margin: 0;
+  text-align: center;
+  padding: 16px 0;
+}
+
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.uploadingRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.uploadingText {
+  font-size: 13px;
+  opacity: 0.5;
+}

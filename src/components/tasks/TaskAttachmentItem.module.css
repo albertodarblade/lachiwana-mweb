@@ -1,0 +1,148 @@
+.item {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--f7-list-bg-color);
+}
+
+.itemImage {
+  aspect-ratio: 1;
+  cursor: pointer;
+}
+
+.itemFile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+}
+
+.thumbWrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  overflow: hidden;
+}
+
+.thumbImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.thumbIcon {
+  opacity: 0.35;
+}
+
+.loadingWrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+}
+
+.imageOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 6px 8px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.55));
+}
+
+.overlayBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.overlayBtn:active {
+  background: rgba(255,255,255,0.4);
+}
+
+.fileIconWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--f7-theme-color) 10%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--f7-theme-color);
+}
+
+.fileMeta {
+  flex: 1;
+  min-width: 0;
+}
+
+.fileName {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--f7-list-item-title-text-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.fileInfo {
+  font-size: 11px;
+  color: var(--f7-list-item-subtitle-text-color);
+  opacity: 0.6;
+  margin: 2px 0 0;
+}
+
+.fileActions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.fileActionBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--f7-list-item-subtitle-text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.fileActionBtn:active {
+  background: color-mix(in srgb, var(--f7-list-item-subtitle-text-color) 10%, transparent);
+}
+
+.fileActionBtnDownload {
+  color: var(--f7-theme-color);
+}
+
+.fileActionBtnDelete {
+  color: #e53935;
+}

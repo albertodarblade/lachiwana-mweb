@@ -1,0 +1,416 @@
+.loadingBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 600;
+}
+
+.errorBanner {
+  background: #FEF3C7;
+  border-bottom: 1px solid #F59E0B;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.errorBannerDismiss {
+  color: #92400E;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 12px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  margin-top: 4px;
+}
+
+.titleInputInline {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  outline: none;
+  color: var(--f7-list-item-title-text-color);
+  min-width: 0;
+}
+
+.titleInputInline::placeholder {
+  opacity: 0.4;
+}
+
+.checkbox {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--f7-list-item-subtitle-text-color);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.checkbox:hover {
+  border-color: var(--f7-theme-color);
+}
+
+.checkboxChecked {
+  background: var(--f7-theme-color);
+  border-color: var(--f7-theme-color);
+}
+
+.morphIcon {
+  color: var(--f7-list-item-subtitle-text-color);
+}
+
+.checkboxChecked .morphIcon {
+  color: #fff;
+}
+
+.titleInput {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.tagsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+}
+
+.tagChipInline {
+  cursor: pointer;
+  border-radius: 20px;
+  display: inline-flex;
+  transition: outline-color 0.15s;
+}
+
+.sectionLabel {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--f7-list-item-subtitle-text-color);
+  padding: 16px 16px 8px;
+}
+
+.membersRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 16px;
+}
+
+.memberChip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--f7-list-item-subtitle-text-color);
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--f7-list-item-subtitle-text-color);
+  opacity: 0.6;
+  transition: opacity 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.memberChipActive {
+  opacity: 1;
+  border-color: var(--f7-theme-color);
+  background: color-mix(in srgb, var(--f7-theme-color) 10%, transparent);
+  color: var(--f7-theme-color);
+}
+
+.memberAvatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.removeMemberBtn {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  background: none;
+  border: 1.5px solid #e53935;
+  border-radius: 10px;
+  color: #e53935;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.15s;
+}
+
+.removeMemberBtn:active {
+  background: color-mix(in srgb, #e53935 10%, transparent);
+}
+
+.deletePageContent {
+  padding: 24px 16px 40px;
+}
+
+.deleteBlock {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.deleteHeading {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.deleteBody {
+  margin: 0;
+  opacity: 0.7;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.confirmButton {
+  margin-bottom: 12px;
+}
+
+.addAttachmentBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: none;
+  border: 1.5px dashed var(--f7-list-item-subtitle-text-color);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--f7-list-item-subtitle-text-color);
+  opacity: 0.6;
+  width: auto;
+  justify-content: center;
+  transition: opacity 0.15s;
+}
+
+.addAttachmentBtn:hover {
+  opacity: 1;
+}
+
+.tabBar {
+  display: flex;
+  gap: 4px;
+  padding: 8px 16px;
+}
+
+.tabBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1.5px solid var(--f7-list-item-subtitle-text-color);
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--f7-list-item-subtitle-text-color);
+  opacity: 0.6;
+  transition: opacity 0.15s, border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.tabBtnActive {
+  opacity: 1;
+  border-color: var(--f7-theme-color);
+  background: color-mix(in srgb, var(--f7-theme-color) 10%, transparent);
+  color: var(--f7-theme-color);
+}
+
+.tabBadge {
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  background: var(--f7-theme-color);
+  color: #fff;
+}
+
+.childTasksSection {
+  padding: 0 16px 8px;
+}
+
+.childTasksList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.childTaskRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--f7-list-bg-color);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.childTaskRow:active {
+  background: color-mix(in srgb, var(--f7-list-bg-color) 80%, black);
+}
+
+.childCheckbox {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--f7-list-item-subtitle-text-color);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-top: 1px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.childCheckbox:hover {
+  border-color: var(--f7-theme-color);
+}
+
+.childCheckboxChecked {
+  background: var(--f7-theme-color);
+  border-color: var(--f7-theme-color);
+}
+
+.childMorphIcon {
+  color: var(--f7-list-item-subtitle-text-color);
+}
+
+.childCheckboxChecked .childMorphIcon {
+  color: #fff;
+}
+
+.childTitle {
+  font-size: 15px;
+  color: var(--f7-list-item-title-text-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.childTitleCompleted {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.childContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.childMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.childTags {
+  display: flex;
+  gap: 4px;
+}
+
+.childAttachBadge {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  color: var(--f7-list-item-subtitle-text-color);
+  opacity: 0.6;
+}
+
+.childAssignee {
+  display: flex;
+  align-items: center;
+}
+
+.childAssigneeAvatar {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.childInputRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.childInput {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1.5px solid var(--f7-list-item-subtitle-text-color);
+  background: transparent;
+  font-size: 14px;
+  color: var(--f7-list-item-title-text-color);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.childInput:focus {
+  border-color: var(--f7-theme-color);
+}
+
+.childInput::placeholder {
+  opacity: 0.4;
+}
+
+.childAddBtn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--f7-theme-color);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: opacity 0.15s;
+}
+
+.childAddBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

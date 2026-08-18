@@ -11,6 +11,8 @@ import EditNotebookPage from './pages/EditNotebookPage'
 import NoteEditorPage from './pages/NoteEditorPage'
 import CreateNoteEditorPage from './pages/CreateNoteEditorPage'
 import TransactionEditPage from './pages/TransactionEditPage'
+import NotebookTasksPage from './pages/NotebookTasksPage'
+import TaskEditPage from './pages/TaskEditPage'
 import LoginPage from './pages/LoginPage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
 import SettingsPage from './pages/SettingsPage'
@@ -90,6 +92,30 @@ function ProtectedTransactionEdit(props) {
   )
 }
 
+function ProtectedTasks(props) {
+  return (
+    <ProtectedRoute>
+      <NotebookTasksPage {...props} />
+    </ProtectedRoute>
+  )
+}
+
+function ProtectedTaskEdit(props) {
+  return (
+    <ProtectedRoute>
+      <TaskEditPage {...props} />
+    </ProtectedRoute>
+  )
+}
+
+function ProtectedChildTaskView(props) {
+  return (
+    <ProtectedRoute>
+      <TaskEditPage {...props} />
+    </ProtectedRoute>
+  )
+}
+
 const routes = [
   { path: '/login', component: LoginPage },
   { path: '/auth/callback', component: AuthCallbackPage },
@@ -102,6 +128,9 @@ const routes = [
   { path: '/notebooks/:id/notes', component: ProtectedDetail },
   { path: '/notebooks/:notebookId/transactions/:transactionId/edit', component: ProtectedTransactionEdit },
   { path: '/notebooks/:id/transactions', component: ProtectedTransactions },
+  { path: '/notebooks/:id/tasks', component: ProtectedTasks },
+  { path: '/notebooks/:notebookId/tasks/:taskId/childTask/:childTaskId', component: ProtectedChildTaskView },
+  { path: '/notebooks/:notebookId/tasks/:taskId', component: ProtectedTaskEdit },
   { path: '/notebooks/:id', component: ProtectedDetail },
 ]
 

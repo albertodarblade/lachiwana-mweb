@@ -11,7 +11,9 @@ export default function NotebookCard({ notebook, isPinned = false, onPinToggle }
   const destination =
     notebook.type === 'transactions'
       ? `/notebooks/${notebook.id}/transactions`
-      : `/notebooks/${notebook.id}/notes`
+      : notebook.type === 'tasks'
+        ? `/notebooks/${notebook.id}/tasks`
+        : `/notebooks/${notebook.id}/notes`
 
   const NotebookIcon = notebook.iconName ? (lucideMap[notebook.iconName] ?? Book) : Book
 

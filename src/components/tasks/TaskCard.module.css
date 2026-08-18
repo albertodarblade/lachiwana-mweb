@@ -1,0 +1,129 @@
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  margin-top: 4px;
+  cursor: pointer;
+}
+
+.checkbox {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--f7-list-item-subtitle-text-color);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-top: 1px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.checkbox:hover {
+  border-color: var(--f7-theme-color);
+}
+
+.checkboxChecked {
+  background: var(--f7-theme-color);
+  border-color: var(--f7-theme-color);
+}
+
+.morphIcon {
+  color: var(--f7-list-item-subtitle-text-color);
+}
+
+.checkboxChecked .morphIcon {
+  color: #fff;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--f7-list-item-title-text-color);
+  margin: 0 0 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.titleCompleted {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.attachBadge {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  color: var(--f7-list-item-subtitle-text-color);
+  opacity: 0.6;
+}
+
+.assignee {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--f7-list-item-subtitle-text-color);
+  opacity: 0.7;
+}
+
+.assigneeAvatar {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.assigneeFallback {
+  width: 16px;
+  height: 16px;
+  color: var(--f7-list-item-subtitle-text-color);
+  opacity: 0.4;
+}
+
+@keyframes taskExit {
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+@keyframes taskEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+.exiting {
+  animation: taskExit 300ms ease-out forwards;
+  pointer-events: none;
+}
+
+.entering {
+  animation: taskEnter 300ms ease-out;
+}
