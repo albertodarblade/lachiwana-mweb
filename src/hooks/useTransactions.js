@@ -3,6 +3,10 @@ import { useQuery } from '@tanstack/react-query'
 import { fetchTransactions } from '../api/transactions'
 import { getTransactions, saveTransactions } from '../lib/db'
 
+function sortByNewestCreated(list) {
+  return [...(list ?? [])].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+}
+
 function monthDateRange(year, month) {
   const pad = (n) => String(n).padStart(2, '0')
   const from = `${year}-${pad(month)}-01T00:00:00.000Z`
@@ -47,7 +51,7 @@ export function useTransactions(notebookId, { year, month, content, tags } = {})
     queryFn: () => fetchTransactions(notebookId, params),
     staleTime: 0,
     enabled: !!notebookId,
-    select: (res) => res?.data ?? res ?? [],
+    select: (res) => sortByNewestCreated(res?.data ?? res ?? []),
   })
 
   useEffect(() => {
@@ -56,7 +60,7 @@ export function useTransactions(notebookId, { year, month, content, tags } = {})
     }
   }, [cacheKey, query.data])
 
-  const data = query.data === undefined ? (cached ?? []) : query.data
+  const data = query.data === undefined ? sortByNewestCreated(cached ?? []) : query.data
 
   return {
     ...query,

@@ -51,7 +51,7 @@ export default function TransactionFormSheet({
 
   const amountValid = !!amount && !isNaN(parseFloat(amount)) && parseFloat(amount) !== 0
 
-  function handleSubmit() {
+  function handleSubmit(registerAnother = false) {
     if (!amountValid) return
     const raw = parseFloat(amount)
     const value = transactionType === 'expense' ? -Math.abs(raw) : Math.abs(raw)
@@ -66,7 +66,15 @@ export default function TransactionFormSheet({
         ...(tagIds.length && { tags: tagIds }),
       },
       {
-        onSuccess: () => onSuccess(),
+        onSuccess: () => {
+          if (registerAnother) {
+            setAmount('')
+            setContent('')
+            amountRef.current?.focus()
+          } else {
+            onSuccess()
+          }
+        },
         onError: (err) => {
           f7.toast
             .create({
@@ -83,8 +91,8 @@ export default function TransactionFormSheet({
   const submitLabel = isPending
     ? 'Guardando...'
     : isExpense
-    ? 'Añadir Gasto'
-    : 'Añadir Ingreso'
+    ? 'Guardar Gasto'
+    : 'Guardar Ingreso'
 
   return (
     <Sheet
@@ -162,11 +170,21 @@ export default function TransactionFormSheet({
             large
             fill
             disabled={isPending || !amountValid}
-            onClick={handleSubmit}
+            onClick={() => handleSubmit(false)}
             className={isExpense ? styles.expenseSubmit : styles.incomeSubmit}
             data-testid="transaction-submit"
           >
             {submitLabel}
+          </Button>
+          <Button
+            large
+            outline
+            disabled={isPending || !amountValid}
+            onClick={() => handleSubmit(true)}
+            className={styles.saveAnotherBtn}
+            data-testid="transaction-submit-another"
+          >
+            Guardar y registrar otro
           </Button>
         </Block>
       </PageContent>

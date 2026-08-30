@@ -3,6 +3,11 @@
   border-bottom: 1px solid var(--f7-list-item-border-color, rgba(0,0,0,0.08));
 }
 
+.pending {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
 .row {
   display: flex;
   justify-content: space-between;

@@ -20,12 +20,22 @@ function formatAmount(value) {
 
 export default function TransactionCard({ transaction, onClick }) {
   const { content, value, date, tags = [], attachments = [] } = transaction
+  const pending = transaction._pending === true
 
   const amountClass =
     value < 0 ? styles.negative : value > 0 ? styles.positive : styles.neutral
 
+  function handleClick() {
+    if (pending) return
+    onClick?.()
+  }
+
   return (
-    <div className={styles.card} onClick={onClick} data-testid={`transaction-card-${transaction.id}`}>
+    <div
+      className={`${styles.card}${pending ? ` ${styles.pending}` : ''}`}
+      onClick={handleClick}
+      data-testid={`transaction-card-${transaction.id}`}
+    >
       <div className={styles.row}>
         <span className={styles.description}>{content}</span>
         <span className={[styles.amount, amountClass].join(' ')}>
