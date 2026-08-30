@@ -1,5 +1,5 @@
 import React from 'react'
-import { Circle, CircleCheck } from 'lucide'
+import { Circle, CircleCheckBig } from 'lucide'
 import { MorphIcon } from 'morphicons/react'
 import styles from './CheckBox.module.css'
 
@@ -19,7 +19,7 @@ export default function CheckBox({ checked, onClick, disabled = false, className
       {...rest}
     >
       <MorphIcon
-        icon={checked ? CircleCheck : Circle}
+        icon={checked ? CircleCheckBig : Circle}
         size={26}
         strokeWidth={2}
         spring="smooth"
