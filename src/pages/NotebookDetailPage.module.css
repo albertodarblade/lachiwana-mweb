@@ -68,12 +68,24 @@
 }
 
 .notesGrid {
-  columns: 2;
+  columns: 1;
   column-gap: 10px;
   padding: 12px 12px 120px 12px;
   overflow-x: hidden;
   box-sizing: border-box;
   width: 100%;
+}
+
+.resultsCount {
+  text-align: center;
+  padding-top: 12px;
+  margin: 0;
+}
+
+.resultsText {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.6;
 }
 
 .notesLoadingBlock {

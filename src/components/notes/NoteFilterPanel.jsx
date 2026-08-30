@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { ChevronLeft } from 'lucide-react'
+import React, { useState, useEffect, useRef } from 'react'
+import { Search, X, ChevronDown, ChevronRight } from 'lucide-react'
 import {
-  Panel, Page, Navbar, NavLeft, NavTitle,
-  Block, BlockTitle, List, ListInput, Button, Link,
+  Sheet, PageContent, Button,
 } from 'framework7-react'
 import { LUCIDE_ICONS } from '../IconSelector/lucideIcons'
 import styles from './NoteFilterPanel.module.css'
@@ -12,6 +11,16 @@ const lucideMap = Object.fromEntries(LUCIDE_ICONS.map(({ name, Icon }) => [name,
 export default function NoteFilterPanel({ opened, onClose, filters, onApply, tags = [] }) {
   const [localContent, setLocalContent] = useState('')
   const [localTagIds, setLocalTagIds] = useState(new Set())
+  const [tagsOpen, setTagsOpen] = useState(false)
+
+  const searchRef = useRef(null)
+
+  useEffect(() => {
+    if (!opened) return
+    setTagsOpen(false)
+    const timer = setTimeout(() => searchRef.current?.focus(), 350)
+    return () => clearTimeout(timer)
+  }, [opened])
 
   useEffect(() => {
     if (opened) {
@@ -19,6 +28,22 @@ export default function NoteFilterPanel({ opened, onClose, filters, onApply, tag
       setLocalTagIds(new Set(filters.tagIds ?? []))
     }
   }, [opened, filters])
+
+  const debouncedTimer = useRef(null)
+
+  useEffect(() => {
+    if (!opened) return
+    if (debouncedTimer.current) clearTimeout(debouncedTimer.current)
+    debouncedTimer.current = setTimeout(() => {
+      onApply({
+        content: localContent.trim(),
+        tagIds: localTagIds,
+      })
+    }, 900)
+    return () => {
+      if (debouncedTimer.current) clearTimeout(debouncedTimer.current)
+    }
+  }, [opened, localContent, localTagIds])
 
   function toggleTag(id) {
     setLocalTagIds((prev) => {
@@ -29,14 +54,6 @@ export default function NoteFilterPanel({ opened, onClose, filters, onApply, tag
     })
   }
 
-  function handleApply() {
-    onApply({
-      content: localContent.trim(),
-      tagIds: localTagIds,
-    })
-    onClose()
-  }
-
   function handleClear() {
     setLocalContent('')
     setLocalTagIds(new Set())
@@ -44,67 +61,91 @@ export default function NoteFilterPanel({ opened, onClose, filters, onApply, tag
     onClose()
   }
 
-  return (
-    <Panel right opened={opened} onPanelClosed={onClose} backdrop className={styles.panel}>
-      <Page>
-        <Navbar>
-          <NavLeft>
-            <Link panelClose data-testid="note-filter-close">
-              <ChevronLeft size={20} />
-            </Link>
-          </NavLeft>
-          <NavTitle>Buscar Notas</NavTitle>
-        </Navbar>
+  const hasCriteria = localContent.trim() !== '' || localTagIds.size > 0
 
-        <List>
-          <ListInput
-            label="Contenido"
+  return (
+    <Sheet
+      top
+      opened={opened}
+      onSheetClosed={onClose}
+      backdrop
+      style={{ height: 'auto' }}
+    >
+      <PageContent className={styles.pageContent}>
+        <div className={styles.dragHandle} />
+
+        <div className={styles.header}>
+          <h3 className={styles.title}>Buscar Notas</h3>
+          <button
+            className={styles.closeBtn}
+            onClick={onClose}
+            data-testid="note-filter-close"
+            aria-label="Cerrar"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className={styles.searchRow}>
+          <Search size={18} className={styles.searchIcon} />
+          <input
+            ref={searchRef}
             type="text"
+            className={styles.searchInput}
             placeholder="Buscar en notas..."
             value={localContent}
             onInput={(e) => setLocalContent(e.target.value)}
-            clearButton
             data-testid="note-filter-content"
           />
-        </List>
+        </div>
 
         {tags.length > 0 && (
-          <>
-            <BlockTitle>Etiquetas</BlockTitle>
-            <Block className={styles.tagsBlock}>
-              {tags.map((tag) => {
-                const tagId = tag.id ?? tag._id
-                const active = localTagIds.has(tagId)
-                return (
-                  <button
-                    key={tagId}
-                    className={[styles.tagChip, active ? styles.tagChipActive : ''].join(' ')}
-                    onClick={() => toggleTag(tagId)}
-                    data-testid={`note-filter-tag-${tagId}`}
-                  >
-                    {(() => {
-                      const LucideIcon = tag.icon ? lucideMap[tag.icon] : null
-                      if (LucideIcon) return <LucideIcon size={14} className={styles.tagChipIcon} />
-                      if (tag.icon) return <i className={['f7-icons', styles.tagChipIcon].join(' ')}>{tag.icon}</i>
-                      return null
-                    })()}
-                    {tag.title}
-                  </button>
-                )
-              })}
-            </Block>
-          </>
+          <div className={styles.section}>
+            <button
+              className={styles.sectionHeader}
+              onClick={() => setTagsOpen((v) => !v)}
+              data-testid="note-filter-tags-toggle"
+            >
+              <span className={styles.sectionTitle}>Etiquetas</span>
+              {tagsOpen ? (
+                <ChevronDown size={18} className={styles.sectionChevron} />
+              ) : (
+                <ChevronRight size={18} className={styles.sectionChevron} />
+              )}
+            </button>
+            {tagsOpen && (
+              <div className={styles.tagsBlock}>
+                {tags.map((tag) => {
+                  const tagId = tag.id ?? tag._id
+                  const active = localTagIds.has(tagId)
+                  return (
+                    <button
+                      key={tagId}
+                      className={[styles.tagChip, active ? styles.tagChipActive : ''].join(' ')}
+                      onClick={() => toggleTag(tagId)}
+                      data-testid={`note-filter-tag-${tagId}`}
+                    >
+                      {(() => {
+                        const LucideIcon = tag.icon ? lucideMap[tag.icon] : null
+                        if (LucideIcon) return <LucideIcon size={14} className={styles.tagChipIcon} />
+                        if (tag.icon) return <i className={['f7-icons', styles.tagChipIcon].join(' ')}>{tag.icon}</i>
+                        return null
+                      })()}
+                      {tag.title}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+          </div>
         )}
 
-        <Block className={styles.footer}>
-          <Button large outline onClick={handleClear} className={styles.clearBtn} data-testid="note-filter-clear">
+        <div className={styles.footer}>
+          <Button large outline onClick={handleClear} disabled={!hasCriteria} className={styles.clearBtn} data-testid="note-filter-clear">
             Limpiar todo
           </Button>
-          <Button large fill onClick={handleApply} className={styles.applyBtn} data-testid="note-filter-apply">
-            Aplicar Filtros
-          </Button>
-        </Block>
-      </Page>
-    </Panel>
+        </div>
+      </PageContent>
+    </Sheet>
   )
 }

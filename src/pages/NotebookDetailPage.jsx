@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import {
   Page, Navbar, NavLeft, NavTitle, NavRight,
-  Block, Preloader, Fab, Icon, Link, Badge,
+  Block, Preloader, Fab, Icon, Link, Badge, f7,
 } from 'framework7-react'
-import { Book, SlidersHorizontal } from 'lucide-react'
+import { Book, Search } from 'lucide-react'
 import { LUCIDE_ICONS } from '../components/IconSelector/lucideIcons'
 import { useNotebook } from '../hooks/useNotebook'
 import { useNotes } from '../hooks/useNotes'
@@ -38,6 +38,14 @@ export default function NotebookDetailPage({ f7route }) {
   const { data: notes = [], isPending: notesLoading, isError: notesError, fetchStatus: notesFetchStatus } = useNotes(id, queryParams)
 
   const notebookTags = notebook?.tags ?? []
+
+  useEffect(() => {
+    if (notesLoading || activeFilterCount === 0) return
+    const message = notes.length > 0
+      ? `Se ${notes.length === 1 ? 'encontró' : 'encontraron'} ${notes.length} ${notes.length === 1 ? 'nota' : 'notas'} con ese criterio.`
+      : 'No se encontraron notas con ese criterio.'
+    f7.toast.create({ text: message, position: 'center', closeTimeout: 2500 }).open()
+  }, [notesLoading, activeFilterCount, notes.length])
 
   // Fallback redirect for direct /notebooks/:id access (bookmarks, external links).
   useEffect(() => {
@@ -120,7 +128,7 @@ export default function NotebookDetailPage({ f7route }) {
             className={styles.filterBtn}
             data-testid="notes-filter-open"
           >
-            <SlidersHorizontal size={20} />
+            <Search size={20} />
             {activeFilterCount > 0 && (
               <Badge color="red" className={styles.filterBadge}>{activeFilterCount}</Badge>
             )}
@@ -168,10 +176,21 @@ export default function NotebookDetailPage({ f7route }) {
           activeFilterCount > 0
             ? (
               <Block className={styles.notesErrorBlock}>
-                <p className={styles.notesErrorText}>Sin resultados para los filtros aplicados.</p>
+                <p className={styles.notesErrorText}>
+                  0 notas encontradas{filters.content ? ` para "${filters.content}"` : ''}
+                </p>
               </Block>
             )
             : <NoteEmptyState />
+        )}
+
+        {!notesLoading && notes.length > 0 && activeFilterCount > 0 && (
+          <Block className={styles.resultsCount}>
+            <p className={styles.resultsText}>
+              {notes.length} {notes.length === 1 ? 'nota encontrada' : 'notas encontradas'}
+              {filters.content ? ` para "${filters.content}"` : ''}
+            </p>
+          </Block>
         )}
 
         {!notesLoading && notes.length > 0 && (
