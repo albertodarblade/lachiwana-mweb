@@ -35,13 +35,22 @@
 
 .titleInputInline {
   flex: 1;
-  font-size: 18px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.4;
   border: none;
   background: transparent;
   outline: none;
-  color: var(--f7-list-item-title-text-color);
+  color: var(--f7-list-item-subtitle-text-color);
   min-width: 0;
+  white-space: pre-wrap;
+  resize: none;
+  overflow: hidden;
+  max-height: 84px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .titleInputInline::placeholder {
@@ -318,9 +327,9 @@
 .childTitle {
   font-size: 15px;
   color: var(--f7-list-item-title-text-color);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .childTitleCompleted {

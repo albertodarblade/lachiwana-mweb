@@ -58,6 +58,17 @@
   padding: 16px 16px 8px;
 }
 
+.sectionHeaderClickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sectionChevron {
+  color: var(--f7-list-item-subtitle-text-color);
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
 .sectionTitle {
   font-size: 13px;
   font-weight: 600;

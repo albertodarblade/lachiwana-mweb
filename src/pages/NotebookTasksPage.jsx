@@ -3,7 +3,7 @@ import {
   Page, Navbar, NavLeft, NavTitle,
   Block, Preloader, Fab, Icon,
 } from 'framework7-react'
-import { CheckSquare } from 'lucide-react'
+import { CheckSquare, ChevronDown, ChevronRight } from 'lucide-react'
 import { LUCIDE_ICONS } from '../components/IconSelector/lucideIcons'
 import { useNotebook } from '../hooks/useNotebook'
 import { useTasks } from '../hooks/useTasks'
@@ -27,6 +27,7 @@ export default function NotebookTasksPage({ f7route }) {
 
   const [transitions, setTransitions] = useState({})
   const timersRef = useRef({})
+  const [completedOpen, setCompletedOpen] = useState(false)
 
   const handleToggleComplete = useCallback((taskId, nextCompleted) => {
     const task = allTasks.find((t) => t.id === taskId)
@@ -207,11 +208,20 @@ export default function NotebookTasksPage({ f7route }) {
 
           {completedTasks.length > 0 && (
             <>
-              <div className={styles.sectionHeader}>
+              <div
+                className={`${styles.sectionHeader} ${styles.sectionHeaderClickable}`}
+                onClick={() => setCompletedOpen((v) => !v)}
+                data-testid="completed-tasks-toggle"
+              >
+                {completedOpen ? (
+                  <ChevronDown size={16} className={styles.sectionChevron} />
+                ) : (
+                  <ChevronRight size={16} className={styles.sectionChevron} />
+                )}
                 <span className={styles.sectionTitle}>Tareas completadas</span>
                 <span className={styles.sectionCount}>{completedTasks.length}</span>
               </div>
-              {renderTaskGroup(completedTasks)}
+              {completedOpen && renderTaskGroup(completedTasks)}
             </>
           )}
         </div>

@@ -9,17 +9,16 @@
 
 .checkbox {
   flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  border: 2px solid var(--f7-list-item-subtitle-text-color);
+  border: none;
   background: transparent;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  margin-top: 1px;
   transition: background 0.15s, border-color 0.15s;
 }
 
@@ -27,32 +26,50 @@
   border-color: var(--f7-theme-color);
 }
 
-.checkboxChecked {
+.checkboxCircle {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--f7-list-item-subtitle-text-color);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkboxCircleChecked {
   background: var(--f7-theme-color);
   border-color: var(--f7-theme-color);
 }
 
 .morphIcon {
+  width: 22px;
+  height: 22px;
   color: var(--f7-list-item-subtitle-text-color);
+  flex-shrink: 0;
 }
 
-.checkboxChecked .morphIcon {
+.checkboxCircleChecked .morphIcon {
+  width: 16px;
+  height: 16px;
   color: #fff;
 }
 
 .content {
   flex: 1;
   min-width: 0;
+  padding-top: 7px;
 }
 
 .title {
   font-size: 15px;
-  font-weight: 500;
-  color: var(--f7-list-item-title-text-color);
+  font-weight: 400;
+  color: var(--f7-list-item-subtitle-text-color);
   margin: 0 0 4px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .titleCompleted {

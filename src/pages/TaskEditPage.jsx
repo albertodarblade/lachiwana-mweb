@@ -67,6 +67,7 @@ export default function TaskEditPage({ f7route }) {
 
   const debounceRef = useRef(null)
   const childInputRef = useRef(null)
+  const titleInputRef = useRef(null)
   const needsInitRef = useRef(true)
   const intervalRef = useRef(null)
 
@@ -85,6 +86,14 @@ export default function TaskEditPage({ f7route }) {
       setSaveStatus('saved')
     }
   }, [task])
+
+  useEffect(() => {
+    const el = titleInputRef.current
+    if (el) {
+      el.style.height = 'auto'
+      el.style.height = `${el.scrollHeight}px`
+    }
+  }, [task, title, isCompleted])
 
   useEffect(() => {
     if (deleteOpen) {
@@ -127,6 +136,13 @@ export default function TaskEditPage({ f7route }) {
     const val = e.target.value
     setTitle(val)
     triggerDebounced({ title: val.trim() })
+  }
+
+  function handleTitleInput(e) {
+    const el = e.target
+    el.style.height = 'auto'
+    el.style.height = `${el.scrollHeight}px`
+    handleTitleChange(e)
   }
 
   function handleToggleComplete() {
@@ -297,12 +313,13 @@ export default function TaskEditPage({ f7route }) {
                 className={styles.morphIcon}
               />
             </button>
-            <input
-              type="text"
+            <textarea
+              ref={titleInputRef}
+              rows={1}
               className={styles.titleInputInline}
               placeholder="Título de la tarea"
               value={title}
-              onInput={handleTitleChange}
+              onInput={handleTitleInput}
               data-testid="edit-task-title"
             />
           </div>

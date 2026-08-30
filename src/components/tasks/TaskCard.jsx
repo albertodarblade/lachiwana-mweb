@@ -37,17 +37,19 @@ export default function TaskCard({ task, tags = [], members = [], onToggleComple
       data-testid={`task-card-${id}`}
     >
       <button
-        className={`${styles.checkbox}${isCompleted ? ` ${styles.checkboxChecked}` : ''}`}
+        className={styles.checkbox}
         onClick={() => onToggleComplete(id, !isCompleted)}
         data-testid={`task-toggle-${id}`}
       >
-        <MorphIcon
-          icon={isCompleted ? Check : Circle}
-          size={18}
-          strokeWidth={2}
-          spring="smooth"
-          className={styles.morphIcon}
-        />
+        <span className={`${styles.checkboxCircle}${isCompleted ? ` ${styles.checkboxCircleChecked}` : ''}`}>
+          <MorphIcon
+            icon={isCompleted ? Check : Circle}
+            size={22}
+            strokeWidth={2}
+            spring="smooth"
+            className={styles.morphIcon}
+          />
+        </span>
       </button>
 
       <div className={styles.content}>
