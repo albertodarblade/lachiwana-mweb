@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Paperclip, EllipsisVertical, CircleUser, Plus, X, ListChecks } from 'lucide-react'
-import { Circle, Check } from 'lucide'
-import { MorphIcon } from 'morphicons/react'
 import {
   Page, Navbar, NavLeft, NavTitle, NavRight,
   Preloader, Block,
@@ -17,6 +15,7 @@ import { useCreateTask } from '../hooks/useCreateTask'
 import { useUsers } from '../hooks/useUsers'
 import { uploadTaskAttachment, deleteTaskAttachment } from '../api/tasks'
 import TaskAttachmentGallery from '../components/tasks/TaskAttachmentGallery'
+import CheckBox from '../components/CheckBox/CheckBox'
 import SaveStatusIndicator from '../components/notes/SaveStatusIndicator'
 import TagChip from '../components/notebooks/TagChip'
 import ThemedButton from '../components/notebooks/ThemedButton'
@@ -300,19 +299,11 @@ export default function TaskEditPage({ f7route }) {
 
         {task && (
           <div className={styles.titleRow}>
-            <button
-              className={`${styles.checkbox}${isCompleted ? ` ${styles.checkboxChecked}` : ''}`}
+            <CheckBox
+              checked={isCompleted}
               onClick={handleToggleComplete}
               data-testid="edit-task-toggle"
-            >
-              <MorphIcon
-                icon={isCompleted ? Check : Circle}
-                size={24}
-                strokeWidth={2}
-                spring="smooth"
-                className={styles.morphIcon}
-              />
-            </button>
+            />
             <textarea
               ref={titleInputRef}
               rows={1}
@@ -484,18 +475,10 @@ export default function TaskEditPage({ f7route }) {
                               className={styles.childTaskRow}
                               onClick={() => navigate(`/notebooks/${notebookId}/tasks/${taskId}/childTask/${child.id}`)}
                             >
-                              <button
-                                className={`${styles.childCheckbox}${child.isCompleted ? ` ${styles.childCheckboxChecked}` : ''}`}
-                                onClick={(e) => { e.stopPropagation(); handleToggleChildComplete(child.id, !child.isCompleted) }}
-                              >
-                                <MorphIcon
-                                  icon={child.isCompleted ? Check : Circle}
-                                  size={16}
-                                  strokeWidth={2}
-                                  spring="smooth"
-                                  className={styles.childMorphIcon}
-                                />
-                              </button>
+                              <CheckBox
+                                checked={child.isCompleted}
+                                onClick={(next) => handleToggleChildComplete(child.id, next)}
+                              />
                               <div className={styles.childContent}>
                                 <span className={`${styles.childTitle}${child.isCompleted ? ` ${styles.childTitleCompleted}` : ''}`}>
                                   {child.title}

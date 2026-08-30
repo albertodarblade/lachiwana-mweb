@@ -4,6 +4,7 @@ import {
   Sheet, PageContent, Block, Button, Badge, Link, f7,
 } from 'framework7-react'
 import { createTask, uploadTaskAttachment } from '../../api/tasks'
+import { useCreateTask } from '../../hooks/useCreateTask'
 import { useUsers } from '../../hooks/useUsers'
 import queryClient from '../../queryClient'
 import TagChip from '../notebooks/TagChip'
@@ -39,22 +40,28 @@ export default function TaskFormSheet({
   const { data: usersData } = useUsers()
   const allUsers = usersData?.data ?? []
 
+  const { mutate: createTaskMutate } = useCreateTask(notebookId)
+
   const memberIds = [notebookOwner, ...notebookMembers].filter(Boolean)
   const members = allUsers.filter((u) => memberIds.includes(u.googleId))
 
+  const resetForm = () => {
+    setTitle('')
+    setSelectedTagIds(new Set())
+    setAssignedTo(null)
+    setShowTags(false)
+    setShowAttachments(false)
+    setShowChildInput(false)
+    setShowAssignee(false)
+    setChildTitles([])
+    setChildInput('')
+    setPendingFiles([])
+    setIsSubmitting(false)
+  }
+
   useEffect(() => {
     if (opened) {
-      setTitle('')
-      setSelectedTagIds(new Set())
-      setAssignedTo(null)
-      setShowTags(false)
-      setShowAttachments(false)
-      setShowChildInput(false)
-      setShowAssignee(false)
-      setChildTitles([])
-      setChildInput('')
-      setPendingFiles([])
-      setIsSubmitting(false)
+      resetForm()
       const timer = setTimeout(() => titleRef.current?.focus(), 350)
       return () => clearTimeout(timer)
     }
@@ -115,47 +122,69 @@ export default function TaskFormSheet({
     setPendingFiles((prev) => prev.filter((_, i) => i !== index))
   }
 
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = useCallback((keepOpen = false) => {
     const trimmed = title.trim()
     if (!trimmed || isSubmitting) return
 
     setIsSubmitting(true)
-    try {
-      const tagIds = [...selectedTagIds].filter(Boolean)
-      const taskRes = await createTask(notebookId, {
-        title: trimmed,
-        ...(tagIds.length && { tags: tagIds }),
-        ...(assignedTo && { assignedTo }),
-      })
-      const taskId = taskRes?.data?.id ?? taskRes?.id
 
-      if (taskId) {
-        for (const childTitle of childTitles) {
-          await createTask(notebookId, {
-            title: childTitle,
-            parentTaskId: taskId,
-          })
-        }
+    const tagIds = [...selectedTagIds].filter(Boolean)
+    const childTitlesSnapshot = childTitles
+    const pendingFilesSnapshot = pendingFiles
 
-        for (const file of pendingFiles) {
-          const formData = new FormData()
-          formData.append('file', file, file.name)
-          await uploadTaskAttachment(notebookId, taskId, formData)
-        }
-      }
-
+    const finalize = (hadError = false) => {
+      setIsSubmitting(false)
       queryClient.invalidateQueries({ queryKey: ['tasks', notebookId] })
-      onSuccess()
-    } catch (err) {
+      if (keepOpen && !hadError) {
+        resetForm()
+        setTimeout(() => titleRef.current?.focus(), 150)
+      } else if (!keepOpen) {
+        onSuccess()
+      }
+    }
+
+    const handleTaskError = (err) => {
       f7.toast.create({
         text: err?.message ?? 'Error al guardar la tarea. Intenta de nuevo.',
         closeTimeout: 3000,
         position: 'top',
       }).open()
-    } finally {
-      setIsSubmitting(false)
+      finalize(true)
     }
-  }, [title, isSubmitting, selectedTagIds, assignedTo, notebookId, childTitles, pendingFiles, onSuccess])
+
+    createTaskMutate(
+      {
+        title: trimmed,
+        ...(tagIds.length && { tags: tagIds }),
+        ...(assignedTo && { assignedTo }),
+      },
+      {
+        onSuccess: (data) => {
+          const taskId = data?.data?.id ?? data?.id
+          if (!taskId) {
+            finalize()
+            return
+          }
+
+          Promise.all([
+            ...childTitlesSnapshot.map((childTitle) =>
+              createTask(notebookId, { title: childTitle, parentTaskId: taskId })
+            ),
+            ...pendingFilesSnapshot.map((file) => {
+              const formData = new FormData()
+              formData.append('file', file, file.name)
+              return uploadTaskAttachment(notebookId, taskId, formData)
+            }),
+          ])
+            .catch(() => {})
+            .then(() => finalize())
+        },
+        onError: handleTaskError,
+      }
+    )
+
+    if (!keepOpen) onSuccess()
+  }, [title, isSubmitting, selectedTagIds, assignedTo, notebookId, childTitles, pendingFiles, onSuccess, createTaskMutate])
 
   function handleTitleKeyDown(e) {
     if (e.key === 'Enter') {
@@ -364,16 +393,28 @@ export default function TaskFormSheet({
         )}
 
         <Block className={styles.submitSection}>
-          <Button
-            large
-            fill
-            disabled={isSubmitting || !hasContent}
-            onClick={handleSubmit}
-            className={styles.submitBtn}
-            data-testid="task-submit"
-          >
-            {isSubmitting ? 'Guardando...' : 'Guardar'}
-          </Button>
+          <div className={styles.submitRow}>
+            <Button
+              large
+              outline
+              disabled={isSubmitting || !hasContent}
+              onClick={() => handleSubmit(true)}
+              className={`${styles.submitBtn} ${styles.submitBtnSecondary}`}
+              data-testid="task-submit-another"
+            >
+              Guardar y crear otra
+            </Button>
+            <Button
+              large
+              fill
+              disabled={isSubmitting || !hasContent}
+              onClick={() => handleSubmit()}
+              className={styles.submitBtn}
+              data-testid="task-submit"
+            >
+              {isSubmitting ? 'Guardando...' : 'Guardar'}
+            </Button>
+          </div>
         </Block>
       </PageContent>
     </Sheet>

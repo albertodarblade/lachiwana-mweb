@@ -1,13 +1,13 @@
 import React from 'react'
 import { Paperclip, CircleUser } from 'lucide-react'
-import { Circle, Check } from 'lucide'
-import { MorphIcon } from 'morphicons/react'
 import TagChip from '../notebooks/TagChip'
+import CheckBox from '../CheckBox/CheckBox'
 import { navigate } from '../../utils/f7navigate'
 import styles from './TaskCard.module.css'
 
 export default function TaskCard({ task, tags = [], members = [], onToggleComplete, depth = 0, className, exiting, entering, notebookId }) {
   const { id, title, isCompleted, attachments = [], assignedTo, tags: taskTagIds = [], parentTaskId } = task
+  const pending = task._pending === true
 
   const resolvedTags = taskTagIds
     .map((tagId) => tags.find((t) => (t.id ?? t._id) === tagId))
@@ -20,6 +20,7 @@ export default function TaskCard({ task, tags = [], members = [], onToggleComple
   const attachmentCount = attachments?.length ?? 0
 
   function handleCardClick(e) {
+    if (pending) return
     if (e.target.closest('button')) return
     if (!notebookId) return
     if (parentTaskId) {
@@ -31,26 +32,17 @@ export default function TaskCard({ task, tags = [], members = [], onToggleComple
 
   return (
     <div
-      className={`${styles.card}${className ? ` ${className}` : ''}${exiting ? ` ${styles.exiting}` : ''}${entering ? ` ${styles.entering}` : ''}`}
+      className={`${styles.card}${pending ? ` ${styles.pending}` : ''}${className ? ` ${className}` : ''}${exiting ? ` ${styles.exiting}` : ''}${entering ? ` ${styles.entering}` : ''}`}
       style={depth > 0 ? { paddingLeft: 16 + depth * 24 } : undefined}
       onClick={handleCardClick}
       data-testid={`task-card-${id}`}
     >
-      <button
-        className={styles.checkbox}
-        onClick={() => onToggleComplete(id, !isCompleted)}
+      <CheckBox
+        checked={isCompleted}
+        disabled={pending}
         data-testid={`task-toggle-${id}`}
-      >
-        <span className={`${styles.checkboxCircle}${isCompleted ? ` ${styles.checkboxCircleChecked}` : ''}`}>
-          <MorphIcon
-            icon={isCompleted ? Check : Circle}
-            size={22}
-            strokeWidth={2}
-            spring="smooth"
-            className={styles.morphIcon}
-          />
-        </span>
-      </button>
+        onClick={(next) => onToggleComplete(id, next)}
+      />
 
       <div className={styles.content}>
         <p className={`${styles.title}${isCompleted ? ` ${styles.titleCompleted}` : ''}`}>

@@ -57,38 +57,6 @@
   opacity: 0.4;
 }
 
-.checkbox {
-  flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid var(--f7-list-item-subtitle-text-color);
-  background: transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  transition: background 0.15s, border-color 0.15s;
-}
-
-.checkbox:hover {
-  border-color: var(--f7-theme-color);
-}
-
-.checkboxChecked {
-  background: var(--f7-theme-color);
-  border-color: var(--f7-theme-color);
-}
-
-.morphIcon {
-  color: var(--f7-list-item-subtitle-text-color);
-}
-
-.checkboxChecked .morphIcon {
-  color: #fff;
-}
-
 .titleInput {
   font-size: 18px;
   font-weight: 500;
@@ -289,39 +257,6 @@
 
 .childTaskRow:active {
   background: color-mix(in srgb, var(--f7-list-bg-color) 80%, black);
-}
-
-.childCheckbox {
-  flex-shrink: 0;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: 2px solid var(--f7-list-item-subtitle-text-color);
-  background: transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  margin-top: 1px;
-  transition: background 0.15s, border-color 0.15s;
-}
-
-.childCheckbox:hover {
-  border-color: var(--f7-theme-color);
-}
-
-.childCheckboxChecked {
-  background: var(--f7-theme-color);
-  border-color: var(--f7-theme-color);
-}
-
-.childMorphIcon {
-  color: var(--f7-list-item-subtitle-text-color);
-}
-
-.childCheckboxChecked .childMorphIcon {
-  color: #fff;
 }
 
 .childTitle {

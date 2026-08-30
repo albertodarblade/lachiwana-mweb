@@ -1,0 +1,32 @@
+.checkbox {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: opacity 0.15s;
+}
+
+.checkbox:hover {
+  opacity: 0.85;
+}
+
+.checkbox:disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.icon {
+  color: var(--f7-list-item-subtitle-text-color);
+  transition: color 0.15s;
+}
+
+.checked .icon {
+  color: var(--f7-theme-color);
+}

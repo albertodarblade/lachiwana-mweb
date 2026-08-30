@@ -215,9 +215,24 @@
   padding: 8px 16px 16px;
 }
 
+.submitRow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .submitBtn {
+  flex: 1;
   --f7-button-bg-color: var(--f7-theme-color);
   --f7-button-pressed-bg-color: color-mix(in srgb, var(--f7-theme-color) 80%, black);
+}
+
+.submitBtnSecondary {
+  flex: 1;
+  --f7-button-bg-color: transparent;
+  --f7-button-pressed-bg-color: color-mix(in srgb, var(--f7-theme-color) 10%, transparent);
+  --f7-button-border-color: var(--f7-theme-color);
+  --f7-button-text-color: var(--f7-theme-color);
 }
 
 .membersRow {
