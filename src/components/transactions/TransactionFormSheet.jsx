@@ -27,6 +27,7 @@ export default function TransactionFormSheet({
   transactionType,
   selectedTags,
   notebookId,
+  color,
   onBack,
   onClose,
   onSuccess,
@@ -112,7 +113,7 @@ export default function TransactionFormSheet({
         {selectedTags.length > 0 && (
           <div className={styles.tagsRow} onClick={onBack} data-testid="transaction-tags-row">
             {selectedTags.map((tag) => (
-              <TagChip key={tag.id ?? tag._id} tag={tag} />
+              <TagChip key={tag.id ?? tag._id} tag={tag} color={color} />
             ))}
             <ChevronRight size={16} className={styles.tagsChevron} />
           </div>
@@ -134,6 +135,7 @@ export default function TransactionFormSheet({
             <Calculator
               initialValue={amount}
               onCalculationConfirm={(value) => setAmount(String(value))}
+              color={color}
             />
           </li>
         </List>
@@ -151,6 +153,7 @@ export default function TransactionFormSheet({
 
         <div
           className={styles.dateRow}
+          style={{ '--notebook-color': color }}
           onClick={() => dateInputRef.current?.showPicker?.() ?? dateInputRef.current?.click()}
           data-testid="transaction-date-picker"
         >
@@ -182,6 +185,11 @@ export default function TransactionFormSheet({
             disabled={isPending || !amountValid}
             onClick={() => handleSubmit(true)}
             className={styles.saveAnotherBtn}
+            style={{
+              '--f7-button-border-color': isExpense ? '#e53935' : '#43a047',
+              '--f7-button-text-color': isExpense ? '#e53935' : '#43a047',
+              '--f7-button-pressed-bg-color': isExpense ? '#e5393526' : '#43a04726',
+            }}
             data-testid="transaction-submit-another"
           >
             Guardar y registrar otro

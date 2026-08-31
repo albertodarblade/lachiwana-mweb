@@ -249,7 +249,7 @@ export default function NotebookTransactionsPage({ f7route }) {
           ) : (
             <div className={styles.list}>
               {transactions.map((t) => (
-                <TransactionCard key={t.id} transaction={{ ...t, tags: resolveTagIds(t.tags) }} onClick={() => { setIsFilterPanelOpen(false); navigate(`/notebooks/${id}/transactions/${t.id}/edit`) }} />
+                <TransactionCard key={t.id} transaction={{ ...t, tags: resolveTagIds(t.tags) }} color={navbarColor} onClick={() => { setIsFilterPanelOpen(false); navigate(`/notebooks/${id}/transactions/${t.id}/edit`) }} />
               ))}
             </div>
           )}
@@ -286,7 +286,7 @@ export default function NotebookTransactionsPage({ f7route }) {
           ) : (
             <div className={styles.list}>
               {transactions.map((t) => (
-                <TransactionCard key={t.id} transaction={{ ...t, tags: resolveTagIds(t.tags) }} onClick={() => { setIsFilterPanelOpen(false); navigate(`/notebooks/${id}/transactions/${t.id}/edit`) }} />
+                <TransactionCard key={t.id} transaction={{ ...t, tags: resolveTagIds(t.tags) }} color={navbarColor} onClick={() => { setIsFilterPanelOpen(false); navigate(`/notebooks/${id}/transactions/${t.id}/edit`) }} />
               ))}
             </div>
           )}
@@ -295,7 +295,7 @@ export default function NotebookTransactionsPage({ f7route }) {
 
       <FabBackdrop onClick={handleFlowClose} />
 
-      <Fab position="right-bottom" style={{ '--f7-fab-bg-color': navbarColor, '--f7-fab-pressed-bg-color': navbarColor }}>
+      <Fab position="right-bottom" style={{ '--f7-fab-bg-color': navbarColor, '--f7-fab-pressed-bg-color': navbarColor, '--f7-glass-shadow-fab': '0 2px 8px rgba(0,0,0,0.28)' }}>
         <Icon ios="f7:plus" md="material:add" />
         <Icon ios="f7:xmark" md="material:close" />
         <FabButtons position="top">
@@ -325,6 +325,7 @@ export default function NotebookTransactionsPage({ f7route }) {
         onConfirm={handleTagsConfirm}
         onClose={() => setIsTagSheetOpen(false)}
         onEditTags={handleEditTags}
+        color={navbarColor}
       />
 
       <TagsPopup
@@ -334,6 +335,7 @@ export default function NotebookTransactionsPage({ f7route }) {
         onTagsChange={() => {}}
         opened={isTagsPopupOpen}
         onClose={handleTagsPopupClose}
+        color={navbarColor}
       />
 
       <TransactionFormSheet
@@ -341,6 +343,7 @@ export default function NotebookTransactionsPage({ f7route }) {
         transactionType={transactionType}
         selectedTags={selectedTags}
         notebookId={id}
+        color={navbarColor}
         onBack={handleFormBack}
         onClose={handleFormSheetClosed}
         onSuccess={handleFlowClose}

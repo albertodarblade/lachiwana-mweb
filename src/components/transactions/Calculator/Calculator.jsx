@@ -59,10 +59,28 @@ const KEYS = [
   ['0', '.', '='],
 ]
 
-export default function Calculator({ onCalculationConfirm, initialValue = '', className }) {
+function hexToRgbString(hex) {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  if (!m) return null
+  return `${parseInt(m[1], 16)}, ${parseInt(m[2], 16)}, ${parseInt(m[3], 16)}`
+}
+
+export default function Calculator({ onCalculationConfirm, initialValue = '', className, color }) {
   const [opened, setOpened] = useState(false)
   const [display, setDisplay] = useState('')
   const [hasCalculated, setHasCalculated] = useState(false)
+
+  const themeColor = color ?? 'var(--f7-theme-color)'
+  const rgb =
+    typeof themeColor === 'string' && themeColor.startsWith('#')
+      ? hexToRgbString(themeColor)
+      : null
+  const themeVars = {
+    '--f7-theme-color': themeColor,
+    '--f7-theme-color-shade': `color-mix(in srgb, ${themeColor} 85%, black)`,
+    '--f7-theme-color-tint': `color-mix(in srgb, ${themeColor} 85%, white)`,
+    ...(rgb ? { '--f7-theme-color-rgb': rgb } : {}),
+  }
 
   function open() {
     setDisplay(initialValue || '')
@@ -145,6 +163,7 @@ export default function Calculator({ onCalculationConfirm, initialValue = '', cl
       <button
         type="button"
         className={[styles.iconBtn, className].filter(Boolean).join(' ')}
+        style={{ '--notebook-color': color }}
         onClick={open}
         aria-label="Abrir calculadora"
         data-testid="calculator-open"
@@ -160,7 +179,7 @@ export default function Calculator({ onCalculationConfirm, initialValue = '', cl
         className={styles.popup}
       >
         <Page>
-          <div className={styles.calculator}>
+          <div className={styles.calculator} style={themeVars}>
             <div className={styles.display} data-testid="calculator-display">
               {display || '0'}
             </div>

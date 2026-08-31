@@ -18,7 +18,7 @@ function formatAmount(value) {
   return `${sign}Bs. ${abs}`
 }
 
-export default function TransactionCard({ transaction, onClick }) {
+export default function TransactionCard({ transaction, onClick, color }) {
   const { content, value, date, tags = [], attachments = [] } = transaction
   const pending = transaction._pending === true
 
@@ -45,7 +45,7 @@ export default function TransactionCard({ transaction, onClick }) {
       <div className={styles.meta}>
         <div className={styles.tags}>
           {tags.map((tag) => (
-            <TagChip key={tag._id ?? tag.title} tag={tag} />
+            <TagChip key={tag._id ?? tag.title} tag={tag} color={color} />
           ))}
           {attachments.length > 0 && (
             <span className={styles.attachBadge}>

@@ -126,7 +126,7 @@
 }
 
 .calendarIcon {
-  color: var(--f7-theme-color);
+  color: var(--notebook-color, var(--f7-theme-color));
 }
 
 .dateLabel {

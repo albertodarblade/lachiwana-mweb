@@ -13,11 +13,29 @@ import styles from './TagsPopup.module.css'
 
 const EMPTY_FORM = { title: '', icon: null }
 
-export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTagsChange, opened, onClose }) {
+function hexToRgbString(hex) {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  if (!m) return null
+  return `${parseInt(m[1], 16)}, ${parseInt(m[2], 16)}, ${parseInt(m[3], 16)}`
+}
+
+export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTagsChange, opened, onClose, color }) {
   const [form, setForm] = useState(EMPTY_FORM)
   const [formOpen, setFormOpen] = useState(false)
   const [editingId, setEditingId] = useState(null)
   const [titleError, setTitleError] = useState(false)
+
+  const themeColor = color ?? 'var(--f7-theme-color)'
+  const rgb =
+    typeof themeColor === 'string' && themeColor.startsWith('#')
+      ? hexToRgbString(themeColor)
+      : null
+  const themeVars = {
+    '--f7-theme-color': themeColor,
+    '--f7-theme-color-shade': `color-mix(in srgb, ${themeColor} 85%, black)`,
+    '--f7-theme-color-tint': `color-mix(in srgb, ${themeColor} 85%, white)`,
+    ...(rgb ? { '--f7-theme-color-rgb': rgb } : {}),
+  }
 
   const { mutate: addTag, isPending: isAdding } = useAddTag(notebookId)
   const { mutate: updateTag, isPending: isUpdating } = useUpdateTag(notebookId)
@@ -107,7 +125,7 @@ export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTa
       backdrop
       style={{ height: '99vh' }}
     >
-      <PageContent className={styles.pageContent}>
+      <PageContent className={styles.pageContent} style={themeVars}>
         <div className={styles.dragHandle} />
 
         <div className={styles.header}>
@@ -127,7 +145,7 @@ export default function TagsPopup({ mode = 'create', notebookId, tags = [], onTa
 
         {tags.map((tag) => (
           <div key={tag.id} className={styles.tagRow}>
-            <TagChip tag={tag} />
+            <TagChip tag={tag} color={color} />
             <div className={styles.tagActions}>
               <Link onClick={() => openEdit(tag)} disabled={deletingId === tag.id} data-testid={`tag-edit-${tag.id}`}>
                 <Pencil size={18} className={styles.editIcon} />

@@ -3,7 +3,7 @@
   border: none;
   padding: 8px;
   cursor: pointer;
-  color: var(--f7-theme-color);
+  color: var(--notebook-color, var(--f7-theme-color));
   display: flex;
   align-items: center;
   font-size: 20px;
@@ -78,7 +78,7 @@
 }
 
 .keyOperator {
-  background: #ff9f0a;
+  background: var(--f7-theme-color);
   color: #fff;
 }
 

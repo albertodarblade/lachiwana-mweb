@@ -253,7 +253,7 @@ export default function TransactionEditPage({ f7route }) {
 
         <div className={styles.tagsRow}>
           {resolvedTags.map((tag) => (
-            <TagChip key={tag.id ?? tag._id} tag={tag} />
+            <TagChip key={tag.id ?? tag._id} tag={tag} color={notebook?.color} />
           ))}
           <ThemedButton
             variant="outline"
@@ -281,6 +281,7 @@ export default function TransactionEditPage({ f7route }) {
             <Calculator
               initialValue={amount}
               onCalculationConfirm={handleCalculationConfirm}
+              color={notebook?.color}
             />
           </li>
         </List>
@@ -299,6 +300,7 @@ export default function TransactionEditPage({ f7route }) {
 
         <div
           className={styles.dateRow}
+          style={{ '--notebook-color': notebook?.color }}
           onClick={() => dateInputRef.current?.showPicker?.() ?? dateInputRef.current?.click()}
           data-testid="edit-transaction-date-picker"
         >
@@ -320,6 +322,7 @@ export default function TransactionEditPage({ f7route }) {
           onConfirm={handleTagsConfirm}
           onClose={() => setTagSheetOpen(false)}
           onEditTags={handleEditTags}
+          color={notebook?.color}
         />
 
         <TagsPopup
@@ -329,6 +332,7 @@ export default function TransactionEditPage({ f7route }) {
           onTagsChange={() => {}}
           opened={tagsPopupOpen}
           onClose={handleTagsPopupClose}
+          color={notebook?.color}
         />
               {/* Actions menu */}
       <Actions opened={actionsOpen} onActionsClosed={() => setActionsOpen(false)}>

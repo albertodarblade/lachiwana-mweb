@@ -6,6 +6,12 @@ import styles from './TagSelectionSheet.module.css'
 
 const lucideMap = Object.fromEntries(LUCIDE_ICONS.map(({ name, Icon }) => [name, Icon]))
 
+function hexToRgbString(hex) {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  if (!m) return null
+  return `${parseInt(m[1], 16)}, ${parseInt(m[2], 16)}, ${parseInt(m[3], 16)}`
+}
+
 export default function TagSelectionSheet({
   opened,
   tags,
@@ -13,8 +19,21 @@ export default function TagSelectionSheet({
   onConfirm,
   onClose,
   onEditTags,
+  color,
 }) {
   const [localSelected, setLocalSelected] = useState(new Set(selectedTagIds))
+
+  const themeColor = color ?? 'var(--f7-theme-color)'
+  const rgb =
+    typeof themeColor === 'string' && themeColor.startsWith('#')
+      ? hexToRgbString(themeColor)
+      : null
+  const themeVars = {
+    '--f7-theme-color': themeColor,
+    '--f7-theme-color-shade': `color-mix(in srgb, ${themeColor} 85%, black)`,
+    '--f7-theme-color-tint': `color-mix(in srgb, ${themeColor} 85%, white)`,
+    ...(rgb ? { '--f7-theme-color-rgb': rgb } : {}),
+  }
 
   useEffect(() => {
     if (opened) setLocalSelected(new Set(selectedTagIds))
@@ -38,7 +57,7 @@ export default function TagSelectionSheet({
       swipeHandler=".tag-swipe-handle"
       style={{ height: '90vh' }}
     >
-      <div className={styles.sheetOuter}>
+      <div className={styles.sheetOuter} style={themeVars}>
 
         {/* Fixed header — drag handle + title + edit button */}
         <div className={styles.fixedHeader}>
