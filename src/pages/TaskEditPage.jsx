@@ -26,6 +26,12 @@ import styles from './TaskEditPage.module.css'
 const DEBOUNCE_MS = 300
 const COUNTDOWN_START = 5
 
+function hexToRgbString(hex) {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  if (!m) return null
+  return `${parseInt(m[1], 16)}, ${parseInt(m[2], 16)}, ${parseInt(m[3], 16)}`
+}
+
 export default function TaskEditPage({ f7route }) {
   const notebookId = f7route?.params?.notebookId
   const routeTaskId = f7route?.params?.taskId
@@ -247,9 +253,20 @@ export default function TaskEditPage({ f7route }) {
     ? `Espera ${countdown}s`
     : isDeleting ? 'Eliminando...' : 'Eliminar'
 
+  const themeColor = notebook?.color ?? 'var(--f7-theme-color)'
+  const rgb = typeof themeColor === 'string' && themeColor.startsWith('#')
+    ? hexToRgbString(themeColor)
+    : null
+  const themeVars = {
+    '--f7-theme-color': themeColor,
+    '--f7-theme-color-shade': `color-mix(in srgb, ${themeColor} 85%, black)`,
+    '--f7-theme-color-tint': `color-mix(in srgb, ${themeColor} 85%, white)`,
+    ...(rgb ? { '--f7-theme-color-rgb': rgb } : {}),
+  }
+
   return (
     <>
-      <Page onPageBeforeIn={handlePageBeforeIn}>
+      <Page style={themeVars} onPageBeforeIn={handlePageBeforeIn}>
         <Navbar>
           <NavLeft
             backLink="Atrás"
@@ -302,6 +319,7 @@ export default function TaskEditPage({ f7route }) {
             <CheckBox
               checked={isCompleted}
               onClick={handleToggleComplete}
+              color={notebook?.color}
               data-testid="edit-task-toggle"
             />
             <textarea
@@ -375,7 +393,7 @@ export default function TaskEditPage({ f7route }) {
                   swipeToClose
                   backdrop
                 >
-                  <PageContent style={{ padding: '16px 16px 32px' }}>
+                  <PageContent style={{ padding: '16px 16px 32px', ...themeVars }}>
                     <div className={styles.sectionLabel} style={{ padding: '0 0 12px' }}>Asignar a</div>
                     <div className={styles.membersRow}>
                       {members.map((member) => {
@@ -478,6 +496,7 @@ export default function TaskEditPage({ f7route }) {
                               <CheckBox
                                 checked={child.isCompleted}
                                 onClick={(next) => handleToggleChildComplete(child.id, next)}
+                                color={notebook?.color}
                               />
                               <div className={styles.childContent}>
                                 <span className={`${styles.childTitle}${child.isCompleted ? ` ${styles.childTitleCompleted}` : ''}`}>

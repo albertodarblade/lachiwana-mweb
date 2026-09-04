@@ -8,7 +8,7 @@ export default function TaskEmptyState() {
     <Block className={styles.block}>
       <CheckSquare size={48} className={styles.icon} />
       <p className={styles.text}>
-        Próximamente: tareas
+        Aún no hay tareas. ¡Crea la primera!
       </p>
     </Block>
   )

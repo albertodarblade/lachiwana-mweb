@@ -3,8 +3,26 @@ import { Sheet, PageContent, List, ListItem, Block, Button } from 'framework7-re
 import TagChip from '../notebooks/TagChip'
 import styles from './NoteTagPicker.module.css'
 
-export default function NoteTagPicker({ notebookTags = [], selectedTagIds = [], onConfirm, opened, onClose }) {
+function hexToRgbString(hex) {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  if (!m) return null
+  return `${parseInt(m[1], 16)}, ${parseInt(m[2], 16)}, ${parseInt(m[3], 16)}`
+}
+
+export default function NoteTagPicker({ notebookTags = [], selectedTagIds = [], onConfirm, opened, onClose, color }) {
   const [localIds, setLocalIds] = useState(selectedTagIds)
+
+  const themeColor = color ?? 'var(--f7-theme-color)'
+  const rgb =
+    typeof themeColor === 'string' && themeColor.startsWith('#')
+      ? hexToRgbString(themeColor)
+      : null
+  const themeVars = {
+    '--f7-theme-color': themeColor,
+    '--f7-theme-color-shade': `color-mix(in srgb, ${themeColor} 85%, black)`,
+    '--f7-theme-color-tint': `color-mix(in srgb, ${themeColor} 85%, white)`,
+    ...(rgb ? { '--f7-theme-color-rgb': rgb } : {}),
+  }
 
   function handleOpen() {
     setLocalIds(selectedTagIds)
@@ -30,7 +48,7 @@ export default function NoteTagPicker({ notebookTags = [], selectedTagIds = [], 
       backdrop
       style={{ height: '99vh' }}
     >
-      <PageContent className={styles.pageContent}>
+      <PageContent className={styles.pageContent} style={themeVars}>
         <div className={styles.dragHandle} />
 
         <div className={styles.sheetTitle}>
@@ -54,7 +72,7 @@ export default function NoteTagPicker({ notebookTags = [], selectedTagIds = [], 
                 data-testid={`note-tag-item-${tag.id}`}
               >
                 <div slot="title">
-                  <TagChip tag={tag} />
+                  <TagChip tag={tag} color={color} />
                 </div>
               </ListItem>
             ))}

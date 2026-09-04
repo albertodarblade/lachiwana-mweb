@@ -159,6 +159,7 @@ export default function NotebookTasksPage({ f7route }) {
           exiting={transitions[task.id] === 'exit'}
           entering={transitions[task.id] === 'enter'}
           notebookId={id}
+          color={navbarColor}
         />
         {childrenMap[task.id]?.length > 0 && renderTaskGroup(childrenMap[task.id], depth + 1)}
       </React.Fragment>
@@ -249,6 +250,7 @@ export default function NotebookTasksPage({ f7route }) {
         notebookOwner={notebook.owner}
         notebookMembers={notebook.users ?? []}
         notebookTags={notebook.tags ?? []}
+        color={notebook.color}
         onClose={() => setIsSheetOpen(false)}
         onSuccess={() => setIsSheetOpen(false)}
       />

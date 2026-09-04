@@ -28,5 +28,5 @@
 }
 
 .checked .icon {
-  color: var(--f7-theme-color);
+  color: var(--checkbox-checked-color, var(--f7-theme-color));
 }

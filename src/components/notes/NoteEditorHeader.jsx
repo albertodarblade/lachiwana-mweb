@@ -37,6 +37,7 @@ export default function NoteEditorHeader({ notebookId, selectedTagIds, onTagsCon
         onConfirm={onTagsConfirm}
         opened={tagPickerOpen}
         onClose={() => setTagPickerOpen(false)}
+        color={notebookData?.color}
       />
     </Block>
   )

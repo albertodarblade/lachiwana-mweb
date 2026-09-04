@@ -19,7 +19,7 @@ import styles from './EditNotebookPage.module.css'
 
 const COLORS = [
   { label: 'Red', hex: '#FF3B30' },
-  { label: 'Orange', hex: '#FF9500' },
+  { label: 'Orange', hex: '#E17100' },
   { label: 'Yellow', hex: '#FFCC00' },
   { label: 'Green', hex: '#16A34A' },
   { label: 'Teal', hex: '#5AC8FA' },
@@ -27,6 +27,12 @@ const COLORS = [
   { label: 'Purple', hex: '#AF52DE' },
   { label: 'Pink', hex: '#FF2D55' },
 ]
+
+function hexToRgbString(hex) {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  if (!m) return null
+  return `${parseInt(m[1], 16)}, ${parseInt(m[2], 16)}, ${parseInt(m[3], 16)}`
+}
 
 export default function EditNotebookPage({ f7route }) {
   const id = f7route?.params?.id
@@ -49,6 +55,17 @@ export default function EditNotebookPage({ f7route }) {
 
   const currentUserId = getSession()?.user?.googleId
   const isOwner = notebook?.owner === currentUserId
+
+  const themeColor = color ?? 'var(--f7-theme-color)'
+  const rgb = typeof themeColor === 'string' && themeColor.startsWith('#')
+    ? hexToRgbString(themeColor)
+    : null
+  const themeVars = {
+    '--f7-theme-color': themeColor,
+    '--f7-theme-color-shade': `color-mix(in srgb, ${themeColor} 85%, black)`,
+    '--f7-theme-color-tint': `color-mix(in srgb, ${themeColor} 85%, white)`,
+    ...(rgb ? { '--f7-theme-color-rgb': rgb } : {}),
+  }
 
   useEffect(() => {
     if (notebook) {
@@ -112,7 +129,7 @@ export default function EditNotebookPage({ f7route }) {
   }
 
   return (
-    <Page>
+    <Page style={themeVars}>
       <Navbar>
         <NavLeft>
           <Link onClick={() => navigateBack()} className={styles.navCloseLink} data-testid="edit-notebook-close">
@@ -243,6 +260,7 @@ export default function EditNotebookPage({ f7route }) {
 
       <TagsPopup
         mode="edit"
+        color={color}
         notebookId={id}
         tags={notebook?.tags ?? []}
         onTagsChange={() => {}}

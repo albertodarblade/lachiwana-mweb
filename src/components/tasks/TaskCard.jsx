@@ -5,7 +5,7 @@ import CheckBox from '../CheckBox/CheckBox'
 import { navigate } from '../../utils/f7navigate'
 import styles from './TaskCard.module.css'
 
-export default function TaskCard({ task, tags = [], members = [], onToggleComplete, depth = 0, className, exiting, entering, notebookId }) {
+export default function TaskCard({ task, tags = [], members = [], onToggleComplete, depth = 0, className, exiting, entering, notebookId, color }) {
   const { id, title, isCompleted, attachments = [], assignedTo, tags: taskTagIds = [], parentTaskId } = task
   const pending = task._pending === true
 
@@ -40,6 +40,7 @@ export default function TaskCard({ task, tags = [], members = [], onToggleComple
       <CheckBox
         checked={isCompleted}
         disabled={pending}
+        color={color}
         data-testid={`task-toggle-${id}`}
         onClick={(next) => onToggleComplete(id, next)}
       />
@@ -52,7 +53,7 @@ export default function TaskCard({ task, tags = [], members = [], onToggleComple
           {resolvedTags.length > 0 && (
             <div className={styles.tags}>
               {resolvedTags.map((tag) => (
-                <TagChip key={tag.id ?? tag._id} tag={tag} />
+                <TagChip key={tag.id ?? tag._id} tag={tag} color={color} />
               ))}
             </div>
           )}

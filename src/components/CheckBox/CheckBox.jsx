@@ -3,7 +3,7 @@ import { Circle, CircleCheckBig } from 'lucide'
 import { MorphIcon } from 'morphicons/react'
 import styles from './CheckBox.module.css'
 
-export default function CheckBox({ checked, onClick, disabled = false, className, ...rest }) {
+export default function CheckBox({ checked, onClick, disabled = false, className, color, ...rest }) {
   function handleClick(e) {
     e.stopPropagation()
     if (!disabled) onClick?.(!checked)
@@ -16,6 +16,7 @@ export default function CheckBox({ checked, onClick, disabled = false, className
       onClick={handleClick}
       disabled={disabled}
       aria-pressed={checked}
+      style={color ? { '--checkbox-checked-color': color } : undefined}
       {...rest}
     >
       <MorphIcon

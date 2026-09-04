@@ -12,15 +12,33 @@ import PendingAttachmentItem from './PendingAttachmentItem'
 import { prepareFileForUpload } from '../../utils/compressImage'
 import styles from './TaskFormSheet.module.css'
 
+function hexToRgbString(hex) {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  if (!m) return null
+  return `${parseInt(m[1], 16)}, ${parseInt(m[2], 16)}, ${parseInt(m[3], 16)}`
+}
+
 export default function TaskFormSheet({
   opened,
   notebookId,
   notebookOwner,
   notebookMembers = [],
   notebookTags = [],
+  color,
   onClose,
   onSuccess,
 }) {
+  const themeColor = color ?? 'var(--f7-theme-color)'
+  const rgb =
+    typeof themeColor === 'string' && themeColor.startsWith('#')
+      ? hexToRgbString(themeColor)
+      : null
+  const themeVars = {
+    '--f7-theme-color': themeColor,
+    '--f7-theme-color-shade': `color-mix(in srgb, ${themeColor} 85%, black)`,
+    '--f7-theme-color-tint': `color-mix(in srgb, ${themeColor} 85%, white)`,
+    ...(rgb ? { '--f7-theme-color-rgb': rgb } : {}),
+  }
   const [title, setTitle] = useState('')
   const [selectedTagIds, setSelectedTagIds] = useState(new Set())
   const [assignedTo, setAssignedTo] = useState(null)
@@ -202,7 +220,7 @@ export default function TaskFormSheet({
       backdrop
       style={{ height: 'auto' }}
     >
-      <PageContent className={styles.pageContent}>
+      <PageContent className={styles.pageContent} style={themeVars}>
         <div className={styles.dragHandle} />
 
         <div className={styles.titleRow}>
@@ -279,7 +297,7 @@ export default function TaskFormSheet({
                     onClick={() => toggleTag(tagId)}
                     data-testid={`task-tag-${tagId}`}
                   >
-                    <TagChip tag={tag} />
+                    <TagChip tag={tag} color={isSelected ? color : 'var(--f7-list-item-subtitle-text-color)'} />
                   </span>
                 )
               })}

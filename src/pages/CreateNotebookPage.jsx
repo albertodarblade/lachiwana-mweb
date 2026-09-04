@@ -11,8 +11,8 @@ import TypeSelector from '../components/notebooks/TypeSelector'
 import styles from './CreateNotebookPage.module.css'
 
 const COLORS = [
+  { label: 'Orange', hex: '#E17100' },
   { label: 'Red', hex: '#FF3B30' },
-  { label: 'Orange', hex: '#FF9500' },
   { label: 'Yellow', hex: '#FFCC00' },
   { label: 'Green', hex: '#16A34A' },
   { label: 'Teal', hex: '#5AC8FA' },
@@ -21,10 +21,16 @@ const COLORS = [
   { label: 'Pink', hex: '#FF2D55' },
 ]
 
+function hexToRgbString(hex) {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  if (!m) return null
+  return `${parseInt(m[1], 16)}, ${parseInt(m[2], 16)}, ${parseInt(m[3], 16)}`
+}
+
 export default function CreateNotebookPage() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [color, setColor] = useState(null)
+  const [color, setColor] = useState(COLORS[0].hex)
   const [iconName, setIconName] = useState(null)
   const [selectedIds, setSelectedIds] = useState(new Set())
   const [titleError, setTitleError] = useState(false)
@@ -45,6 +51,17 @@ export default function CreateNotebookPage() {
   const { data: usersData } = useUsers()
   const allUsers = usersData?.data ?? []
   const currentUserId = getSession()?.user?.googleId
+
+  const themeColor = color ?? 'var(--f7-theme-color)'
+  const rgb = typeof themeColor === 'string' && themeColor.startsWith('#')
+    ? hexToRgbString(themeColor)
+    : null
+  const themeVars = {
+    '--f7-theme-color': themeColor,
+    '--f7-theme-color-shade': `color-mix(in srgb, ${themeColor} 85%, black)`,
+    '--f7-theme-color-tint': `color-mix(in srgb, ${themeColor} 85%, white)`,
+    ...(rgb ? { '--f7-theme-color-rgb': rgb } : {}),
+  }
 
   function handleSubmit() {
     if (!title.trim()) {
@@ -73,7 +90,7 @@ export default function CreateNotebookPage() {
   }
 
   return (
-    <Page>
+    <Page style={themeVars}>
       <Navbar>
         <NavLeft backLink="Atrás" />
         <NavTitle>Nuevo Cuaderno</NavTitle>
@@ -189,6 +206,7 @@ export default function CreateNotebookPage() {
 
       <TagsPopup
         mode="create"
+        color={color}
         tags={tags}
         onTagsChange={setTags}
         opened={tagsPopupOpen}
