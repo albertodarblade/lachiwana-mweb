@@ -1,0 +1,220 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.centered {
+  display: flex;
+  justify-content: center;
+  padding-top: 60px;
+}
+
+.errorText {
+  opacity: 0.6;
+  text-align: center;
+}
+
+.backLink {
+  color: var(--f7-theme-color);
+  cursor: pointer;
+  display: block;
+  text-align: center;
+}
+
+.navTitleInner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.iconContainer {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--icon-color, var(--f7-theme-color)) 14%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.navIcon {
+  color: var(--icon-color, var(--f7-theme-color));
+}
+
+.navTitleText {
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--f7-navbar-text-color);
+  line-height: 1.15;
+  min-width: 0;
+}
+
+.navTitleSub {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.6;
+  color: var(--f7-navbar-text-color);
+  white-space: nowrap;
+}
+
+.messagesScroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--f7-messages-content-bg-color, var(--f7-page-bg-color));
+}
+
+.messages {
+  min-height: 100%;
+  padding: 8px 0;
+}
+
+.fullWidth {
+  max-width: 100% !important;
+}
+
+.userMessage :global(.message-text) {
+  font-size: 14px;
+}
+
+.markdownBody {
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.markdownBody :global(p),
+.markdownBody :global(li) {
+  margin: 0;
+}
+
+.markdownBody :global(p + p) {
+  margin-top: 6px;
+}
+
+.markdownBody :global(ul),
+.markdownBody :global(ol) {
+  padding-left: 18px;
+  margin: 4px 0;
+}
+
+.markdownBody :global(h1),
+.markdownBody :global(h2),
+.markdownBody :global(h3),
+.markdownBody :global(h4) {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 6px 0 0;
+  line-height: 1.3;
+}
+
+.markdownBody :global(strong) {
+  font-weight: 600;
+}
+
+.markdownBody :global(a) {
+  color: var(--f7-theme-color, #007aff);
+  text-decoration: underline;
+}
+
+.markdownBody :global(pre),
+.markdownBody :global(code) {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: hidden;
+  font-size: 12px;
+}
+
+.markdownBody :global(code) {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+
+.markdownBody :global(pre) {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin: 4px 0;
+}
+
+.markdownBody :global(pre code) {
+  background: transparent;
+  padding: 0;
+}
+
+.markdownBody :global(table) {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 4px 0;
+  font-size: 13px;
+}
+
+.markdownBody :global(th),
+.markdownBody :global(td) {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 4px 6px;
+  text-align: left;
+}
+
+.markdownBody :global(blockquote) {
+  margin: 4px 0;
+  padding-left: 10px;
+  border-left: 3px solid rgba(0, 0, 0, 0.2);
+  opacity: 0.85;
+}
+
+.messagebar {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  flex-shrink: 0;
+  padding: 8px 12px calc(8px + var(--f7-safe-area-bottom, 0px));
+  border-top: 1px solid var(--f7-list-item-border-color, rgba(0, 0, 0, 0.08));
+  background: var(--f7-messagebar-bg-color, var(--f7-page-bg-color, #fff));
+}
+
+.messagebarInput {
+  flex: 1;
+  min-height: 40px;
+  max-height: 100px;
+  resize: none;
+  border: none;
+  outline: none;
+  padding: 10px 14px;
+  border-radius: 20px;
+  background: var(--f7-messagebar-textarea-bg-color, rgba(0, 0, 0, 0.06));
+  color: var(--f7-text-color, #000);
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.messagebarInput::placeholder {
+  color: var(--f7-messagebar-textarea-placeholder-color, rgba(0, 0, 0, 0.4));
+}
+
+.sendBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--send-color, var(--f7-theme-color));
+  opacity: 0.35;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sendBtnActive {
+  opacity: 1;
+}

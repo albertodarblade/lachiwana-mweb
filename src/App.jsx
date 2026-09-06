@@ -7,6 +7,7 @@ import NotebooksPage from './pages/NotebooksPage'
 import CreateNotebookPage from './pages/CreateNotebookPage'
 import NotebookDetailPage from './pages/NotebookDetailPage'
 import NotebookTransactionsPage from './pages/NotebookTransactionsPage'
+import NotebookTransactionsQuestionsPage from './pages/NotebookTransactionsQuestionsPage'
 import EditNotebookPage from './pages/EditNotebookPage'
 import NoteEditorPage from './pages/NoteEditorPage'
 import CreateNoteEditorPage from './pages/CreateNoteEditorPage'
@@ -48,6 +49,14 @@ function ProtectedTransactions(props) {
   return (
     <ProtectedRoute>
       <NotebookTransactionsPage {...props} />
+    </ProtectedRoute>
+  )
+}
+
+function ProtectedTransactionQuestions(props) {
+  return (
+    <ProtectedRoute>
+      <NotebookTransactionsQuestionsPage {...props} />
     </ProtectedRoute>
   )
 }
@@ -127,6 +136,7 @@ const routes = [
   { path: '/notebooks/:notebookId/notes/:noteId', component: ProtectedNoteEditor },
   { path: '/notebooks/:id/notes', component: ProtectedDetail },
   { path: '/notebooks/:notebookId/transactions/:transactionId/edit', component: ProtectedTransactionEdit },
+  { path: '/notebooks/:id/transactions/questions', component: ProtectedTransactionQuestions },
   { path: '/notebooks/:id/transactions', component: ProtectedTransactions },
   { path: '/notebooks/:id/tasks', component: ProtectedTasks },
   { path: '/notebooks/:notebookId/tasks/:taskId/childTask/:childTaskId', component: ProtectedChildTaskView },

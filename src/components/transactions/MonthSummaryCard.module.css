@@ -3,51 +3,6 @@
   margin-bottom: 12px;
 }
 
-.accordion {
-  width: 100%;
-  min-width: 0;
-  overflow-x: hidden;
-}
-
-.coverRow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: nowrap;
-  gap: 8px;
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  padding: 10px 16px;
-  background: var(--f7-card-bg-color);
-  user-select: none;
-  white-space: nowrap;
-}
-
-.coverValue {
-  font-size: 12px;
-  font-weight: 600;
-  min-width: 0;
-}
-
-.coverSeparator {
-  font-size: 12px;
-  color: var(--f7-list-item-subtitle-text-color);
-  opacity: 0.5;
-}
-
-.coverChevron {
-  color: var(--f7-list-item-subtitle-text-color);
-  opacity: 0.6;
-  margin-left: 2px;
-  flex-shrink: 0;
-  transition: transform 0.2s ease;
-}
-
-.accordion :global(.accordion-item-opened) .coverChevron {
-  transform: rotate(180deg);
-}
-
 .list {
   margin: 0;
   min-width: 0;
@@ -58,8 +13,6 @@
   font-weight: 600;
 }
 
-.negative { color: #e53935; }
-.positive { color: #43a047; }
 .totalPositive { color: #43a047; }
 .totalNegative { color: #e53935; }
 .totalNeutral { color: var(--f7-list-item-subtitle-text-color); }
