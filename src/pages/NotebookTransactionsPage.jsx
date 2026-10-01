@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   Page, Navbar, NavLeft, NavTitle, NavRight, Tabs, Tab,
-  Block, Preloader, Fab, FabButtons, FabButton, FabBackdrop, Icon, Link, Badge,
+  Block, Preloader, Fab, FabButtons, FabButton, FabBackdrop, Icon, Link, Badge, f7,
 } from 'framework7-react'
 import { ArrowLeftRight, Search } from 'lucide-react'
 import { LUCIDE_ICONS } from '../components/IconSelector/lucideIcons'
@@ -16,6 +16,7 @@ import TransactionEmptyState from '../components/transactions/TransactionEmptySt
 import TagSelectionSheet from '../components/transactions/TagSelectionSheet'
 import TransactionFormSheet from '../components/transactions/TransactionFormSheet'
 import TransactionFilterPanel from '../components/transactions/TransactionFilterPanel'
+import TransactionsSearchResult from '../components/transactions/TransactionsSearchResult'
 import TransactionsDashboard from '../components/transactions/TransactionsDashboard'
 import TransactionChat from '../components/ai/TransactionChat'
 import TagsPopup from '../components/notebooks/TagsPopup'
@@ -73,8 +74,9 @@ export default function NotebookTransactionsPage({ f7route }) {
   const byMonth = viewType === 'by-month'
 
   const activeFilterCount = (filters.content ? 1 : 0) + filters.tagIds.size
+  const hasSearchCriteria = activeFilterCount > 0
   const filterParams = {
-    ...(byMonth ? cursor : {}),
+    ...(byMonth && !hasSearchCriteria ? cursor : {}),
     ...(filters.content ? { content: filters.content } : {}),
     ...(filters.tagIds.size ? { tags: [...filters.tagIds] } : {}),
   }
@@ -84,6 +86,14 @@ export default function NotebookTransactionsPage({ f7route }) {
   const { data: summary } = useTransactionSummary(id)
 
   const notebookTags = notebook?.tags ?? []
+
+  useEffect(() => {
+    if (transactionsLoading || activeFilterCount === 0) return
+    const message = transactions.length > 0
+      ? `Se ${transactions.length === 1 ? 'encontró' : 'encontraron'} ${transactions.length} ${transactions.length === 1 ? 'transacción' : 'transacciones'} con ese criterio.`
+      : 'No se encontraron transacciones con ese criterio.'
+    f7.toast.create({ text: message, position: 'center', closeTimeout: 2500 }).open()
+  }, [transactionsLoading, activeFilterCount, transactions.length])
 
   function resolveTagIds(tagIds = []) {
     return tagIds
@@ -161,6 +171,10 @@ export default function NotebookTransactionsPage({ f7route }) {
     if (transactionType !== null) {
       setTimeout(() => setIsTagSheetOpen(true), 300)
     }
+  }
+
+  function handleClearFilters() {
+    setFilters({ content: '', tagIds: new Set() })
   }
 
   if (isPending && fetchStatus === 'paused') {
@@ -242,6 +256,22 @@ const tabButtons = [
         </NavRight>
       </Navbar>
 
+      {hasSearchCriteria ? (
+        <TransactionsSearchResult
+          transactions={transactions}
+          filters={filters}
+          tags={notebookTags}
+          color={navbarColor}
+          isLoading={transactionsLoading}
+          isPaused={transactionsFetchStatus === 'paused'}
+          isError={transactionsError}
+          staleError={transactionsError && transactions.length > 0 && !dismissTxError}
+          onDismissError={() => setDismissTxError(true)}
+          onClearFilters={handleClearFilters}
+          onSelect={(t) => { setIsFilterPanelOpen(false); navigate(`/notebooks/${id}/transactions/${t.id}/edit`) }}
+        />
+      ) : (
+        <>
       {byMonth && (
         <MonthSelector
           year={cursor.year}
@@ -350,10 +380,12 @@ const tabButtons = [
           />
         </Tab>
       </Tabs>
+        </>
+      )}
 
       <FabBackdrop onClick={handleFlowClose} />
 
-      {activeTab === 'movements' && (
+      {activeTab === 'movements' && !hasSearchCriteria && (
         <Fab position="right-bottom" style={{ '--f7-fab-bg-color': navbarColor, '--f7-fab-pressed-bg-color': navbarColor, '--f7-glass-shadow-fab': '0 2px 8px rgba(0,0,0,0.28)' }}>
           <Icon ios="f7:plus" md="material:add" />
           <Icon ios="f7:xmark" md="material:close" />
