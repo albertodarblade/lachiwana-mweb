@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import {
   Page, Navbar, NavLeft, NavTitle, NavRight,
-  Block, Preloader, Fab, Icon, Link, Badge, f7,
+  Block, Preloader, Fab, FabButtons, FabButton, FabBackdrop,
+  Icon, Link, Badge, f7,
 } from 'framework7-react'
-import { Book, Search } from 'lucide-react'
+import { Book, Search, FileText, Zap } from 'lucide-react'
 import { LUCIDE_ICONS } from '../components/IconSelector/lucideIcons'
 import { useNotebook } from '../hooks/useNotebook'
 import { useNotes } from '../hooks/useNotes'
@@ -205,7 +206,6 @@ export default function NotebookDetailPage({ f7route }) {
       <Fab
         position="right-bottom"
         text="Nueva Nota"
-        onClick={() => navigate(`/notebooks/${id}/notes/create`)}
         data-testid="note-create-fab"
         style={{
           '--f7-fab-bg-color': navbarColor,
@@ -216,7 +216,26 @@ export default function NotebookDetailPage({ f7route }) {
         }}
       >
         <Icon ios="f7:plus" md="material:add" />
+        <FabButtons position="top">
+          <FabButton
+            fabClose
+            label="Nota normal"
+            onClick={() => navigate(`/notebooks/${id}/notes/create`)}
+            data-testid="note-type-normal"
+          >
+            <FileText size={20} />
+          </FabButton>
+          <FabButton
+            fabClose
+            label="Smart Note"
+            onClick={() => navigate(`/notebooks/${id}/notes/create?type=smart`)}
+            data-testid="note-type-smart"
+          >
+            <Zap size={20} />
+          </FabButton>
+        </FabButtons>
       </Fab>
+      <FabBackdrop />
 
       <NoteFilterPanel
         opened={isFilterPanelOpen}

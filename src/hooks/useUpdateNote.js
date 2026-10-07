@@ -5,11 +5,12 @@ import { f7 } from 'framework7-react'
 
 export function useUpdateNote(notebookId, noteId) {
   return useMutation({
-    mutationFn: ({ content, tags }) => updateNote(notebookId, noteId, {
+    mutationFn: ({ content, tags, sandboxCode }) => updateNote(notebookId, noteId, {
       ...(content !== undefined && { content }),
       ...(tags !== undefined && { tags }),
+      ...(sandboxCode !== undefined && { sandboxCode }),
     }),
-    onMutate: async ({ content, tags }) => {
+    onMutate: async ({ content, tags, sandboxCode }) => {
       await queryClient.cancelQueries({ queryKey: ['note', notebookId, noteId] })
       await queryClient.cancelQueries({ queryKey: ['notes', notebookId] })
       const previous = queryClient.getQueryData(['note', notebookId, noteId])
@@ -17,6 +18,7 @@ export function useUpdateNote(notebookId, noteId) {
       const patch = {
         ...(content !== undefined && { content }),
         ...(tags !== undefined && { tags }),
+        ...(sandboxCode !== undefined && { sandboxCode }),
         updatedAt: new Date().toISOString(),
       }
 

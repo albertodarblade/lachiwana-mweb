@@ -4,6 +4,23 @@
   gap: 4px;
 }
 
+/* Replaces SaveStatusIndicator in the navbar while a smart note is previewing */
+.navEditBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--f7-theme-color);
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .editorLayoutCentered {
   justify-content: center;
   align-items: center;

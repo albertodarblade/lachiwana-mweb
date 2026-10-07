@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Paperclip } from 'lucide-react'
+import { Paperclip, Zap } from 'lucide-react'
 import { Actions, ActionsGroup, ActionsButton } from 'framework7-react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -37,7 +37,12 @@ export default function NoteCard({ note, notebookId }) {
     .map((id) => notebookTags.find((t) => t.id === id))
     .filter(Boolean)
 
-  const { title, body } = parseContent(note.content)
+  // Smart notes use `content` as a plain title; normal notes derive it from
+  // the first markdown heading. Fallback: legacy notes without `type` but
+  // with saved sandbox code are smart notes too.
+  const isSmart = note.type === 'smart' || Boolean(note.sandboxCode?.trim())
+  const { title: parsedTitle, body } = parseContent(note.content)
+  const title = isSmart ? (note.content?.trim() || null) : parsedTitle
   const hasAttachments = (note.attachments?.length ?? 0) > 0
   const date = note.updatedAt || note.createdAt
 
@@ -68,12 +73,21 @@ export default function NoteCard({ note, notebookId }) {
   return (
     <>
       <div
-        className={styles.card}
+        className={isSmart ? `${styles.card} ${styles.cardSmart}` : styles.card}
         onClick={handleCardClick}
         data-testid={`note-card-${note.id}`}
+        data-smart={isSmart ? 'true' : 'false'}
+        style={isSmart && notebookColor ? { '--notebook-color': notebookColor } : undefined}
       >
+        {isSmart && (
+          <span className={styles.smartBadge}>
+            <Zap size={12} />
+            Smart
+          </span>
+        )}
+        {isSmart && !title && <p className={styles.titleMuted}>Sin título</p>}
         {title && <p className={styles.title}>{title}</p>}
-        {body && (
+        {!isSmart && body && (
           <div
             className={styles.body}
             style={notebookColor ? { '--notebook-color': notebookColor } : undefined}

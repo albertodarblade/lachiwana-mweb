@@ -12,6 +12,7 @@ import { useDeleteNote } from '../hooks/useDeleteNote'
 import { getNote, uploadAttachment, deleteAttachment } from '../api/notes'
 import { prepareFileForUpload } from '../utils/compressImage'
 import NoteEditor from '../components/notes/NoteEditor'
+import SmartNoteEditor from '../components/notes/SmartNoteEditor'
 import NoteEditorHeader from '../components/notes/NoteEditorHeader'
 import SaveStatusIndicator from '../components/notes/SaveStatusIndicator'
 import ThemedButton from '../components/notebooks/ThemedButton'
@@ -24,15 +25,20 @@ const COUNTDOWN_START = 5
 
 export default function CreateNoteEditorPage({ f7route }) {
   const notebookId = f7route?.params?.notebookId
+  const noteType = f7route?.query?.type === 'smart' ? 'smart' : 'normal'
 
   const [noteId, setNoteId] = useState(null)
   const [selectedTagIds, setSelectedTagIds] = useState([])
   const [saveStatus, setSaveStatus] = useState('saved')
+  const [smartPreview, setSmartPreview] = useState(false)
   const [actionsOpen, setActionsOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [countdown, setCountdown] = useState(COUNTDOWN_START)
 
   const contentRef = useRef('')
+  const titleRef = useRef('')
+  const codeRef = useRef('')
+  const dirtyRef = useRef({ content: false, sandboxCode: false })
   const debounceRef = useRef(null)
   const noteIdRef = useRef(null)
   const isCreatingRef = useRef(false)
@@ -121,6 +127,97 @@ export default function CreateNoteEditorPage({ f7route }) {
     }
   }
 
+  // ── Smart note flow ─────────────────────────────────────────────────────
+  // The note is still created lazily: the first non-empty title triggers the
+  // POST (with whatever code is buffered); afterwards title/code changes are
+  // flushed debounced, only with the fields that actually changed.
+
+  function flushSmart() {
+    clearTimeout(debounceRef.current)
+    debounceRef.current = null
+    if (!noteIdRef.current) return
+    const payload = {}
+    if (dirtyRef.current.content) {
+      payload.content = titleRef.current
+      dirtyRef.current.content = false
+    }
+    if (dirtyRef.current.sandboxCode) {
+      payload.sandboxCode = codeRef.current
+      dirtyRef.current.sandboxCode = false
+    }
+    if (!Object.keys(payload).length) return
+    setSaveStatus('saving')
+    updateMutateRef.current?.(payload, {
+      onSuccess: () => setSaveStatus('saved'),
+      onError: () => setSaveStatus('error'),
+    })
+  }
+
+  function scheduleSmartFlush() {
+    clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(flushSmart, DEBOUNCE_MS)
+  }
+
+  function tryCreateSmart() {
+    if (!titleRef.current.trim() || isCreatingRef.current) return
+    isCreatingRef.current = true
+    setSaveStatus('saving')
+    const snapshot = { content: titleRef.current, sandboxCode: codeRef.current }
+    createNote({ ...snapshot, type: 'smart', tags: selectedTagIds })
+      .then((result) => {
+        const id = result?.data?.id
+        if (!id) return
+        noteIdRef.current = id
+        setNoteId(id)
+        dirtyRef.current.content = false
+        dirtyRef.current.sandboxCode = false
+        const changedWhileCreating =
+          titleRef.current !== snapshot.content || codeRef.current !== snapshot.sandboxCode
+        if (changedWhileCreating) scheduleSmartFlush()
+        else setSaveStatus('saved')
+      })
+      .catch(() => setSaveStatus('error'))
+      .finally(() => { isCreatingRef.current = false })
+  }
+
+  function handleSmartTitleChange(value) {
+    titleRef.current = value
+    if (noteIdRef.current) {
+      dirtyRef.current.content = true
+      setSaveStatus('editing')
+      scheduleSmartFlush()
+    } else if (value.trim()) {
+      dirtyRef.current.content = true
+      tryCreateSmart()
+    }
+  }
+
+  function handleSmartCodeChange(value) {
+    codeRef.current = value
+    if (noteIdRef.current) {
+      dirtyRef.current.sandboxCode = true
+      setSaveStatus('editing')
+      scheduleSmartFlush()
+    } else if (titleRef.current.trim()) {
+      dirtyRef.current.sandboxCode = true
+      tryCreateSmart()
+    }
+    // No note yet and no title: buffer only — nothing exists to save.
+  }
+
+  function flushSmartAndCleanup() {
+    clearTimeout(debounceRef.current)
+    debounceRef.current = null
+    if (!noteIdRef.current) return
+    // Discard only a truly empty draft — an empty title with code left keeps
+    // the note (the update endpoint accepts empty content).
+    if (!titleRef.current.trim() && !codeRef.current.trim()) {
+      deleteMutateRef.current?.()
+      return
+    }
+    flushSmart()
+  }
+
   async function handleImageUpload(file) {
     if (!noteIdRef.current) {
       f7.toast.create({
@@ -176,13 +273,25 @@ export default function CreateNoteEditorPage({ f7route }) {
     : isDeleting ? 'Eliminando...' : 'Eliminar'
 
   return (
-    <Page pageContent={false} onPageBeforeOut={flushAndCleanup}>
+    <Page pageContent={false} onPageBeforeOut={noteType === 'smart' ? flushSmartAndCleanup : flushAndCleanup}>
       <Navbar>
         <NavLeft backLink="Atrás" />
         <NavTitle>
           <div className={styles.navTitleRow}>
             <span data-undoredo-slot />
-            <SaveStatusIndicator status={saveStatus} />
+            {noteType === 'smart' && smartPreview ? (
+              <button
+                type="button"
+                className={styles.navEditBtn}
+                style={notebook?.color ? { background: notebook.color } : undefined}
+                onClick={() => setSmartPreview(false)}
+                data-testid="smart-exit-preview"
+              >
+                Editar
+              </button>
+            ) : (
+              <SaveStatusIndicator status={saveStatus} />
+            )}
           </div>
         </NavTitle>
         {noteId && (
@@ -205,15 +314,28 @@ export default function CreateNoteEditorPage({ f7route }) {
           selectedTagIds={selectedTagIds}
           onTagsConfirm={handleTagsConfirm}
         />
-        <NoteEditor
-          initialContent=""
-          onContentChange={handleContentChange}
-          imageUploadHandler={handleImageUpload}
-          onDeleteImage={handleDeleteImage}
-          notebookColor={notebook?.color}
-          saveStatus={saveStatus}
-          autoFocus
-        />
+        {noteType === 'smart' ? (
+          <SmartNoteEditor
+            initialTitle=""
+            initialCode=""
+            onTitleChange={handleSmartTitleChange}
+            onCodeChange={handleSmartCodeChange}
+            previewOpen={smartPreview}
+            onPreviewChange={setSmartPreview}
+            notebookColor={notebook?.color}
+            autoFocus
+          />
+        ) : (
+          <NoteEditor
+            initialContent=""
+            onContentChange={handleContentChange}
+            imageUploadHandler={handleImageUpload}
+            onDeleteImage={handleDeleteImage}
+            notebookColor={notebook?.color}
+            saveStatus={saveStatus}
+            autoFocus
+          />
+        )}
       </div>
 
       <Actions opened={actionsOpen} onActionsClosed={() => setActionsOpen(false)}>

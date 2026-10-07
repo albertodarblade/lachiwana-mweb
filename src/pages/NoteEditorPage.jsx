@@ -11,6 +11,7 @@ import { useDeleteNote } from '../hooks/useDeleteNote'
 import { getNote, uploadAttachment, deleteAttachment } from '../api/notes'
 import { prepareFileForUpload } from '../utils/compressImage'
 import NoteEditor from '../components/notes/NoteEditor'
+import SmartNoteEditor from '../components/notes/SmartNoteEditor'
 import NoteEditorHeader from '../components/notes/NoteEditorHeader'
 import SaveStatusIndicator from '../components/notes/SaveStatusIndicator'
 import { EllipsisVertical } from 'lucide-react'
@@ -32,6 +33,7 @@ export default function NoteEditorPage({ f7route }) {
 
   const [selectedTagIds, setSelectedTagIds] = useState([])
   const [saveStatus, setSaveStatus] = useState('saved')
+  const [smartPreview, setSmartPreview] = useState(true)
   const [actionsOpen, setActionsOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [countdown, setCountdown] = useState(COUNTDOWN_START)
@@ -39,6 +41,10 @@ export default function NoteEditorPage({ f7route }) {
 
   const debounceRef = useRef(null)
   const contentRef = useRef('')
+  const titleRef = useRef('')
+  const codeRef = useRef('')
+  const dirtyRef = useRef({ content: false, sandboxCode: false })
+  const smartInitRef = useRef(false)
   const initializedRef = useRef(false)
   const editorMountedRef = useRef(false)
   const intervalRef = useRef(null)
@@ -52,6 +58,15 @@ export default function NoteEditorPage({ f7route }) {
       initializedRef.current = true
     }
   }, [note?.tags])
+
+  // Seed the smart editor buffers once, from the first note data available
+  // (list cache or fresh fetch) — later refetches must not clobber edits.
+  useEffect(() => {
+    if (note?.type !== 'smart' || smartInitRef.current) return
+    smartInitRef.current = true
+    titleRef.current = note.content ?? ''
+    codeRef.current = note.sandboxCode ?? ''
+  }, [note])
 
   useEffect(() => {
     if (deleteOpen) {
@@ -98,6 +113,46 @@ export default function NoteEditorPage({ f7route }) {
     updateNote({ tags: newTagIds })
   }
 
+  // ── Smart note flow ─────────────────────────────────────────────────────
+  function flushSmart() {
+    clearTimeout(debounceRef.current)
+    debounceRef.current = null
+    const payload = {}
+    if (dirtyRef.current.content) {
+      payload.content = titleRef.current
+      dirtyRef.current.content = false
+    }
+    if (dirtyRef.current.sandboxCode) {
+      payload.sandboxCode = codeRef.current
+      dirtyRef.current.sandboxCode = false
+    }
+    if (!Object.keys(payload).length) return
+    setSaveStatus('saving')
+    updateNote(payload, {
+      onSuccess: () => setSaveStatus('saved'),
+      onError: () => setSaveStatus('error'),
+    })
+  }
+
+  function scheduleSmartFlush() {
+    clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(flushSmart, DEBOUNCE_MS)
+  }
+
+  function handleSmartTitleChange(value) {
+    titleRef.current = value
+    dirtyRef.current.content = true
+    setSaveStatus('editing')
+    scheduleSmartFlush()
+  }
+
+  function handleSmartCodeChange(value) {
+    codeRef.current = value
+    dirtyRef.current.sandboxCode = true
+    setSaveStatus('editing')
+    scheduleSmartFlush()
+  }
+
   async function handleImageUpload(file) {
     const prepared = await prepareFileForUpload(file)
     const formData = new FormData()
@@ -116,6 +171,10 @@ export default function NoteEditorPage({ f7route }) {
   }
 
   function flushPendingSave() {
+    if (note?.type === 'smart') {
+      flushSmart()
+      return
+    }
     if (!debounceRef.current) return
     clearTimeout(debounceRef.current)
     debounceRef.current = null
@@ -183,7 +242,19 @@ export default function NoteEditorPage({ f7route }) {
         <NavTitle>
           <div className={styles.navTitleRow}>
             <span data-undoredo-slot />
-            <SaveStatusIndicator status={saveStatus} />
+            {note?.type === 'smart' && smartPreview ? (
+              <button
+                type="button"
+                className={styles.navEditBtn}
+                style={notebook?.color ? { background: notebook.color } : undefined}
+                onClick={() => setSmartPreview(false)}
+                data-testid="smart-exit-preview"
+              >
+                Editar
+              </button>
+            ) : (
+              <SaveStatusIndicator status={saveStatus} />
+            )}
           </div>
         </NavTitle>
         <NavRight>
@@ -204,15 +275,28 @@ export default function NoteEditorPage({ f7route }) {
           selectedTagIds={selectedTagIds}
           onTagsConfirm={handleTagsConfirm}
         />
-        <NoteEditor
-          key={noteId}
-          initialContent={note?.content ?? ''}
-          onContentChange={handleContentChange}
-          imageUploadHandler={handleImageUpload}
-          onDeleteImage={handleDeleteImage}
-          notebookColor={notebook?.color}
-          saveStatus={saveStatus}
-        />
+        {note?.type === 'smart' ? (
+          <SmartNoteEditor
+            key={noteId}
+            initialTitle={note?.content ?? ''}
+            initialCode={note?.sandboxCode ?? ''}
+            onTitleChange={handleSmartTitleChange}
+            onCodeChange={handleSmartCodeChange}
+            previewOpen={smartPreview}
+            onPreviewChange={setSmartPreview}
+            notebookColor={notebook?.color}
+          />
+        ) : (
+          <NoteEditor
+            key={noteId}
+            initialContent={note?.content ?? ''}
+            onContentChange={handleContentChange}
+            imageUploadHandler={handleImageUpload}
+            onDeleteImage={handleDeleteImage}
+            notebookColor={notebook?.color}
+            saveStatus={saveStatus}
+          />
+        )}
       </div>
 
       <Actions opened={actionsOpen} onActionsClosed={() => setActionsOpen(false)}>
