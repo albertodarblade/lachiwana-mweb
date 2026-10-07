@@ -18,6 +18,7 @@ import SaveStatusIndicator from '../components/notes/SaveStatusIndicator'
 import ThemedButton from '../components/notebooks/ThemedButton'
 import { navigateBack } from '../utils/f7navigate'
 import queryClient from '../queryClient'
+import useWakeLock from '../hooks/useWakeLock'
 import styles from './NoteEditorPage.module.css'
 
 const DEBOUNCE_MS = 800
@@ -45,6 +46,9 @@ export default function CreateNoteEditorPage({ f7route }) {
   const intervalRef = useRef(null)
 
   const { data: notebook } = useNotebook(notebookId)
+
+  // Keep the phone screen on while the note is being created/edited.
+  const { acquire: acquireWakeLock, release: releaseWakeLock } = useWakeLock()
 
   const { mutateAsync: createNote } = useCreateNote(notebookId)
 
@@ -273,7 +277,15 @@ export default function CreateNoteEditorPage({ f7route }) {
     : isDeleting ? 'Eliminando...' : 'Eliminar'
 
   return (
-    <Page pageContent={false} onPageBeforeOut={noteType === 'smart' ? flushSmartAndCleanup : flushAndCleanup}>
+    <Page
+      pageContent={false}
+      onPageBeforeOut={() => {
+        if (noteType === 'smart') flushSmartAndCleanup()
+        else flushAndCleanup()
+        releaseWakeLock()
+      }}
+      onPageAfterIn={acquireWakeLock}
+    >
       <Navbar>
         <NavLeft backLink="Atrás" />
         <NavTitle>

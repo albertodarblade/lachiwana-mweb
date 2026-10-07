@@ -18,6 +18,7 @@ import { EllipsisVertical } from 'lucide-react'
 import ThemedButton from '../components/notebooks/ThemedButton'
 import { navigate } from '../utils/f7navigate'
 import queryClient from '../queryClient'
+import useWakeLock from '../hooks/useWakeLock'
 import styles from './NoteEditorPage.module.css'
 
 const DEBOUNCE_MS = 800
@@ -51,6 +52,9 @@ export default function NoteEditorPage({ f7route }) {
 
   const { mutate: updateNote } = useUpdateNote(notebookId, noteId)
   const { mutate: deleteNote, isPending: isDeleting } = useDeleteNote(notebookId, noteId)
+
+  // Keep the phone screen on while the note is being viewed/edited.
+  const { acquire: acquireWakeLock, release: releaseWakeLock } = useWakeLock()
 
   useEffect(() => {
     if (note?.tags !== undefined && !initializedRef.current) {
@@ -230,7 +234,11 @@ export default function NoteEditorPage({ f7route }) {
     : isDeleting ? 'Eliminando...' : 'Eliminar'
 
   return (
-    <Page pageContent={false} onPageBeforeOut={flushPendingSave}>
+    <Page
+      pageContent={false}
+      onPageBeforeOut={() => { flushPendingSave(); releaseWakeLock() }}
+      onPageAfterIn={acquireWakeLock}
+    >
       {isError && note && !dismissNoteError && (
         <div style={{ background: '#FEF3C7', borderBottom: '1px solid #F59E0B', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 14 }}>
           <span>Error al cargar. Mostrando datos guardados.</span>
