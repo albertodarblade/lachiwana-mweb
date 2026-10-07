@@ -23,6 +23,7 @@ import styles from './NoteEditorPage.module.css'
 
 const DEBOUNCE_MS = 800
 const COUNTDOWN_START = 5
+const DEFAULT_SMART_TITLE = 'Sin título'
 
 export default function NoteEditorPage({ f7route }) {
   const notebookId = f7route?.params?.notebookId
@@ -123,7 +124,7 @@ export default function NoteEditorPage({ f7route }) {
     debounceRef.current = null
     const payload = {}
     if (dirtyRef.current.content) {
-      payload.content = titleRef.current
+      payload.content = titleRef.current.trim() || DEFAULT_SMART_TITLE
       dirtyRef.current.content = false
     }
     if (dirtyRef.current.sandboxCode) {

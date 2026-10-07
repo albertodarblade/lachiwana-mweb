@@ -23,6 +23,7 @@ import styles from './NoteEditorPage.module.css'
 
 const DEBOUNCE_MS = 800
 const COUNTDOWN_START = 5
+const DEFAULT_SMART_TITLE = 'Sin título'
 
 export default function CreateNoteEditorPage({ f7route }) {
   const notebookId = f7route?.params?.notebookId
@@ -132,9 +133,10 @@ export default function CreateNoteEditorPage({ f7route }) {
   }
 
   // ── Smart note flow ─────────────────────────────────────────────────────
-  // The note is still created lazily: the first non-empty title triggers the
-  // POST (with whatever code is buffered); afterwards title/code changes are
-  // flushed debounced, only with the fields that actually changed.
+  // The note is created lazily: the first non-empty title OR the first code
+  // triggers the POST; a smart note created without a title is stored with the
+  // default title "Sin título". Afterwards title/code changes are flushed
+  // debounced, only with the fields that actually changed.
 
   function flushSmart() {
     clearTimeout(debounceRef.current)
@@ -142,7 +144,7 @@ export default function CreateNoteEditorPage({ f7route }) {
     if (!noteIdRef.current) return
     const payload = {}
     if (dirtyRef.current.content) {
-      payload.content = titleRef.current
+      payload.content = titleRef.current.trim() || DEFAULT_SMART_TITLE
       dirtyRef.current.content = false
     }
     if (dirtyRef.current.sandboxCode) {
@@ -163,10 +165,13 @@ export default function CreateNoteEditorPage({ f7route }) {
   }
 
   function tryCreateSmart() {
-    if (!titleRef.current.trim() || isCreatingRef.current) return
+    // A smart note without a title is still created, using the default title.
+    if (!titleRef.current.trim() && !codeRef.current.trim()) return
+    if (isCreatingRef.current) return
     isCreatingRef.current = true
     setSaveStatus('saving')
-    const snapshot = { content: titleRef.current, sandboxCode: codeRef.current }
+    const content = titleRef.current.trim() || DEFAULT_SMART_TITLE
+    const snapshot = { content, sandboxCode: codeRef.current }
     createNote({ ...snapshot, type: 'smart', tags: selectedTagIds })
       .then((result) => {
         const id = result?.data?.id
@@ -176,7 +181,8 @@ export default function CreateNoteEditorPage({ f7route }) {
         dirtyRef.current.content = false
         dirtyRef.current.sandboxCode = false
         const changedWhileCreating =
-          titleRef.current !== snapshot.content || codeRef.current !== snapshot.sandboxCode
+          (titleRef.current.trim() || DEFAULT_SMART_TITLE) !== snapshot.content ||
+          codeRef.current !== snapshot.sandboxCode
         if (changedWhileCreating) scheduleSmartFlush()
         else setSaveStatus('saved')
       })
@@ -202,19 +208,23 @@ export default function CreateNoteEditorPage({ f7route }) {
       dirtyRef.current.sandboxCode = true
       setSaveStatus('editing')
       scheduleSmartFlush()
-    } else if (titleRef.current.trim()) {
+    } else if (value.trim()) {
       dirtyRef.current.sandboxCode = true
       tryCreateSmart()
     }
-    // No note yet and no title: buffer only — nothing exists to save.
+    // No note yet and no content: buffer only — nothing exists to save.
   }
 
   function flushSmartAndCleanup() {
     clearTimeout(debounceRef.current)
     debounceRef.current = null
-    if (!noteIdRef.current) return
-    // Discard only a truly empty draft — an empty title with code left keeps
-    // the note (the update endpoint accepts empty content).
+    if (!noteIdRef.current) {
+      // Buffered draft never created (e.g. only code typed): create it now
+      // with the default title so nothing is lost.
+      if (titleRef.current.trim() || codeRef.current.trim()) tryCreateSmart()
+      return
+    }
+    // Discard only a truly empty draft.
     if (!titleRef.current.trim() && !codeRef.current.trim()) {
       deleteMutateRef.current?.()
       return
