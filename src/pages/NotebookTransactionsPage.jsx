@@ -68,6 +68,7 @@ export default function NotebookTransactionsPage({ f7route }) {
   const [filters, setFilters] = useState({ content: '', tagIds: new Set() })
   const [dismissTxError, setDismissTxError] = useState(false)
   const [activeTab, setActiveTab] = useState('movements')
+  const [flowId, setFlowId] = useState(0)
   const formClosingForBack = useRef(false)
 
   const viewType = notebook?.transactionsViewType ?? 'all'
@@ -123,6 +124,8 @@ export default function NotebookTransactionsPage({ f7route }) {
 
   function handleTypeSelect(type) {
     setTransactionType(type)
+    // New creation flow: tells TransactionFormSheet to clear its draft
+    setFlowId((n) => n + 1)
     if (notebook?.tags?.length > 0) {
       setIsTagSheetOpen(true)
     } else {
@@ -432,6 +435,7 @@ const tabButtons = [
 
       <TransactionFormSheet
         opened={isFormSheetOpen}
+        flowId={flowId}
         transactionType={transactionType}
         selectedTags={selectedTags}
         notebookId={id}

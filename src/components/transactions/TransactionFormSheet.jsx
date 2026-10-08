@@ -24,6 +24,7 @@ function formatDateDisplay(isoDate) {
 
 export default function TransactionFormSheet({
   opened,
+  flowId,
   transactionType,
   selectedTags,
   notebookId,
@@ -40,14 +41,18 @@ export default function TransactionFormSheet({
 
   const { mutate, isPending } = useCreateTransaction(notebookId)
 
+  // Clear the draft only when a NEW flow starts (FAB tap), not when the
+  // sheet reopens after editing tags — otherwise amount/description are lost.
   useEffect(() => {
-    if (opened) {
-      setAmount('')
-      setContent('')
-      setDate(todayISO())
-      const timer = setTimeout(() => amountRef.current?.focus(), 350)
-      return () => clearTimeout(timer)
-    }
+    setAmount('')
+    setContent('')
+    setDate(todayISO())
+  }, [flowId])
+
+  useEffect(() => {
+    if (!opened) return
+    const timer = setTimeout(() => amountRef.current?.focus(), 350)
+    return () => clearTimeout(timer)
   }, [opened])
 
   const amountValid = !!amount && !isNaN(parseFloat(amount)) && parseFloat(amount) !== 0
