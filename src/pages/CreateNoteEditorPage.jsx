@@ -37,6 +37,11 @@ export default function CreateNoteEditorPage({ f7route }) {
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [countdown, setCountdown] = useState(COUNTDOWN_START)
 
+  const deletedRef = useRef(false)
+  const pendingNavRef = useRef(false)
+  const deleteOpenRef = useRef(false)
+  deleteOpenRef.current = deleteOpen
+
   const contentRef = useRef('')
   const titleRef = useRef('')
   const codeRef = useRef('')
@@ -77,6 +82,15 @@ export default function CreateNoteEditorPage({ f7route }) {
     }
     return () => clearInterval(intervalRef.current)
   }, [deleteOpen])
+
+  // Drop the note query on unmount after a confirmed delete (the mutation's
+  // onSuccess no longer removes it — doing so while mounted can flip pages
+  // into their loading branch mid-transition and crash React's DOM commit).
+  useEffect(() => () => {
+    if (!deletedRef.current) return
+    const id = noteId ?? noteIdRef.current
+    if (id) queryClient.removeQueries({ queryKey: ['note', notebookId, id] })
+  }, [])
 
   function handleContentChange(markdown) {
     contentRef.current = markdown
@@ -276,8 +290,16 @@ export default function CreateNoteEditorPage({ f7route }) {
   function handleDeleteConfirm() {
     deleteMutateRef.current?.(undefined, {
       onSuccess: () => {
-        setDeleteOpen(false)
-        navigateBack()
+        deletedRef.current = true
+        if (deleteOpenRef.current) {
+          // Navigate only after the Sheet fully closes: Framework7 returns the
+          // Sheet's DOM node to the page when the close animation ends, and
+          // unmounting earlier leaves it stranded outside the React tree.
+          pendingNavRef.current = true
+          setDeleteOpen(false)
+        } else {
+          navigateBack()
+        }
       },
     })
   }
@@ -376,7 +398,13 @@ export default function CreateNoteEditorPage({ f7route }) {
 
       <Sheet
         opened={deleteOpen}
-        onSheetClosed={() => setDeleteOpen(false)}
+        onSheetClosed={() => {
+          setDeleteOpen(false)
+          if (pendingNavRef.current) {
+            pendingNavRef.current = false
+            navigateBack()
+          }
+        }}
         style={{ height: 'auto' }}
         swipeToClose={false}
         backdrop

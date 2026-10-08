@@ -10,6 +10,7 @@ import './styles/note-editor.css'
 import Framework7 from "framework7/lite-bundle";
 import Framework7React from "framework7-react";
 import App from './App'
+import ErrorBoundary from './components/ErrorBoundary'
 import queryClient from './queryClient'
 import { getUser } from './stores/authStore'
 import { getPrefs, applyPrefs } from './stores/settingsStore'
@@ -41,7 +42,9 @@ if ('serviceWorker' in navigator) {
 }
 
 ReactDOM.createRoot(document.getElementById('app')).render(
-  <QueryClientProvider client={queryClient}>
-    <App />
-  </QueryClientProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  </ErrorBoundary>
 )

@@ -9,7 +9,13 @@ export function useDeleteNote(notebookId, noteId) {
   return useMutation({
     mutationFn: () => deleteNote(notebookId, noteId),
     onSuccess: () => {
-      queryClient.removeQueries({ queryKey: ['note', notebookId, noteId] })
+      // NOTE: do NOT removeQueries(['note', …]) here. Removing the detail query
+      // while NoteEditorPage is still mounted makes useNote rebuild a data-less
+      // query, which flips the page into its loading branch mid-transition —
+      // React then tries to remove the delete Sheet's DOM node, but Framework7
+      // parks modal elements outside the page until their close animation ends
+      // ("Failed to execute 'removeChild' on 'Node'"). The stale detail query
+      // is dropped by NoteEditorPage on unmount once the delete is confirmed.
       queryClient.invalidateQueries({ queryKey: ['notes', notebookId] })
     },
     onError: (err) => {

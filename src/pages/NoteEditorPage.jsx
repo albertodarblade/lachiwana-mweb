@@ -41,6 +41,11 @@ export default function NoteEditorPage({ f7route }) {
   const [countdown, setCountdown] = useState(COUNTDOWN_START)
   const [dismissNoteError, setDismissNoteError] = useState(false)
 
+  const deletedRef = useRef(false)
+  const pendingNavRef = useRef(false)
+  const deleteOpenRef = useRef(false)
+  deleteOpenRef.current = deleteOpen
+
   const debounceRef = useRef(null)
   const contentRef = useRef('')
   const titleRef = useRef('')
@@ -88,6 +93,16 @@ export default function NoteEditorPage({ f7route }) {
     }
     return () => clearInterval(intervalRef.current)
   }, [deleteOpen])
+
+  // Once the delete is confirmed, drop the note query only when this page goes
+  // away. Removing it earlier (e.g. in the mutation's onSuccess) makes useNote
+  // re-render into its loading branch while the delete Sheet is still closing,
+  // and Framework7 has the Sheet's DOM parked outside the page — React's
+  // removeChild then throws and the ErrorBoundary takes over.
+  useEffect(() => () => {
+    if (!deletedRef.current) return
+    queryClient.removeQueries({ queryKey: ['note', notebookId, noteId] })
+  }, [])
 
   function handleContentChange(markdown) {
     contentRef.current = markdown
@@ -176,6 +191,7 @@ export default function NoteEditorPage({ f7route }) {
   }
 
   function flushPendingSave() {
+    if (deletedRef.current) return
     if (note?.type === 'smart') {
       flushSmart()
       return
@@ -190,8 +206,19 @@ export default function NoteEditorPage({ f7route }) {
   function handleDeleteConfirm() {
     deleteNote(undefined, {
       onSuccess: () => {
-        setDeleteOpen(false)
-        navigate(`/notebooks/${notebookId}`)
+        deletedRef.current = true
+        if (deleteOpenRef.current) {
+          // Navigate only after the Sheet has fully closed. Framework7 returns
+          // the Sheet's DOM node to the page when the close animation ends
+          // (~300ms); navigating before that unmounts this page while the node
+          // is still parked outside the React tree (removeChild crash + a
+          // stranded invisible sheet element in the app root).
+          pendingNavRef.current = true
+          setDeleteOpen(false)
+        } else {
+          // Sheet was already closed (e.g. backdrop tap while deleting).
+          navigate(`/notebooks/${notebookId}`)
+        }
       },
     })
   }
@@ -324,7 +351,13 @@ export default function NoteEditorPage({ f7route }) {
 
       <Sheet
         opened={deleteOpen}
-        onSheetClosed={() => setDeleteOpen(false)}
+        onSheetClosed={() => {
+          setDeleteOpen(false)
+          if (pendingNavRef.current) {
+            pendingNavRef.current = false
+            navigate(`/notebooks/${notebookId}`)
+          }
+        }}
         style={{ height: 'auto' }}
         swipeToClose={false}
         backdrop
