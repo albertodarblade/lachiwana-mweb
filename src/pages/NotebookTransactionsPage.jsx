@@ -183,7 +183,7 @@ export default function NotebookTransactionsPage({ f7route }) {
   if (isPending && fetchStatus === 'paused') {
     return (
       <Page>
-        <Navbar title="Cuaderno" backLink="Atrás" backLinkUrl="/" />
+        <Navbar title="Cuaderno" backLink="Atrás" backLinkForce backLinkUrl="/" />
         <Block className={styles.centered}>
           <p>Sin conexión — no hay datos guardados.</p>
         </Block>
@@ -194,7 +194,7 @@ export default function NotebookTransactionsPage({ f7route }) {
   if (isLoading) {
     return (
       <Page>
-        <Navbar title="Cuaderno" backLink="Atrás" backLinkUrl="/" />
+        <Navbar title="Cuaderno" backLink="Atrás" backLinkForce backLinkUrl="/" />
         <Block className={styles.centered}>
           <Preloader size={44} />
         </Block>
@@ -205,7 +205,7 @@ export default function NotebookTransactionsPage({ f7route }) {
   if (isError || !notebook) {
     return (
       <Page>
-        <Navbar title="Cuaderno" backLink="Atrás" backLinkUrl="/" />
+        <Navbar title="Cuaderno" backLink="Atrás" backLinkForce backLinkUrl="/" />
         <Block className={styles.centered}>
           <p className={styles.errorText}>Cuaderno no encontrado.</p>
           <span className={styles.backLink} onClick={() => navigateBack()}>

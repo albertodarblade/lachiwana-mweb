@@ -270,6 +270,7 @@ export default function TaskEditPage({ f7route }) {
         <Navbar>
           <NavLeft
             backLink="Atrás"
+            backLinkForce
             backLinkUrl={isChildView ? `/notebooks/${notebookId}/tasks/${parentTaskId}` : undefined}
           />
           <NavTitle>

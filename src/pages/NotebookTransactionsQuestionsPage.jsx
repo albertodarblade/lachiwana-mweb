@@ -90,7 +90,7 @@ export default function NotebookTransactionsQuestionsPage({ f7route }) {
   if (isPending && fetchStatus === 'paused') {
     return (
       <Page>
-        <Navbar title="Asistente" backLink="Atrás" backLinkUrl="/" />
+        <Navbar title="Asistente" backLink="Atrás" backLinkUrl="/" backLinkForce />
         <Block className={styles.centered}>
           <p>Sin conexión — no hay datos guardados.</p>
         </Block>
@@ -101,7 +101,7 @@ export default function NotebookTransactionsQuestionsPage({ f7route }) {
   if (isLoading) {
     return (
       <Page>
-        <Navbar title="Asistente" backLink="Atrás" backLinkUrl="/" />
+        <Navbar title="Asistente" backLink="Atrás" backLinkUrl="/" backLinkForce />
         <Block className={styles.centered}>
           <Preloader size={44} />
         </Block>
@@ -112,7 +112,7 @@ export default function NotebookTransactionsQuestionsPage({ f7route }) {
   if (isError || !notebook) {
     return (
       <Page>
-        <Navbar title="Asistente" backLink="Atrás" backLinkUrl="/" />
+        <Navbar title="Asistente" backLink="Atrás" backLinkUrl="/" backLinkForce />
         <Block className={styles.centered}>
           <p className={styles.errorText}>Cuaderno no encontrado.</p>
           <span className={styles.backLink} onClick={() => navigateBack()}>
@@ -129,7 +129,7 @@ export default function NotebookTransactionsQuestionsPage({ f7route }) {
   return (
     <Page className={styles.page} data-testid="transactions-questions-page">
       <Navbar>
-        <NavLeft backLink="Atrás" />
+        <NavLeft backLink="Atrás" backLinkForce backLinkUrl={`/notebooks/${id}/transactions`} />
         <NavTitle>
           <div className={styles.navTitleInner}>
             <div className={styles.iconContainer} style={{ '--icon-color': navbarColor }}>

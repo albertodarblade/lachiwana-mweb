@@ -199,7 +199,7 @@ export default function NoteEditorPage({ f7route }) {
   if (isPending && fetchStatus === 'paused') {
     return (
       <Page pageContent={false}>
-        <Navbar title="Nota" backLink="Atrás" />
+        <Navbar title="Nota" backLink="Atrás" backLinkForce backLinkUrl={`/notebooks/${notebookId}/notes`} />
         <div className={['note-editor-layout', styles.editorLayoutCentered].join(' ')}>
           <p>Sin conexión — no hay datos guardados.</p>
         </div>
@@ -210,7 +210,7 @@ export default function NoteEditorPage({ f7route }) {
   if (isLoading && !note) {
     return (
       <Page pageContent={false}>
-        <Navbar title="Nota" backLink="Atrás" />
+        <Navbar title="Nota" backLink="Atrás" backLinkForce backLinkUrl={`/notebooks/${notebookId}/notes`} />
         <div className={['note-editor-layout', styles.editorLayoutCentered].join(' ')}>
           <Preloader size={44} />
         </div>
@@ -221,7 +221,7 @@ export default function NoteEditorPage({ f7route }) {
   if (isError && !note) {
     return (
       <Page pageContent={false}>
-        <Navbar title="Nota" backLink="Atrás" />
+        <Navbar title="Nota" backLink="Atrás" backLinkForce backLinkUrl={`/notebooks/${notebookId}/notes`} />
         <div className={['note-editor-layout', styles.editorLayoutCentered].join(' ')}>
           <p>Error al cargar la nota.</p>
           <Button onClick={() => window.location.reload()} style={{ marginTop: 16 }}>Reintentar</Button>
@@ -247,7 +247,7 @@ export default function NoteEditorPage({ f7route }) {
         </div>
       )}
       <Navbar>
-        <NavLeft backLink="Atrás" />
+        <NavLeft backLink="Atrás" backLinkForce backLinkUrl={`/notebooks/${notebookId}/notes`} />
         <NavTitle>
           <div className={styles.navTitleRow}>
             <span data-undoredo-slot />

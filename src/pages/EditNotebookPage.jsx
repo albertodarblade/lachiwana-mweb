@@ -131,11 +131,11 @@ export default function EditNotebookPage({ f7route }) {
   return (
     <Page style={themeVars}>
       <Navbar>
-        <NavLeft>
-          <Link onClick={() => navigateBack()} className={styles.navCloseLink} data-testid="edit-notebook-close">
-            <X size={20} />
-          </Link>
-        </NavLeft>
+        <NavLeft
+          backLink="Atrás"
+          backLinkForce
+          backLinkUrl={`/notebooks/${notebook.id}/${type}`}
+        />
         <NavTitle>Editar Cuaderno</NavTitle>
         <NavRight>
           <Link

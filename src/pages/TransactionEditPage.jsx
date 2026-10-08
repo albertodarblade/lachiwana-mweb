@@ -188,7 +188,7 @@ export default function TransactionEditPage({ f7route }) {
     <>
       <Page onPageBeforeIn={handlePageBeforeIn}>
         <Navbar>
-          <NavLeft backLink="Atrás" />
+          <NavLeft backLink="Atrás" backLinkForce backLinkUrl={`/notebooks/${notebookId}/transactions`} />
           <NavTitle>
             <SaveStatusIndicator status={saveStatus} />
           </NavTitle>

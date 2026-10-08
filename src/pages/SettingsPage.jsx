@@ -36,7 +36,7 @@ export default function SettingsPage() {
 
   return (
     <Page>
-      <Navbar title="Ajustes" backLink="Atrás" />
+      <Navbar title="Ajustes" backLink="Atrás" backLinkForce backLinkUrl="/" />
 
       <UserProfileHeader />
 

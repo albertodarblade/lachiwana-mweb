@@ -65,7 +65,7 @@ export default function NotebookDetailPage({ f7route }) {
   if (isPending && fetchStatus === 'paused') {
     return (
       <Page>
-        <Navbar title="Cuaderno" backLink="Atrás" backLinkUrl="/" />
+        <Navbar title="Cuaderno" backLink="Atrás" backLinkUrl="/" backLinkForce/>
         <Block className={styles.loadingBlock}>
           <p>Sin conexión — no hay datos guardados.</p>
         </Block>
@@ -76,7 +76,7 @@ export default function NotebookDetailPage({ f7route }) {
   if (isLoading) {
     return (
       <Page>
-        <Navbar title="Cuaderno" backLink="Atrás" backLinkUrl="/" />
+        <Navbar title="Cuaderno" backLink="Atrás" backLinkUrl="/" backLinkForce />
         <Block className={styles.loadingBlock}>
           <Preloader size={44} />
         </Block>
@@ -87,7 +87,7 @@ export default function NotebookDetailPage({ f7route }) {
   if (isError && !notebook) {
     return (
       <Page>
-        <Navbar title="Cuaderno" backLink="Atrás" backLinkUrl="/" />
+        <Navbar title="Cuaderno" backLink="Atrás" backLinkUrl="/" backLinkForce />
         <Block className={styles.errorBlock}>
           <p className={styles.notFoundText}>Cuaderno no encontrado.</p>
           <span className={styles.backLink} onClick={() => navigateBack()}>
@@ -107,7 +107,7 @@ export default function NotebookDetailPage({ f7route }) {
   return (
     <Page onPageAfterIn={handlePageAfterIn}>
       <Navbar>
-        <NavLeft backLink="Atrás" backLinkUrl="/" />
+        <NavLeft backLink="Atrás" backLinkUrl="/" backLinkForce />
         <NavTitle>
           <div
             className={styles.navTitleInner}

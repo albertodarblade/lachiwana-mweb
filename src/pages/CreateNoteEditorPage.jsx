@@ -297,7 +297,7 @@ export default function CreateNoteEditorPage({ f7route }) {
       onPageAfterIn={acquireWakeLock}
     >
       <Navbar>
-        <NavLeft backLink="Atrás" />
+        <NavLeft backLink="Atrás" backLinkForce backLinkUrl={`/notebooks/${notebookId}/notes`} />
         <NavTitle>
           <div className={styles.navTitleRow}>
             <span data-undoredo-slot />

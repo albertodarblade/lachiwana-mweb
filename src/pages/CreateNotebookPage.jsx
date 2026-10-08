@@ -92,7 +92,7 @@ export default function CreateNotebookPage() {
   return (
     <Page style={themeVars}>
       <Navbar>
-        <NavLeft backLink="Atrás" />
+        <NavLeft backLink="Atrás" backLinkForce backLinkUrl="/" />
         <NavTitle>Nuevo Cuaderno</NavTitle>
       </Navbar>
 
