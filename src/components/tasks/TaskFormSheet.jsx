@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { Tag, Paperclip, ListChecks, User, Plus, X, CircleUser } from 'lucide-react'
 import {
   Sheet, PageContent, Block, Button, Badge, Link, f7,
@@ -50,6 +51,21 @@ export default function TaskFormSheet({
   const [childInput, setChildInput] = useState('')
   const [pendingFiles, setPendingFiles] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Framework7 mueve el elemento del Sheet al final de #framework7-root
+  // (app.$el) cuando se abre, si su padre es otro. Si el Sheet vive dentro de
+  // <Page> (es decir, dentro de .page-content), React sigue creyendo que ese
+  // nodo sigue ahí y al re-renderizar la página lanza
+  // "NotFoundError: Failed to execute 'insertBefore'...".
+  // Portalizándolo a #framework7-root, el padre real coincide con el
+  // containerEl de Framework7, así que nunca lo mueve y React no se desincroniza.
+  const [portalRoot, setPortalRoot] = useState(() =>
+    typeof document !== 'undefined' ? document.getElementById('framework7-root') : null
+  )
+
+  useEffect(() => {
+    if (!portalRoot) setPortalRoot(document.getElementById('framework7-root'))
+  }, [portalRoot])
 
   const titleRef = useRef(null)
   const fileInputRef = useRef(null)
@@ -213,7 +229,7 @@ export default function TaskFormSheet({
 
   const hasContent = title.trim().length > 0
 
-  return (
+  const sheetEl = (
     <Sheet
       opened={opened}
       onSheetClosed={onClose}
@@ -437,4 +453,6 @@ export default function TaskFormSheet({
       </PageContent>
     </Sheet>
   )
+
+  return portalRoot ? createPortal(sheetEl, portalRoot) : sheetEl
 }
