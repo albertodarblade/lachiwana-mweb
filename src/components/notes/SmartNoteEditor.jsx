@@ -141,7 +141,7 @@ export default function SmartNoteEditor({
           <iframe
             className={styles.previewFrame}
             title="Vista previa de la Smart Note"
-            sandbox="allow-scripts"
+            sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
             srcDoc={previewDoc}
             data-testid="smart-preview-frame"
           />
