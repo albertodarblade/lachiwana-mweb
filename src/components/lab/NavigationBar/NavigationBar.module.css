@@ -1,0 +1,124 @@
+.bar {
+  --nb-container: var(--md-sys-color-surface-container, #f3edf7);
+  --nb-on-surface: var(--md-sys-color-on-surface, #1d1b20);
+  --nb-on-surface-variant: var(--md-sys-color-on-surface-variant, #49454f);
+  --nb-indicator: var(--md-sys-color-secondary-container, #e8def8);
+  --nb-on-secondary-container: var(--md-sys-color-on-secondary-container, #1d192b);
+
+  width: 100%;
+  background: var(--nb-container);
+  color: var(--nb-on-surface);
+  box-sizing: border-box;
+}
+
+.fixedBottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 900;
+}
+
+.inner {
+  min-height: 80px;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+  padding: 0 8px calc(env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+}
+
+.reserveFabSpaceSmall .inner {
+  /* just enough for collapsed FAB (56px icon-only) at right: 16px */
+  padding-right: calc(56px + 16px + env(safe-area-inset-right, 0px));
+}
+
+.reserveFabSpaceLarge .inner {
+  padding-right: calc(8px + 88px + env(safe-area-inset-right, 0px));
+}
+
+.item {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 168px;
+  border: none;
+  background: transparent;
+  color: var(--nb-on-surface-variant);
+  padding: 12px 4px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  font: inherit;
+}
+
+.item:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+
+.item:focus-visible {
+  outline: 2px solid var(--nb-on-secondary-container);
+  outline-offset: -2px;
+  border-radius: 16px;
+}
+
+.indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 32px;
+  border-radius: 16px;
+  background: transparent;
+  color: inherit;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.iconSlot {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconSvg {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+.label {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.active {
+  color: var(--nb-on-surface);
+}
+
+.active .indicator {
+  background: var(--nb-indicator);
+  color: var(--nb-on-secondary-container);
+}
+
+.active .label {
+  font-weight: 600;
+  color: var(--nb-on-surface);
+}
+
+.fabSpacer {
+  flex: 0 0 0;
+  width: 0;
+}

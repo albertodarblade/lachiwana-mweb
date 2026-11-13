@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import {
   Page, Navbar, NavLeft, NavTitle, NavRight, Tabs, Tab,
-  Block, Preloader, Fab, FabButtons, FabButton, FabBackdrop, Icon, Link, Badge, f7,
+  Block, Preloader, Link, Badge, Sheet, PageContent, Button, f7,
 } from 'framework7-react'
-import { ArrowLeftRight, Search } from 'lucide-react'
+import { ArrowLeftRight, Search, TrendingDown, TrendingUp, LayoutDashboard, BotMessageSquare, Wallet } from 'lucide-react'
 import { LUCIDE_ICONS } from '../components/IconSelector/lucideIcons'
 import { useNotebook } from '../hooks/useNotebook'
 import { useTransactions } from '../hooks/useTransactions'
@@ -20,6 +20,8 @@ import TransactionsSearchResult from '../components/transactions/TransactionsSea
 import TransactionsDashboard from '../components/transactions/TransactionsDashboard'
 import TransactionChat from '../components/ai/TransactionChat'
 import TagsPopup from '../components/notebooks/TagsPopup'
+import BloomRadialFabMenu from '../components/lab/BloomRadialFabMenu/BloomRadialFabMenu'
+import NavigationBar from '../components/lab/NavigationBar/NavigationBar'
 import { navigate, navigateBack } from '../utils/f7navigate'
 import styles from './NotebookTransactionsPage.module.css'
 
@@ -34,9 +36,9 @@ function sumAmounts(transactions) {
   return transactions.reduce((acc, t) => acc + (t.value ?? 0), 0)
 }
 
-function formatAmount(value) {
+function formatAmount(value, { showSign = true } = {}) {
   const abs = Math.abs(value ?? 0).toFixed(2)
-  const sign = (value ?? 0) < 0 ? '-' : (value ?? 0) > 0 ? '+' : ''
+  const sign = showSign ? ((value ?? 0) < 0 ? '-' : (value ?? 0) > 0 ? '+' : '') : ''
   return `${sign}Bs. ${abs}`
 }
 
@@ -68,6 +70,7 @@ export default function NotebookTransactionsPage({ f7route }) {
   const [filters, setFilters] = useState({ content: '', tagIds: new Set() })
   const [dismissTxError, setDismissTxError] = useState(false)
   const [activeTab, setActiveTab] = useState('movements')
+  const [dashboardGroup, setDashboardGroup] = useState(null)
   const [flowId, setFlowId] = useState(0)
   const formClosingForBack = useRef(false)
 
@@ -225,9 +228,9 @@ export default function NotebookTransactionsPage({ f7route }) {
   const chatRange = monthRange(refMonth.year, refMonth.month)
 
 const tabButtons = [
-  { key: 'movements', label: 'Movimientos', tabId: 'transactions-tab-movements', testId: 'transactions-tab-movements' },
-  { key: 'dashboard', label: 'Dashboard', tabId: 'transactions-tab-dashboard', testId: 'transactions-tab-dashboard' },
-  { key: 'chatbot', label: 'Chatbot', tabId: 'transactions-tab-chatbot', testId: 'transactions-tab-chatbot' },
+  { id: 'movements', label: 'Movimientos', icon: <ArrowLeftRight size={24} />, tabId: 'transactions-tab-movements', testId: 'transactions-tab-movements' },
+  { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={24} />, tabId: 'transactions-tab-dashboard', testId: 'transactions-tab-dashboard' },
+  { id: 'chatbot', label: 'Chatbot', icon: <BotMessageSquare size={24} />, tabId: 'transactions-tab-chatbot', testId: 'transactions-tab-chatbot' },
 ]
 
   return (
@@ -284,27 +287,35 @@ const tabButtons = [
         />
       )}
 
-      <div
-        className={styles.tabs}
-        style={{ '--tabs-color': navbarColor }}
-        data-testid="transactions-tabs"
-      >
-        {tabButtons.map((tab) => (
-          <Link
-            key={tab.key}
-            tabLink={`#${tab.tabId}`}
-            tabLinkActive={activeTab === tab.key}
-            className={[styles.tabBtn, activeTab === tab.key ? styles.tabBtnActive : ''].join(' ')}
-            onClick={() => setActiveTab(tab.key)}
-            data-testid={tab.testId}
-          >
-            {tab.label}
-          </Link>
-        ))}
-      </div>
+      <NavigationBar
+        items={tabButtons.map((tab) => ({ id: tab.id, label: tab.label, icon: tab.icon }))}
+        activeId={activeTab}
+        onSelect={(id) => {
+          setActiveTab(id)
+          const tab = tabButtons.find((t) => t.id === id)
+          if (tab?.tabId) f7.tab.show(`#${tab.tabId}`, true)
+        }}
+        fixed="bottom"
+        reserveFabSpace={activeTab === 'movements' && !hasSearchCriteria ? 'small' : false}
+        ariaLabel="Navegación de transacciones"
+      />
 
       <Tabs animated className={styles.tabsWrap}>
         <Tab id="transactions-tab-movements" tabActive={activeTab === 'movements'} className={styles.tab}>
+          <div className={styles.summaryBar} data-testid="transactions-total-movements">
+            <div className={styles.summaryItem}>
+              <span className={styles.summaryLabel}><TrendingDown size={14} className={styles.summaryIcon} /> Gastos</span>
+              <span className={`${styles.summaryValue} ${styles.itemNegative}`}>{formatAmount(totalExpenses, { showSign: false })}</span>
+            </div>
+            <div className={styles.summaryItem}>
+              <span className={styles.summaryLabel}><TrendingUp size={14} className={styles.summaryIcon} /> Ingresos</span>
+              <span className={`${styles.summaryValue} ${styles.itemPositive}`}>{formatAmount(totalIncome, { showSign: false })}</span>
+            </div>
+            <div className={styles.summaryItem}>
+              <span className={styles.summaryLabel}><Wallet size={14} className={styles.summaryIcon} /> Balance</span>
+              <span className={`${styles.summaryValue} ${resultClass}`}>{formatAmount(netTotal, { showSign: false })}</span>
+            </div>
+          </div>
           <div className={styles.list}>
             {transactionsError && transactions.length > 0 && !dismissTxError && (
               <Block className={styles.centered}>
@@ -337,16 +348,16 @@ const tabButtons = [
         <Tab id="transactions-tab-dashboard" tabActive={activeTab === 'dashboard'} className={styles.tab}>
           <div className={styles.summaryBar} data-testid="transactions-total-sticky">
             <div className={styles.summaryItem}>
-              <span className={styles.summaryLabel}>Gastos</span>
-              <span className={`${styles.summaryValue} ${styles.itemNegative}`}>{formatAmount(totalExpenses)}</span>
+              <span className={styles.summaryLabel}><TrendingDown size={14} className={styles.summaryIcon} /> Gastos</span>
+              <span className={`${styles.summaryValue} ${styles.itemNegative}`}>{formatAmount(totalExpenses, { showSign: false })}</span>
             </div>
             <div className={styles.summaryItem}>
-              <span className={styles.summaryLabel}>Ingresos</span>
-              <span className={`${styles.summaryValue} ${styles.itemPositive}`}>{formatAmount(totalIncome)}</span>
+              <span className={styles.summaryLabel}><TrendingUp size={14} className={styles.summaryIcon} /> Ingresos</span>
+              <span className={`${styles.summaryValue} ${styles.itemPositive}`}>{formatAmount(totalIncome, { showSign: false })}</span>
             </div>
             <div className={styles.summaryItem}>
-              <span className={styles.summaryLabel}>Resultado</span>
-              <span className={`${styles.summaryValue} ${resultClass}`}>{formatAmount(netTotal)}</span>
+              <span className={styles.summaryLabel}><Wallet size={14} className={styles.summaryIcon} /> Balance</span>
+              <span className={`${styles.summaryValue} ${resultClass}`}>{formatAmount(netTotal, { showSign: false })}</span>
             </div>
           </div>
           {byMonth ? (
@@ -370,7 +381,12 @@ const tabButtons = [
               <Preloader size={44} />
             </Block>
           ) : (
-            <TransactionsDashboard transactions={transactions} tags={notebookTags} color={navbarColor} />
+            <TransactionsDashboard
+              transactions={transactions}
+              tags={notebookTags}
+              color={navbarColor}
+              onSelectGroup={setDashboardGroup}
+            />
           )}
         </Tab>
 
@@ -386,31 +402,30 @@ const tabButtons = [
         </>
       )}
 
-      <FabBackdrop onClick={handleFlowClose} />
-
       {activeTab === 'movements' && !hasSearchCriteria && (
-        <Fab position="right-bottom" style={{ '--f7-fab-bg-color': navbarColor, '--f7-fab-pressed-bg-color': navbarColor, '--f7-glass-shadow-fab': '0 2px 8px rgba(0,0,0,0.28)' }}>
-          <Icon ios="f7:plus" md="material:add" />
-          <Icon ios="f7:xmark" md="material:close" />
-          <FabButtons position="top">
-            <FabButton
-              fabClose
-              label="Gasto"
-              className={styles.expenseBtn}
-              onClick={() => handleTypeSelect('expense')}
-            >
-              <Icon ios="f7:minus" md="material:remove" />
-            </FabButton>
-            <FabButton
-              fabClose
-              label="Ingreso"
-              className={styles.incomeBtn}
-              onClick={() => handleTypeSelect('income')}
-            >
-              <Icon ios="f7:plus" md="material:add" />
-            </FabButton>
-          </FabButtons>
-        </Fab>
+        <BloomRadialFabMenu
+          color={navbarColor}
+          ariaLabel="Crear transacción"
+          closeAriaLabel="Cerrar menú de transacciones"
+          menuAriaLabel="Tipo de transacción"
+          style={{ bottom: 'calc(54px + env(safe-area-inset-bottom, 0px))' }}
+          items={[
+            {
+              id: 'expense',
+              label: 'Gasto',
+              icon: <TrendingDown size={20} />,
+              color: '#e53935',
+              onSelect: () => handleTypeSelect('expense'),
+            },
+            {
+              id: 'income',
+              label: 'Ingreso',
+              icon: <TrendingUp size={20} />,
+              color: '#43a047',
+              onSelect: () => handleTypeSelect('income'),
+            },
+          ]}
+        />
       )}
 
       <TagSelectionSheet
@@ -452,6 +467,55 @@ const tabButtons = [
         filters={filters}
         onApply={(newFilters) => setFilters(newFilters)}
       />
+
+      <Sheet
+        opened={!!dashboardGroup}
+        onSheetClosed={() => setDashboardGroup(null)}
+        backdrop
+        swipeToClose
+        swipeHandler=".dashboard-group-swipe-handle"
+        style={{ height: '85vh' }}
+      >
+        <PageContent style={{ paddingBottom: 24 }}>
+          <div className="dashboard-group-swipe-handle" style={{ padding: '10px 0 6px', display: 'flex', justifyContent: 'center' }}>
+            <div style={{ width: 36, height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.2)' }} />
+          </div>
+          <div style={{ padding: '4px 16px 8px' }}>
+            <div style={{ fontSize: 18, fontWeight: 700 }}>{dashboardGroup?.label}</div>
+            <div style={{ fontSize: 13, opacity: 0.7 }}>
+              {dashboardGroup?.count ?? 0} {(dashboardGroup?.count ?? 0) === 1 ? 'movimiento' : 'movimientos'}
+            </div>
+          </div>
+          {dashboardGroup && (
+            <div className={styles.summaryBar} style={{ position: 'static', margin: '0 12px 8px', borderRadius: 12 }}>
+              <div className={styles.summaryItem}>
+                <span className={styles.summaryLabel}><TrendingDown size={14} className={styles.summaryIcon} /> Gastos</span>
+                <span className={`${styles.summaryValue} ${styles.itemNegative}`}>{formatAmount(dashboardGroup.expenses ?? 0, { showSign: false })}</span>
+              </div>
+              <div className={styles.summaryItem}>
+                <span className={styles.summaryLabel}><TrendingUp size={14} className={styles.summaryIcon} /> Ingresos</span>
+                <span className={`${styles.summaryValue} ${styles.itemPositive}`}>{formatAmount(dashboardGroup.income ?? 0, { showSign: false })}</span>
+              </div>
+              <div className={styles.summaryItem}>
+                <span className={styles.summaryLabel}><Wallet size={14} className={styles.summaryIcon} /> Balance</span>
+                <span className={`${styles.summaryValue} ${((dashboardGroup.expenses ?? 0) + (dashboardGroup.income ?? 0)) < 0 ? styles.resultNegative : ((dashboardGroup.expenses ?? 0) + (dashboardGroup.income ?? 0)) > 0 ? styles.resultPositive : styles.resultNeutral}`}>{formatAmount((dashboardGroup.expenses ?? 0) + (dashboardGroup.income ?? 0), { showSign: false })}</span>
+              </div>
+            </div>
+          )}
+          <div style={{ padding: '8px 0' }}>
+            {(dashboardGroup?.transactions ?? []).map((t) => (
+              <TransactionCard
+                key={t.id}
+                transaction={{ ...t, tags: resolveTagIds(t.tags) }}
+                color={navbarColor}
+              />
+            ))}
+            {(dashboardGroup?.transactions ?? []).length === 0 && (
+              <Block className={styles.centered}><p>Sin movimientos.</p></Block>
+            )}
+          </div>
+        </PageContent>
+      </Sheet>
 
     </Page>
   )

@@ -1,46 +1,40 @@
 import React from 'react'
-import { Card, List, ListItem } from 'framework7-react'
+import { Card } from 'framework7-react'
+import { TrendingDown, TrendingUp, Wallet } from 'lucide-react'
 import styles from './TransactionsSummaryCard.module.css'
 
 function formatAmount(value) {
   if (value == null) return '–'
   const abs = Math.abs(value).toFixed(2)
-  const sign = value < 0 ? '-' : value > 0 ? '+' : ''
-  return `${sign}Bs. ${abs}`
+  return `Bs. ${abs}`
 }
 
-function totalLabel(total) {
-  return total == null || total >= 0 ? 'Ahorrado' : 'Gastado de más'
-}
-
-function totalClass(total) {
-  if (total == null) return styles.placeholder
-  if (total < 0) return styles.totalNegative
-  if (total > 0) return styles.totalPositive
+function valueClass(value, kind) {
+  if (value == null) return styles.placeholder
+  if (kind === 'expense') return styles.negative
+  if (kind === 'income') return styles.positive
+  if (value < 0) return styles.totalNegative
+  if (value > 0) return styles.totalPositive
   return styles.totalNeutral
 }
 
 export default function TransactionsSummaryCard({ expensesLabel, incomeLabel, expenses, income, total }) {
-  const expensesClass = expenses == null ? styles.placeholder : styles.negative
-  const incomeClass = income == null ? styles.placeholder : styles.positive
-
   return (
     <Card className={styles.card} data-testid="transactions-summary-card">
-      <List noShadow noBorder noHairlines className={styles.list}>
-        <ListItem
-          title={<span className={styles.totalTitle}>{expensesLabel}</span>}
-          after={<span className={`${styles.value} ${expensesClass}`}>{formatAmount(expenses)}</span>}
-        />
-        <ListItem
-          title={<span className={styles.totalTitle}>{incomeLabel}</span>}
-          after={<span className={`${styles.value} ${incomeClass}`}>{formatAmount(income)}</span>}
-        />
-        <ListItem
-          className={styles.totalRow}
-          title={<span className={styles.totalTitle}>{totalLabel(total)}</span>}
-          after={<span className={`${styles.value} ${totalClass(total)}`}>{formatAmount(total)}</span>}
-        />
-      </List>
+      <div className={styles.rows}>
+        <div className={styles.row}>
+          <span className={styles.label}><TrendingDown size={16} className={styles.icon} /> {expensesLabel || 'Gastos'}</span>
+          <span className={`${styles.value} ${valueClass(expenses, 'expense')}`}>{formatAmount(expenses)}</span>
+        </div>
+        <div className={styles.row}>
+          <span className={styles.label}><TrendingUp size={16} className={styles.icon} /> {incomeLabel || 'Ingresos'}</span>
+          <span className={`${styles.value} ${valueClass(income, 'income')}`}>{formatAmount(income)}</span>
+        </div>
+        <div className={`${styles.row} ${styles.totalRow}`}>
+          <span className={styles.label}><Wallet size={16} className={styles.icon} /> Balance</span>
+          <span className={`${styles.value} ${valueClass(total)}`}>{formatAmount(total)}</span>
+        </div>
+      </div>
     </Card>
   )
 }

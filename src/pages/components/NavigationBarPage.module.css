@@ -1,0 +1,55 @@
+.demoBlock {
+  padding: 0;
+  overflow: visible;
+}
+
+.demoStage {
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+  background: var(--f7-page-bg-color, #f4f4f4);
+}
+
+.demoContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 24px 44px;
+  text-align: center;
+}
+
+.demoHint {
+  font-size: 15px;
+  color: var(--f7-text-color);
+  line-height: 1.5;
+}
+
+.demoBarWrap {
+  position: relative;
+  overflow: visible;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--f7-text-color);
+}
+
+.input {
+  font: inherit;
+  font-size: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--f7-block-strong-border-color, rgba(0,0,0,0.12));
+  background: var(--f7-block-bg-color, #fff);
+  color: var(--f7-text-color);
+  width: 100%;
+  box-sizing: border-box;
+}

@@ -1,0 +1,44 @@
+.intro {
+  margin-top: 8px;
+}
+
+.text {
+  margin: 0 0 12px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.list {
+  margin: 0 0 16px;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.list li {
+  margin-bottom: 6px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--f7-theme-color, rgb(225, 113, 0)) 10%, transparent);
+}
+
+.statusLabel {
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+.statusValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--f7-theme-color, rgb(225, 113, 0));
+}
+
+.spacer {
+  min-height: 40vh;
+}

@@ -17,6 +17,9 @@ import TaskEditPage from './pages/TaskEditPage'
 import LoginPage from './pages/LoginPage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
 import SettingsPage from './pages/SettingsPage'
+import ComponentsPage from './pages/ComponentsPage'
+import FabMenuPage from './pages/components/FabMenuPage'
+import NavigationBarPage from './pages/components/NavigationBarPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { getUser } from './stores/authStore'
 import { getPrefs } from './stores/settingsStore'
@@ -128,6 +131,9 @@ function ProtectedChildTaskView(props) {
 const routes = [
   { path: '/login', component: LoginPage },
   { path: '/auth/callback', component: AuthCallbackPage },
+  { path: '/components', component: ComponentsPage },
+  { path: '/components/buttons/fab-menu', component: FabMenuPage },
+  { path: '/components/navigation/navigation-bar', component: NavigationBarPage },
   { path: '/settings', component: ProtectedSettings },
   { path: '/', component: ProtectedHome },
   { path: '/notebooks/create', component: ProtectedCreate },

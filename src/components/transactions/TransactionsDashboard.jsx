@@ -8,7 +8,7 @@ function formatAmount(value) {
   return `${sign}Bs. ${abs}`
 }
 
-export default function TransactionsDashboard({ transactions, tags, color }) {
+export default function TransactionsDashboard({ transactions, tags, color, onSelectGroup }) {
   const groups = new Map()
 
   transactions.forEach((t) => {
@@ -22,17 +22,20 @@ export default function TransactionsDashboard({ transactions, tags, color }) {
       if (!groups.has(key)) {
         groups.set(key, {
           key,
+          tagId,
           label: tag?.title ?? 'Sin categoría',
           rowColor: tag?.color ?? null,
           expenses: 0,
           income: 0,
           count: 0,
+          transactions: [],
         })
       }
       const g = groups.get(key)
       if (value < 0) g.expenses += value
       else if (value > 0) g.income += value
       g.count += 1
+      g.transactions.push(t)
     })
   })
 
@@ -57,8 +60,16 @@ export default function TransactionsDashboard({ transactions, tags, color }) {
         const magnitude = Math.abs(row.expenses + row.income)
         const barWidth = Math.round((magnitude / maxMagnitude) * 100)
         const rowColor = row.rowColor ?? color
+        const clickable = typeof onSelectGroup === 'function'
         return (
-          <div key={row.key} className={styles.card}>
+          <div
+            key={row.key}
+            className={`${styles.card}${clickable ? ` ${styles.cardClickable}` : ''}`}
+            onClick={clickable ? () => onSelectGroup(row) : undefined}
+            role={clickable ? 'button' : undefined}
+            tabIndex={clickable ? 0 : undefined}
+            onKeyDown={clickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelectGroup(row) } } : undefined}
+          >
             <div className={styles.header}>
               <span className={styles.dot} style={{ background: rowColor }} />
               <span className={styles.label}>{row.label}</span>

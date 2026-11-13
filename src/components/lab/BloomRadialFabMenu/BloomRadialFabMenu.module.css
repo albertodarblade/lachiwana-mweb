@@ -1,0 +1,219 @@
+.root {
+  --fab-menu-color: var(--f7-theme-color, rgb(225, 113, 0));
+  --fab-menu-on-color: #fff;
+  --fab-menu-item-bg: var(--f7-card-bg-color, #fff);
+  --fab-menu-item-fg: var(--f7-text-color, #1c1c1e);
+  --fab-menu-shadow: 0 6px 18px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.12);
+  --fab-menu-duration: 200ms;
+  --fab-menu-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: fixed;
+  right: calc(16px + env(safe-area-inset-right, 0px));
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  z-index: 1000;
+  font-family: var(--f7-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+}
+
+@media (min-width: 1024px) {
+  .root {
+    right: calc(24px + env(safe-area-inset-right, 0px));
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.embedded {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  z-index: 20;
+}
+
+@media (min-width: 1024px) {
+  .embedded {
+    right: auto;
+    bottom: auto;
+  }
+}
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 0;
+}
+
+.anchor {
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  gap: 12px;
+  z-index: 1;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+  visibility: hidden;
+  height: 0;
+  overflow: visible;
+}
+
+.menuOpen {
+  pointer-events: auto;
+  visibility: visible;
+  height: auto;
+}
+
+.menuItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--item-accent, var(--fab-menu-item-bg));
+  color: var(--item-on-accent, var(--fab-menu-item-fg));
+  box-shadow: var(--fab-menu-shadow);
+  cursor: pointer;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  opacity: 0;
+  transform: translateY(8px) scale(0.92);
+  transform-origin: bottom right;
+  transition:
+    transform var(--fab-menu-duration) var(--fab-menu-ease),
+    opacity var(--fab-menu-duration) var(--fab-menu-ease),
+    background-color 120ms ease,
+    box-shadow 120ms ease,
+    filter 120ms ease;
+  transition-delay: 0ms;
+}
+
+.menuOpen .menuItem {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition-delay: var(--delay);
+}
+
+.menuItem:hover:not(:disabled) {
+  filter: brightness(1.04);
+}
+
+.menuItem:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+.menuItem:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--item-accent, var(--fab-menu-color)) 45%, white);
+  outline-offset: 2px;
+}
+
+.menuItem:disabled {
+  opacity: 0.45;
+  cursor: default;
+  box-shadow: none;
+}
+
+.itemIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.itemLabel {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: inherit;
+}
+
+.fab {
+  position: relative;
+  min-width: 56px;
+  height: 56px;
+  border-radius: var(--fab-trigger-shape, 999px);
+  border: none;
+  background: var(--fab-menu-color);
+  color: var(--fab-menu-on-color);
+  box-shadow: var(--fab-menu-shadow);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 0 16px;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease, border-radius 150ms ease;
+}
+
+.fab:not(.fabExtended) {
+  width: 56px;
+  min-width: 56px;
+  padding: 0;
+  gap: 0;
+}
+
+.fabExtended {
+  min-width: 80px;
+  width: auto;
+  padding: 0 16px;
+}
+
+.fab:hover {
+  filter: brightness(1.03);
+}
+
+.fab:active {
+  transform: scale(0.96);
+}
+
+.fab:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--fab-menu-color) 40%, white);
+  outline-offset: 3px;
+}
+
+.fabOpen:not(.fabExtended) {
+  width: 56px;
+}
+
+.fabLabel {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  white-space: nowrap;
+}
+
+.fabIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  transition: transform var(--fab-menu-duration) var(--fab-menu-ease);
+}
+
+.fabIconOpen {
+  transform: rotate(90deg);
+}
+
+.svgIcon {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.reducedMotion .menuItem,
+.reducedMotion .fabIcon,
+.reducedMotion .fab {
+  transition-duration: 1ms !important;
+  transition-delay: 0ms !important;
+}

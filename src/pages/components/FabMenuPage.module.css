@@ -1,0 +1,142 @@
+.intro {
+  margin-top: 8px;
+}
+
+.text {
+  margin: 0 0 12px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--f7-theme-color, rgb(225, 113, 0)) 10%, transparent);
+}
+
+.statusLabel {
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+.statusValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--f7-theme-color, rgb(225, 113, 0));
+}
+
+.formGrid,
+.itemsConfig {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--f7-list-item-border-color, rgba(0, 0, 0, 0.15));
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 15px;
+  font-family: inherit;
+  background: var(--f7-list-bg-color, #fff);
+  color: var(--f7-text-color, #111);
+}
+
+.colorRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.colorPicker {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--f7-list-item-border-color, rgba(0, 0, 0, 0.15));
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.itemRow {
+  border: 1px solid var(--f7-list-item-border-color, rgba(0, 0, 0, 0.12));
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.itemRowHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.itemIndex {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.inlineFields {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.checkField {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  padding: 10px 4px;
+  white-space: nowrap;
+}
+
+.smallBtn,
+.addBtn {
+  border: 1px solid var(--f7-list-item-border-color, rgba(0, 0, 0, 0.15));
+  background: var(--f7-list-bg-color, #fff);
+  color: var(--f7-text-color, #111);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.smallBtn:disabled,
+.addBtn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.addBtn {
+  margin-top: 12px;
+  width: 100%;
+}
+
+.spacer {
+  min-height: 40vh;
+}

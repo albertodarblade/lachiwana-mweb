@@ -3,13 +3,42 @@
   margin-bottom: 12px;
 }
 
-.list {
-  margin: 0;
+.rows {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+.totalRow {
+  border-top: 1px solid var(--f7-list-border-color, rgba(0,0,0,0.08));
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--f7-text-color);
+}
+
+.icon {
+  flex-shrink: 0;
+  opacity: 0.8;
 }
 
 .value {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .negative { color: #e53935; }
@@ -18,14 +47,3 @@
 .totalNegative { color: #e53935; }
 .totalNeutral { color: var(--f7-list-item-subtitle-text-color); }
 .placeholder { color: var(--f7-list-item-subtitle-text-color); }
-
-.totalRow :global(.item-inner) {
-  border-top: 1px solid var(--f7-list-border-color);
-  margin-top: 6px;
-  padding-top: 6px;
-}
-
-.totalTitle {
-  font-size: 14px;
-  font-weight: 600;
-}

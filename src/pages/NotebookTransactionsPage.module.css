@@ -72,36 +72,10 @@
   padding: 0 4px;
 }
 
-.tabs {
-  display: flex;
-  gap: 4px;
-  padding: 4px 12px 8px;
-  flex-shrink: 0;
-}
-
-.tabBtn {
-  flex: 1;
-  border: none;
-  background: transparent;
-  padding: 8px 0;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--f7-text-color);
-  opacity: 0.45;
-  border-bottom: 2px solid transparent;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.tabBtnActive {
-  opacity: 1;
-  color: var(--tabs-color, var(--f7-theme-color));
-  border-bottom-color: var(--tabs-color, var(--f7-theme-color));
-}
-
 .pageWrap :global(.page-content) {
   display: flex;
   flex-direction: column;
+  padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
 }
 
 .tabsWrap {
@@ -119,6 +93,7 @@
   height: 100%;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
 }
 
 .summaryBar {
@@ -149,6 +124,13 @@
   font-weight: 600;
   color: rgba(0, 0, 0, 0.5);
   text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.summaryIcon {
+  flex-shrink: 0;
 }
 
 .summaryValue {
