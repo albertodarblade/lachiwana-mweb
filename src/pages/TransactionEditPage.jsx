@@ -10,6 +10,7 @@ import { useTransaction } from '../hooks/useTransaction'
 import { useNotebook } from '../hooks/useNotebook'
 import { useUpdateTransaction } from '../hooks/useUpdateTransaction'
 import { useDeleteTransaction } from '../hooks/useDeleteTransaction'
+import { sanitizeAmountInput, parseAmountInput } from '../utils/amountInput'
 import SaveStatusIndicator from '../components/notes/SaveStatusIndicator'
 import TagChip from '../components/notebooks/TagChip'
 import ThemedButton from '../components/notebooks/ThemedButton'
@@ -117,23 +118,26 @@ export default function TransactionEditPage({ f7route }) {
   }
 
   function handleAmountChange(e) {
-    const raw = e.target.value
-    setAmount(raw)
-    const parsed = parseFloat(raw)
-    if (!raw || isNaN(parsed) || parsed === 0) { setSaveStatus('editing'); return }
+    const sanitized = sanitizeAmountInput(e.target.value)
+    setAmount(sanitized)
+    const parsed = parseAmountInput(sanitized)
+    if (isNaN(parsed) || parsed === 0) { setSaveStatus('editing'); return }
     triggerDebounced({ value: isExpense ? -Math.abs(parsed) : Math.abs(parsed) })
   }
 
   function handleCalculationConfirm(value) {
-    setAmount(String(value))
-    triggerDebounced({ value: isExpense ? -Math.abs(value) : Math.abs(value) })
+    const sanitized = sanitizeAmountInput(String(value))
+    setAmount(sanitized)
+    const parsed = parseAmountInput(sanitized)
+    if (isNaN(parsed) || parsed === 0) return
+    triggerDebounced({ value: isExpense ? -Math.abs(parsed) : Math.abs(parsed) })
   }
 
   function handleTypeToggle(toExpense) {
     if (toExpense === isExpense) return
     setIsExpense(toExpense)
-    const parsed = parseFloat(amount)
-    if (!amount || isNaN(parsed) || parsed === 0) return
+    const parsed = parseAmountInput(amount)
+    if (isNaN(parsed) || parsed === 0) return
     triggerDebounced({ value: toExpense ? -Math.abs(parsed) : Math.abs(parsed) })
   }
 
@@ -270,8 +274,11 @@ export default function TransactionEditPage({ f7route }) {
           <li className={styles.amountRow}>
             <span className={styles.currency}>Bs.</span>
             <input
-              type="number"
+              type="text"
               inputMode="decimal"
+              autoComplete="off"
+              enterKeyHint="done"
+              pattern="[0-9]*[.,]?[0-9]*"
               placeholder="0"
               value={amount}
               onChange={handleAmountChange}

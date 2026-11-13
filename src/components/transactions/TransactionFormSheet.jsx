@@ -4,6 +4,7 @@ import {
   Sheet, PageContent, Block, List, ListInput, Button, f7,
 } from 'framework7-react'
 import { useCreateTransaction } from '../../hooks/useCreateTransaction'
+import { sanitizeAmountInput, parseAmountInput, isValidAmountInput } from '../../utils/amountInput'
 import TagChip from '../notebooks/TagChip'
 import Calculator from './Calculator/Calculator'
 import styles from './TransactionFormSheet.module.css'
@@ -55,11 +56,11 @@ export default function TransactionFormSheet({
     return () => clearTimeout(timer)
   }, [opened])
 
-  const amountValid = !!amount && !isNaN(parseFloat(amount)) && parseFloat(amount) !== 0
+  const amountValid = isValidAmountInput(amount)
 
   function handleSubmit(registerAnother = false) {
     if (!amountValid) return
-    const raw = parseFloat(amount)
+    const raw = parseAmountInput(amount)
     const value = transactionType === 'expense' ? -Math.abs(raw) : Math.abs(raw)
     const tagIds = selectedTags.map((t) => t.id ?? t._id).filter(Boolean)
     const trimmedContent = content.trim()
@@ -129,11 +130,14 @@ export default function TransactionFormSheet({
             <span className={styles.currency}>Bs.</span>
             <input
               ref={amountRef}
-              type="number"
+              type="text"
               inputMode="decimal"
+              autoComplete="off"
+              enterKeyHint="done"
+              pattern="[0-9]*[.,]?[0-9]*"
               placeholder="0"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => setAmount(sanitizeAmountInput(e.target.value))}
               className={styles.amountInput}
               data-testid="transaction-amount"
             />
